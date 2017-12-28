@@ -15,7 +15,7 @@
 #define MYNODEID      2   // Trasmitter node ID
 #define TONODEID      1   // Destination node ID
 #define FREQUENCY   RF69_433MHZ
-#define DEBUG         0
+#define DEBUG         1
 
 
 Adafruit_SHT31 sht31 = Adafruit_SHT31();
@@ -94,6 +94,7 @@ void loop() {
 
 void gotosleep(int period) {
   int timer = period;
+  if(DEBUG) { timer = 5; }
   while (timer > 0) {
     if (timer > 8) { LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF); timer = timer -8; }
     else { LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF); timer = timer -1; }
@@ -146,24 +147,28 @@ void code_period_setup(char nodeID[5]) {
   } else {
     if(DEBUG) { Serial.print("Got data from server = "); }
     if(DEBUG) {  Serial.print((char)radio.DATA);  }
-  // da verificare se questa sopra non funziona; in tal caso usare queste sotto
-  //  for (byte i = 0; i < radio.DATALEN; i++)
-  //  {
-  //    if(DEBUG) {  Serial.print((char)radio.DATA[i]);  }
-  //  }
-
-    if ((radio.DATA[0] == nodeID[0]) and (radio.DATA[1] == nodeID[1]) and (radio.DATA[2] == nodeID[2]) and (radio.DATA[3] == nodeID[3])) {
+    // da verificare se questa sopra non funziona; in tal caso usare queste sotto
+    //  for (byte i = 0; i < radio.DATALEN; i++)
+    //  {
+    //    if(DEBUG) {  Serial.print((char)radio.DATA[i]);  }
+    //  }
+    char nodeID_received[5] = "";
+    nodeID_received[0] = radio.DATA[0];
+    nodeID_received[1] = radio.DATA[1];
+    nodeID_received[2] = radio.DATA[2];
+    nodeID_received[3] = radio.DATA[3];
+    if (atoi(nodeID_received) == nodeID) {
       if(DEBUG) {  Serial.println("Got code_period from server: using that value"); }
-      code_period = (radio.DATA[5] -48) ;
-      EEPROM.write(ECP,code_period);
-      delay (5);
-    } else {
-      if(DEBUG) {  Serial.println("Failed, response not good; using stored value"); }
-      delay (5);
-    }
+    code_period = (radio.DATA[5] -48) ;
+    EEPROM.write(ECP,code_period);
+    delay (5);
+  } else {
+    if(DEBUG) {  Serial.println("Failed, response not good; using stored value"); }
+    delay (5);
   }
-  code_period = EEPROM.read(ECP);
-  led_blink(code_period,500);        // slowly blink code_period times
+}
+code_period = EEPROM.read(ECP);
+led_blink(code_period,500);        // slowly blink code_period times
 }
 
 // End function code_period_setup

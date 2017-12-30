@@ -10,8 +10,8 @@ from RFM69registers import *
 import requests
 import time
 
-sink = "http://bars.slartitorto.eu/datasink.php"
-router_name = "myrouter"
+sink = "http://bars.slartitorto.eu/datasink2.php"
+router_name = "000029"
 rf69 = RFM69.RFM69(RF69_433MHZ, 1, 0, True)
 rf69.rcCalibration()
 while True:

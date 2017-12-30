@@ -22,6 +22,6 @@ while True:
     rssi=(100+(((rf69.RSSI)+28)*100/72))
     payload = ("".join([chr(letter) for letter in rf69.DATA]))
     # print "%s from %s RSSI:%s" % (payload,rf69.SENDERID, rssi)
-    url = sink + '?data=' + payload + '&router=' + router_name
-    rssi_string = {'rssi':rssi}
-    requests.get(url,params=rssi_string,stream=True)
+    url = sink + '?data=' + payload
+    other_data = {'rssi':rssi,'router':router_name}
+    requests.get(url,params=other_data,stream=True)

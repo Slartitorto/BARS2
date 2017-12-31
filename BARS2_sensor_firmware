@@ -28,8 +28,9 @@ int code_period;
 int period;
 char outBuffer[32] = "";
 byte outBufferLen;
-int min_vcc = 400; // 555 is default
+int min_vcc = 575;
 
+if(DEBUG) {  min_vcc = 200; }
 
 // -------------------------
 // Start setup

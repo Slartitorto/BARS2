@@ -21,14 +21,14 @@ $hum = $hum/100;
 //  min = 3600/2/3.222 = 558 -> 0%
 //  verified 575 -> 0%
 //  max = 4200/2/3.222 = 651 -> 100%
-//  to be verified
+//  verified 651 -> 100%
 //  651 - 575 = 76 (range in digit)
 //  100/76 = 1.316 (range in %)
 //  so:
-int batt_0 = 575;
-float batt_corr = 1.316;
+$batt_0 = 575;
+$batt_corr = 1.316;
 
-$battery = intval(($battery - batt_0) * batt_corr);
+$battery = intval(($battery - $batt_0) * $batt_corr);
 if ($battery > 100) $battery = 100;
 if ($battery < 1)   $battery = 0;
 

@@ -22,7 +22,7 @@ Adafruit_SHT31 sht31 = Adafruit_SHT31();
 RFM69 radio;
 
 // Global variables
-int counter = 0;
+long counter = 0;
 int nodeID = 5555;
 int code_period;
 int period;

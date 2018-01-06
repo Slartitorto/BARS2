@@ -28,7 +28,7 @@ RFM69 radio;
 
 // Global variables
 long counter = 0;
-int nodeID;
+int nodeID = 5556;
 int code_period;
 int period;
 char outBuffer[32] = "";
@@ -70,7 +70,15 @@ void loop() {
 
   brown_out_detector(vcc,nodeID);
 
-  sprintf(outBuffer, "%04d:%06d:%04d:%04d:%04d:%04d",nodeID,counter,temp,hum,vcc,period);
+  int a = nodeID;
+  int b = counter;
+  int c = temp;
+  int d = hum;
+  int e = vcc;
+  int f = period;
+
+  sprintf(outBuffer, "%04d:%06d:%04d:%04d:%04d:%04d",a,b,c,d,e,f);
+  // sprintf(outBuffer, "%04d:%06d:%04d:%04d:%04d:%04d",nodeID,counter,temp,hum,vcc,period);
   outBufferLen = strlen(outBuffer);
 
   if(DEBUG) {  Serial.print("Vcc = "); Serial.println(vcc); }

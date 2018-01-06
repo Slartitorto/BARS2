@@ -10,18 +10,33 @@ from RFM69registers import *
 import requests
 import time
 
-sink = "http://bars.slartitorto.eu/datasink2.php"
+sink_url = "http://bars.slartitorto.eu/datasink2.php"
+get_code_period_url = "http://bars.slartitorto.eu/get_period.php"
 router_name = "000029"
 rf69 = RFM69.RFM69(RF69_433MHZ, 1, 0, True)
 rf69.rcCalibration()
+
+
+def set_code_period(nodeID):
+    url = get_code_period_url + '?serial=' + nodeID
+    #print "sending request"
+    response = requests.get(url,stream=True)
+    code_period = response.text[0]
+    rf69.setHighPower(True)
+    #print "sending %s to %s " % (code_period,nodeID)
+    string = nodeID + ':' + code_period
+    rf69.send(2,string)
+
 while True:
     rf69.receiveBegin()
     while not rf69.receiveDone():
         time.sleep(.1)
-    # print(rf69.DATA)
+    #print(rf69.DATA)
     rssi=(100+(((rf69.RSSI)+28)*100/72))
     payload = ("".join([chr(letter) for letter in rf69.DATA]))
-    # print "%s from %s RSSI:%s" % (payload,rf69.SENDERID, rssi)
-    url = sink + '?data=' + payload
+    data = payload.split(":")
+    if (data[1] == "get_code_period") : set_code_period(data[0])
+    #print "%s from %s RSSI:%s" % (payload,rf69.SENDERID, rssi)
+    url = sink_url + '?data=' + payload
     other_data = {'rssi':rssi,'router':router_name}
     requests.get(url,params=other_data,stream=True)

@@ -7,29 +7,33 @@
 #include <EEPROM.h>
 #include <RFM69.h>
 
-#define ledPin 3
-#define batteryPin A1 // Analog pin for battery voltage measure
+#define ledPin        3   // Digital pin for led connection
+#define batteryPin   A1   // Analog pin for battery voltage measure
 
-#define ECP 1          // EEPROM register where store info for pause between trasmission
-#define NETWORKID     0   // Must be the same for all nodes
-#define MYNODEID      2   // Trasmitter node ID
-#define TONODEID      1   // Destination node ID
-#define FREQUENCY   RF69_433MHZ
-#define DEBUG         1
+#define ECP           1   // EEPROM address where store info for pause between trasmission
+#define EFORGEDADD    3   // EEPROM address where store flag (2 char) forged (= 234 and 189)
+#define ENODEIDADD    6   // EEprom address where store nodeID (5 char)
+#define NODEIDLEN     4   // number of digit for nodeID
+#define KEY1        234   // ranom key
+#define KEY2        189   // ranom key
+#define NETWORKID     0   // Must be the same for all nodes --- Don't change
+#define MYNODEID      2   // Trasmitter node ID --- Don't change
+#define TONODEID      1   // Destination node ID --- Don't change
+#define FREQUENCY   RF69_433MHZ //  --- Don't change
 
+#define DEBUG         1   // debug mode print useful info on serial; set 0 in not debug
 
 Adafruit_SHT31 sht31 = Adafruit_SHT31();
 RFM69 radio;
 
 // Global variables
 long counter = 0;
-int nodeID = 5555;
+int nodeID;
 int code_period;
 int period;
 char outBuffer[32] = "";
 byte outBufferLen;
 int min_vcc = 575;
-
 
 // -------------------------
 // Start setup
@@ -46,6 +50,8 @@ void setup() {
 
   radio.initialize(FREQUENCY, MYNODEID, NETWORKID);
   radio.setHighPower();
+
+  // set_nodeID();   // to be verified
 
   code_period_setup(nodeID);
   period = get_period(code_period);
@@ -108,7 +114,7 @@ void gotosleep(int period) {
 // -------------------------
 // Start function code_period_setup
 
-void code_period_setup(char nodeID[5]) {
+void code_period_setup(int nodeID) {
   // at boot, get period from server or EEPROM
 
   delay(500);
@@ -118,6 +124,7 @@ void code_period_setup(char nodeID[5]) {
 
   // Check stored value if set; otherwise set 5 as default
   code_period = EEPROM.read(ECP);
+  if(DEBUG) {  Serial.print("code_period = "); Serial.println(code_period); }
   if (code_period < 1 || code_period > 9) {
     if(DEBUG) {  Serial.println("code_period <1 or >9"); }
     code_period = 5;                 // maybe EEPROM not yet set; set code_period = 5 as default value = 60 sec.
@@ -133,7 +140,7 @@ void code_period_setup(char nodeID[5]) {
   }
 
   // Get code_period from server
-  if(DEBUG) {  Serial.println("Sending get_code_period to server"); }
+  if(DEBUG) {  Serial.print("Sending get_code_period to server from nodeID "); Serial.println(nodeID); }
   sprintf(outBuffer, "%04d:get_code_period",nodeID);
   outBufferLen = strlen(outBuffer);
   radio.send(TONODEID, outBuffer, outBufferLen);
@@ -148,30 +155,35 @@ void code_period_setup(char nodeID[5]) {
     if(DEBUG) {  Serial.println("Failed to get code_period from server: timeout; using stored value"); }
     delay (5);
   } else {
+
     if(DEBUG) { Serial.print("Got data from server = "); }
-    if(DEBUG) {  Serial.print((char)radio.DATA);  }
-    // da verificare se questa sopra non funziona; in tal caso usare queste sotto
-    //  for (byte i = 0; i < radio.DATALEN; i++)
-    //  {
-    //    if(DEBUG) {  Serial.print((char)radio.DATA[i]);  }
-    //  }
+    if(DEBUG) { for (byte i = 0; i < radio.DATALEN; i++) Serial.print((char)radio.DATA[i]); Serial.println(); }
+
     char nodeID_received[5] = "";
     nodeID_received[0] = radio.DATA[0];
     nodeID_received[1] = radio.DATA[1];
     nodeID_received[2] = radio.DATA[2];
     nodeID_received[3] = radio.DATA[3];
-    if (atoi(nodeID_received) == nodeID) {
+
+    if(DEBUG) { Serial.print("nodeID_received = "); Serial.println(nodeID_received); }
+    if(DEBUG) { Serial.print("my_nodeID = "); Serial.println(nodeID); }
+
+    int code_period_received = radio.DATA[5] - 48 ;
+
+    if(DEBUG) { Serial.print("code_period_received = "); Serial.println(code_period_received); }
+
+    if ((atoi(nodeID_received) == nodeID) && (code_period_received > 0) && (code_period_received < 9)) {
       if(DEBUG) {  Serial.println("Got code_period from server: using that value"); }
-    code_period = (radio.DATA[5] -48) ;
-    EEPROM.write(ECP,code_period);
-    delay (5);
-  } else {
-    if(DEBUG) {  Serial.println("Failed, response not good; using stored value"); }
-    delay (5);
+
+      EEPROM.write(ECP,code_period_received);
+      delay (5);
+    } else {
+      if(DEBUG) {  Serial.println("Failed, response not good; using stored value"); }
+      delay (5);
+    }
   }
-}
-code_period = EEPROM.read(ECP);
-led_blink(code_period,500);        // slowly blink code_period times
+  code_period = EEPROM.read(ECP);
+  led_blink(code_period,500);        // slowly blink code_period times
 }
 
 // End function code_period_setup
@@ -234,4 +246,44 @@ void brown_out_detector(int vcc, char nodeID) {
 }
 
 // End function Brown Out Detector
+// -------------------------
+// Start function set_nodeID
+// to be verified
+
+void set_nodeID() {
+  // check if Hooly is new
+  int test1 = EEPROM.read(EFORGEDADD);
+  int test2 = EEPROM.read(EFORGEDADD+1);
+  if (test1 != KEY1 || test2 != KEY2) {  // Hooly is new
+    // await nodeID from server
+    if (radio.receiveDone()) // Got one!
+    {
+      // Print out the information:
+      if(DEBUG) {  Serial.print("received  "); }
+      if(DEBUG) {  Serial.println((char)radio.DATA); }
+      if(DEBUG) {  for (byte i = 0; i < radio.DATALEN; i++) Serial.print((char)radio.DATA[i]); }
+      if(atoi(radio.DATA[1]) == KEY1) { // da sistemare
+
+        // write nodeID into ENODEIDADD
+        for (int i = 0; i < NODEIDLEN; i++) {
+          EEPROM.write(ENODEIDADD+i,0);
+          EEPROM.write(ENODEIDADD+i,radio.DATA[i]);
+        }
+        // write the Hooly is not new and it is forged
+        EEPROM.write(EFORGEDADD,0);
+        EEPROM.write(EFORGEDADD+1,0);
+        EEPROM.write(EFORGEDADD,KEY1);
+        EEPROM.write(EFORGEDADD+1,KEY2);
+      }
+    }
+  }
+  // set nodeID from EEPROM ENODEIDADD
+  nodeID = 0;
+  for (int i = NODEIDLEN; i = 0 ; i--) {
+    int x =  EEPROM.read(ENODEIDADD+i);
+    nodeID = nodeID + (x * 10 ^ i);
+  }
+}
+
+// End function set_nodeID
 // -------------------------

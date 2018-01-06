@@ -30,12 +30,14 @@ char outBuffer[32] = "";
 byte outBufferLen;
 int min_vcc = 575;
 
-if(DEBUG) {  min_vcc = 200; }
 
 // -------------------------
 // Start setup
 
 void setup() {
+
+  if(DEBUG) {  min_vcc = 200; }
+
   pinMode(ledPin, OUTPUT);
 
   Serial.begin(115200);
@@ -131,8 +133,8 @@ void code_period_setup(char nodeID[5]) {
   }
 
   // Get code_period from server
-  if(DEBUG) {  Serial.println("Sending 000000 to server"); }
-  sprintf(outBuffer, "%04d:000000:0000:0000:0000:0000",nodeID);
+  if(DEBUG) {  Serial.println("Sending get_code_period to server"); }
+  sprintf(outBuffer, "%04d:get_code_period",nodeID);
   outBufferLen = strlen(outBuffer);
   radio.send(TONODEID, outBuffer, outBufferLen);
 

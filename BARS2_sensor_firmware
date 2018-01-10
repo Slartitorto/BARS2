@@ -3,23 +3,22 @@
 
 #include <LowPower.h>
 #include "Adafruit_SHT31.h"
-#include <SPI.h>
 #include <EEPROM.h>
 #include <RFM69.h>
 
 #define ledPin        3   // Digital pin for led connection
 #define batteryPin   A1   // Analog pin for battery voltage measure
 
-#define ECP           1   // EEPROM address where store info for pause between trasmission
+#define ECP           1   // EEPROM address where store info for pause between transmission
 #define EFORGEDADD    3   // EEPROM address where store flag (2 char) forged (= 234 and 189)
 #define ENODEIDADD    6   // EEprom address where store nodeID (5 char)
 #define NODEIDLEN     4   // number of digit for nodeID
 #define KEY1        234   // ranom key
 #define KEY2        189   // ranom key
-#define NETWORKID     0   // Must be the same for all nodes --- Don't change
-#define MYNODEID      2   // Trasmitter node ID --- Don't change
-#define TONODEID      1   // Destination node ID --- Don't change
-#define FREQUENCY   RF69_433MHZ //  --- Don't change
+#define NETWORKID     0   // Must be the same for all nodes
+#define MYNODEID      2   // Trasmitter node ID
+#define TONODEID      1   // Destination node ID
+#define FREQUENCY     RF69_433MHZ
 
 #define DEBUG         1   // debug mode print useful info on serial; set 0 in not debug
 

@@ -1,9 +1,8 @@
 #!/usr/bin/env python2
 
 #remember to install:
-# requests: \http://docs.python-requests.org/en/latest/user/quickstart/
-# RFM69 library: https://github.com/etrombly/RFM69
-# modify RFM69.py for properly rstPin (28 not good)
+# requests: http://docs.python-requests.org/en/latest/user/quickstart/
+# RFM69 library: https://github.com/etrombly/RFM69 (modify RFM69.py for properly rstPin - 28 not good, used 16-)
 
 import RFM69
 from RFM69registers import *

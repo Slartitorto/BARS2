@@ -1,0 +1,276 @@
+// nRF24L01+ & ATmega328 & DS18B20
+// code for HW BARS1 rev. 2.02
+// OK testato
+
+#include <RF24.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#include <EEPROM.h>
+#include <LowPower.h>
+#include <avr/io.h>
+#include <util/delay.h>
+
+#define F_CPU 8000000UL
+#define tempPin A2     // sensor Vout connected to A2
+#define radioPower A5  // EN Voltage Regulator pin is connected to A5
+#define ledPin 4       // Led pin is connected to 4
+#define tempPower 0    // sensor Power pin is connected to D2 (ATtiny pin 5)
+#define ECP 1          // EEPROM register where store info for pause between trasmission
+
+RF24 radio(A0,A1);                   // attiny84: pins for nrf24l01 CE,CSN
+OneWire oneWire(tempPin);              // startup oneWire library
+DallasTemperature sensors(&oneWire);   // startup Dallas library
+
+// change and remember to add nodeID as device serial number in DB
+char nodeID[5] = "5555";    // nodeID 4 character ([0-9][a-z][A_Z])
+
+// define global software variables
+int code_period;
+int period;
+int counter = 0;
+
+void setup(void)
+{
+  sensors.begin();
+  analogReference(INTERNAL);       // set the aref to the internal 1.1V reference
+  pinMode(tempPower, OUTPUT);      // set power pin for sensor to output
+  digitalWrite(tempPower, HIGH);   // turn power sensor on
+  pinMode(ledPin, OUTPUT);         // set power pin for LED to output
+  pinMode(radioPower, OUTPUT);     // set power pin for EN Voltage regulator
+  delay(2000);
+  get_code_period();               // get code_period from EEPROM; if EEPROM code is not set, set "6" as 5 min. period
+  delay(2000);                     // wait 2 sec. for pause between period signal and first trasmission
+}
+
+void loop(void)
+{
+  char receivePayload[32]="";
+  char outBuffer[32]= "";
+
+  sensors.requestTemperatures();           // Send the command to get temperatures
+  delay(1000);                             // Allow 1 sec. for the sensor to be ready
+  digitalWrite(ledPin, HIGH);              // turn LED on
+
+  int temptx=(sensors.getTempCByIndex(0)*100); // read sensor
+  long vcc=readVcc();
+  int period = get_period(code_period);
+
+  // Prepare OutBuffer
+
+  int i;
+  int c;
+  int x;
+
+  outBuffer[0] = '1';
+  outBuffer[1] = ':';
+  outBuffer[2] = nodeID[0];
+  outBuffer[3] = nodeID[1];
+  outBuffer[4] = nodeID[2];
+  outBuffer[5] = nodeID[3];
+  outBuffer[6] = ':';
+
+  c = counter;
+  for (i = 10; i >= 7; --i)
+  {
+    x = c %10;
+    outBuffer[i] = '0' + x ;
+    c = (c - x) / 10;
+  }
+  outBuffer[11] = ':';
+
+  c = temptx;
+  if (temptx < 0) { outBuffer[12] = '-'; c = c * -1;}
+  else { outBuffer[12] = '+';}
+  for (i = 16; i >= 13; --i)
+  {
+    x = c %10;
+    outBuffer[i] = '0' + x ;
+    c = (c - x) / 10;
+  }
+  outBuffer[17] = ':';
+
+  c = vcc;
+  for (i = 21; i >= 18; --i)
+  {
+    int x;
+    x = c %10;
+    outBuffer[i] = '0' + x ;
+    c = (c - x) / 10;
+  }
+  outBuffer[22] = ':';
+
+  c = period;
+  for (i = 26; i >= 23; --i)
+  {
+    int x;
+    x = c %10;
+    outBuffer[i] = '0' + x ;
+    c = (c - x) / 10;
+  }
+  outBuffer[27] = ':';
+
+  // turn Voltage Regulator ON
+  digitalWrite(radioPower, HIGH);
+  delay(50);
+
+  // init radio for writing on channel 76
+  radio.begin();
+  radio.setPALevel(RF24_PA_MAX);
+  radio.setChannel(0x4c);
+  radio.setDataRate(RF24_250KBPS);
+  radio.setAutoAck(1);
+  radio.setRetries(1,10);
+  radio.openWritingPipe(0xF0F0F0F0E1LL);
+  radio.enableDynamicPayloads();
+  radio.powerUp();
+
+  // Transmit data
+  delay(5);
+  radio.write(outBuffer, strlen(outBuffer));
+
+  // at first trasmission (boot), get period from server
+  if (counter==0) {
+    delay(1000);
+    radio.openReadingPipe(1,0xF00FF0F0E1LL);
+    radio.startListening();
+    unsigned long started_waiting_at = millis();               // Set up a timeout period, get the current millisecond
+    int timeout = 0;
+
+    while ( ! radio.available()) {
+      if (millis() - started_waiting_at > 10000 ){            // If waited longer than 10s, indicate timeout and exit while loop
+        timeout = 1;
+        break;
+      }
+    }
+
+    if ( timeout ) {
+      //    Serial.println(F("Failed, response timed out."));
+    } else {
+      uint8_t len = radio.getDynamicPayloadSize();
+      radio.read(receivePayload, len);                          // *** Read from radio until payload size is reached
+      if ((receivePayload[0] = nodeID[0]) and (receivePayload[1] = nodeID[1]) and (receivePayload[2] = nodeID[2]) and (receivePayload[3] = nodeID[3])) {
+        code_period = (receivePayload[5] -48) ;
+        EEPROM.write(ECP,code_period);
+        delay (5);
+        code_period = EEPROM.read(ECP);  // back read for complete storage
+        period = get_period(code_period);
+        digitalWrite(ledPin, LOW);      // turn LED on
+        delay(500);
+        led_blink(code_period,500);
+      }
+    }
+    radio.stopListening();
+
+    // now send payload with update period and counter = 1
+    c = period;
+    for (i = 26; i >= 23; --i)
+    {
+      int x;
+      x = c %10;
+      outBuffer[i] = '0' + x ;
+      c = (c - x) / 10;
+    }
+    outBuffer[10] = '0' + 1 ;       // next payload counter = 1 avoid twice 0
+
+    counter = 1;                      // fix counter = 1
+
+    delay(500);
+    digitalWrite(ledPin, HIGH);      // turn LED on
+    radio.write(outBuffer, strlen(outBuffer));
+    delay(10);
+    digitalWrite(ledPin, LOW);      // turn LED off
+  }   // end if first trasmission
+
+  // sleep
+  radio.powerDown();
+  digitalWrite(radioPower, LOW);        // turn Voltage Regulator OFF
+  digitalWrite(ledPin, LOW);            // turn LED off
+  gotosleep(period);
+
+  // increase counter
+  counter ++;
+  if (counter == 10000) {
+    counter = 1;
+  }
+}
+
+// END OF MAIN LOOP
+
+void gotosleep(int period) {
+  int timer = period;
+  while (timer > 0) {
+    if (timer > 8) { LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF); timer = timer -8; }
+    else { LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF); timer = timer -1; }
+  }
+}
+
+void led_blink(int times, int speed) {
+  // 50 = very fast - 250 = readable - 500 = slow
+  for (int i = 0; i < times; i++) {
+    digitalWrite(ledPin, HIGH);      // turn LED on
+    delay(speed);
+    digitalWrite(ledPin, LOW);       // turn LED off
+    delay(speed);
+  }
+}
+
+void get_code_period(void) {
+  code_period = EEPROM.read(ECP);
+  if (code_period < 1 || code_period > 9) {
+    code_period = 6;                 // set 6 as default value = 5 m.
+    EEPROM.write(ECP,code_period);   // registra il valore di default
+    delay (5);
+    code_period = EEPROM.read(ECP);  // back read for complete storage
+  }
+  led_blink(code_period,250);      // lampeggia il valore storato
+}
+
+int get_period(int code_period) {
+  int period;
+  if (code_period == 1)
+  period = 5;
+  else if (code_period == 2)
+  period = 15;
+  else if (code_period == 3)
+  period = 30;
+  else if (code_period == 4)
+  period = 60;
+  else if (code_period == 5)
+  period = 180;
+  else if (code_period == 6)
+  period = 300;
+  else if (code_period == 7)
+  period = 900;
+  else if (code_period == 8)
+  period = 1800;
+  else if (code_period == 9)
+  period = 3600;
+  return period;
+}
+
+// measure supply voltage in mV
+long readVcc() {
+  // Read 1.1V reference against AVcc
+  // set the reference to Vcc and the measurement to the internal 1.1V reference
+  #if defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+  ADMUX = _BV(REFS0) | _BV(MUX4) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
+  #elif defined (__AVR_ATtiny24__) || defined(__AVR_ATtiny44__) || defined(__AVR_ATtiny84__)
+  ADMUX = _BV(MUX5) | _BV(MUX0);
+  #elif defined (__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
+  ADMUX = _BV(MUX3) | _BV(MUX2);
+  #else
+  ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
+  #endif
+
+  delay(2); // Wait for Vref to settle
+  ADCSRA |= _BV(ADSC); // Start conversion
+  while (bit_is_set(ADCSRA,ADSC)); // measuring
+
+  uint8_t low  = ADCL; // must read ADCL first - it then locks ADCH
+  uint8_t high = ADCH; // unlocks both
+
+  long result = (high<<8) | low;
+
+  result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
+  return result;              // Vcc in millivolts
+}

@@ -1,15 +1,15 @@
 #!/usr/bin/env python2
-
 #remember to install:
 # requests: http://docs.python-requests.org/en/latest/user/quickstart/
 # RFM69 library: https://github.com/etrombly/RFM69 (modify RFM69.py for properly rstPin - 28 not good, used 16-)
+
 
 import RFM69
 from RFM69registers import *
 import requests
 import time
 
-sink_url = "http://bars.slartitorto.eu/datasink2.php"
+sink = "http://bars.slartitorto.eu/datasink2.php"
 get_code_period_url = "http://bars.slartitorto.eu/get_period.php"
 router_name = "000029"
 rf69 = RFM69.RFM69(RF69_433MHZ, 1, 0, True)
@@ -34,8 +34,10 @@ while True:
     rssi=(100+(((rf69.RSSI)+28)*100/72))
     payload = ("".join([chr(letter) for letter in rf69.DATA]))
     data = payload.split(":")
-    if (data[1] == "get_code_period") : set_code_period(data[0])
-    #print "%s from %s RSSI:%s" % (payload,rf69.SENDERID, rssi)
-    url = sink_url + '?data=' + payload
-    other_data = {'rssi':rssi,'router':router_name}
-    requests.get(url,params=other_data,stream=True)
+    if (data[1] == "get_code_period"):
+       set_code_period(data[0])
+    else:
+       #print "%s from %s RSSI:%s" % (payload,rf69.SENDERID, rssi)
+       url = sink + '?data=' + payload
+       other_data = {'rssi':rssi,'router':router_name}
+       requests.get(url,params=other_data,stream=True)

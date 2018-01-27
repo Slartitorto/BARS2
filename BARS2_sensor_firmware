@@ -15,6 +15,7 @@
 #define NODEIDLEN     4   // number of digit for nodeID
 #define KEY1        234   // ranom key
 #define KEY2        189   // ranom key
+#define DEBUG_PERIOD  5   // sec. between transmission in DEBUG mode
 #define NETWORKID     0   // Must be the same for all nodes
 #define MYNODEID      2   // Trasmitter node ID
 #define TONODEID      1   // Destination node ID
@@ -110,7 +111,7 @@ void loop() {
 
 void gotosleep(int period) {
   int timer = period;
-  if(DEBUG) { timer = 5; }
+  if(DEBUG) { timer = DEBUG_PERIOD; }
   while (timer > 0) {
     if (timer > 8) { LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF); timer = timer -8; }
     else { LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF); timer = timer -1; }

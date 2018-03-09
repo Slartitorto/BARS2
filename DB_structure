@@ -1,3 +1,13 @@
+-- To prepare DB
+-- From SQL:
+--   CREATE DATABASE hooly;
+--   CREATE USER 'hooly'@'localhost' IDENTIFIED BY 'hooly_pwd';
+--   GRANT ALL PRIVILEGES ON hooly.* TO 'hooly'@'localhost';
+-- From sh:
+--   mysql hooly -u hooly -p  < DB_structure.sql
+-- DB_structure.sql must contain these lines:
+
+
 -- MySQL dump 10.13  Distrib 5.5.53, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: sensors

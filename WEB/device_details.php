@@ -126,7 +126,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
   <TD align=\"left\" width=\"90%\">
   <A href=\"javascript:navigator_Go('index.php');\"><img src=\"icone/left37.png\" width=\"35\"></A></TD>
   <TD align=\"right\">
-  <A href=\"javascript:navigator_Go('device_details_2.php?serial=$serial&last=$last&graph=temp');\"><img src=\"icone/refresh57.png\" width=\"30\">
+  <A href=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$last&graph=temp');\"><img src=\"icone/refresh57.png\" width=\"30\">
   </TD>
   </TR></TABLE>
   <BR><CENTER>
@@ -182,7 +182,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     echo " <table class=\"gridtable\">	";
     echo " <tr><th>" . $device_name . "</th><th>" . $position . "</th></tr><tr> <th colspan = 2>Temp: " . round($temp,2) . "&deg C</th></tr>";
     if ($graph == temp ){
-      echo " <TR><TD>Serial: <B> " . $serial . "</B></TD><TD><A HREF=\"javascript:navigator_Go('device_details_2.php?serial=$serial&last=$last&graph=battery');\">Batteria:</a>  <B>" . $batt . "% </B> </TD></TR>";
+      echo " <TR><TD>Serial: <B> " . $serial . "</B></TD><TD><A HREF=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$last&graph=battery');\">Batteria:</a>  <B>" . $batt . "% </B> </TD></TR>";
     } else {
       echo " <TR><TD>Serial: <B> " . $serial . "</B></TD><TD>Batteria: <B>" . $batt . "</B> (" . $perc_batt . "%) - " . $batt_type . "</TD></TR>";
     }
@@ -195,9 +195,9 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     echo "<td width=34% align=center>" . $current . "</td>";
     echo "<td width=33% align=right>";
     if ($graph == temp) {
-      echo "<A href=\"javascript:navigator_Go('device_details_2.php?serial=$serial&last=$next_last&graph=temp');\">" . $string_last . "</a>";
+      echo "<A href=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$next_last&graph=temp');\">" . $string_last . "</a>";
     } else {
-      echo "<A href=\"javascript:navigator_Go('device_details_2.php?serial=$serial&last=$next_last&graph=battery');\">" . $string_last . "</a>";
+      echo "<A href=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$next_last&graph=battery');\">" . $string_last . "</a>";
 
     }
     echo "</td>";

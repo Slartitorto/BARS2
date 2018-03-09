@@ -2,9 +2,9 @@
 
 // DATI DI CONNESSIONE AL DATABASE
 $servername = "localhost";
-$username = "USER";
-$password = "PWD";
-$dbname = "sensors";
+$username = "hooly";
+$password = "hooly_pwd";
+$dbname = "hooly";
 
 
 //      ACCESSO AL DATABASE

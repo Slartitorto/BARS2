@@ -15655,6 +15655,7 @@ Created 2016-06-07, Hans Locher&lt;br&gt;
 </variantdefs>
 <classes>
 <class number="0" name="default" width="0" drill="0">
+<clearance class="0" value="0.508"/>
 </class>
 </classes>
 <parts>
@@ -15809,11 +15810,11 @@ Created 2016-06-07, Hans Locher&lt;br&gt;
 <instance part="Q1" gate="G$1" x="124.46" y="116.84"/>
 <instance part="C9" gate="G$1" x="119.38" y="109.22" smashed="yes" rot="R90">
 <attribute name="NAME" x="121.539" y="105.664" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="124.079" y="110.744" size="1.778" layer="96" rot="R90"/>
+<attribute name="VALUE" x="121.539" y="103.124" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="C10" gate="G$1" x="127" y="109.22" smashed="yes" rot="R90">
 <attribute name="NAME" x="131.699" y="105.664" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="131.699" y="110.744" size="1.778" layer="96" rot="R90"/>
+<attribute name="VALUE" x="134.239" y="103.124" size="1.778" layer="96" rot="R180"/>
 </instance>
 </instances>
 <busses>

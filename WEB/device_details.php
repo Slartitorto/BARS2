@@ -21,7 +21,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
   // SELECT for data to graph
 
-  if ($graph == temp) {
+  if ($graph == "temp") {
     $query = "SELECT min_ok, max_ok FROM devices where serial = '$serial'";
     $result = $conn->query($query);
     while($row = $result->fetch_assoc()) {
@@ -95,7 +95,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
       },
       series: [{
         data: [";
-        if ($graph == temp){
+        if ($graph == "temp"){
           echo join($data1, ',') ;
           print			"]
         },{
@@ -181,7 +181,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
     echo " <table class=\"gridtable\">	";
     echo " <tr><th>" . $device_name . "</th><th>" . $position . "</th></tr><tr> <th colspan = 2>Temp: " . round($temp,2) . "&deg C</th></tr>";
-    if ($graph == temp ){
+    if ($graph == "temp" ){
       echo " <TR><TD>Serial: <B> " . $serial . "</B></TD><TD><A HREF=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$last&graph=battery');\">Batteria:</a>  <B>" . $batt . "% </B> </TD></TR>";
     } else {
       echo " <TR><TD>Serial: <B> " . $serial . "</B></TD><TD>Batteria: <B>" . $batt . "</B> (" . $perc_batt . "%) - " . $batt_type . "</TD></TR>";
@@ -194,7 +194,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     echo "<td width=33%></td>";
     echo "<td width=34% align=center>" . $current . "</td>";
     echo "<td width=33% align=right>";
-    if ($graph == temp) {
+    if ($graph == "temp") {
       echo "<A href=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$next_last&graph=temp');\">" . $string_last . "</a>";
     } else {
       echo "<A href=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$next_last&graph=battery');\">" . $string_last . "</a>";

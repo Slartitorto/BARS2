@@ -29,8 +29,8 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
       $max_ok=$row["max_ok"];
     }
 
-    $sqla = "SELECT unix_timestamp(timestamp) as timestamp, temp FROM rec_data_2 where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-    $sql_csv = "SELECT timestamp, counter,  temp FROM rec_data_2 where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+    $sqla = "SELECT unix_timestamp(timestamp) as timestamp, temp FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+    $sql_csv = "SELECT timestamp, counter,  temp FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
 
     $result = $conn->query($sqla);
     while ($row = $result->fetch_array()) {
@@ -43,8 +43,8 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
       $data3[] = "[$timestamp, $max_ok]";
     }
   } else {
-    $sqla = "SELECT unix_timestamp(timestamp) as timestamp, battery FROM rec_data_2 where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-    $sql_csv = "SELECT timestamp, battery FROM rec_data_2 where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+    $sqla = "SELECT unix_timestamp(timestamp) as timestamp, battery FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+    $sql_csv = "SELECT timestamp, battery FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
     $result = $conn->query($sqla);
     while ($row = $result->fetch_array()) {
       $timestamp = $row['timestamp'];
@@ -148,7 +148,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
   }
 
   // SELECT last record
-  $sql = "SELECT timestamp, temp, hum, battery, period, rssi, timestampdiff(second,timestamp,now()) as sec_delay FROM last_rec_data_2 where serial = '$serial' order by timestamp desc limit 1";
+  $sql = "SELECT timestamp, temp, hum, battery, period, rssi, timestampdiff(second,timestamp,now()) as sec_delay FROM last_rec_data where serial = '$serial' order by timestamp desc limit 1";
   $result = $conn->query($sql);
   if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
@@ -166,13 +166,13 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     }
 
     // SELECT last counter
-    $query = "select counter from last_rec_data_2 where serial = '$serial' order by timestamp desc limit 1";
+    $query = "select counter from last_rec_data where serial = '$serial' order by timestamp desc limit 1";
     $result = $conn->query($query);
     while($row = $result->fetch_assoc()) {
       $link_qlt0=$row["counter"];
     }
     // SELECT last counter -10
-    $query = "select counter from rec_data_2 where serial = '$serial' order by timestamp desc limit 10,1";
+    $query = "select counter from rec_data where serial = '$serial' order by timestamp desc limit 10,1";
     $result = $conn->query($query);
     while($row = $result->fetch_assoc()) {
       $link_qlt1=$row["counter"];

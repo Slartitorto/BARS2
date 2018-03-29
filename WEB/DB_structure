@@ -73,9 +73,11 @@ CREATE TABLE `last_rec_data` (
   `data_type` int(11) DEFAULT NULL,
   `serial` varchar(5) DEFAULT NULL,
   `counter` int(11) DEFAULT NULL,
-  `data` float DEFAULT NULL,
+  `temp` float DEFAULT NULL,
+  `hum` float DEFAULT NULL,
   `battery` float DEFAULT NULL,
   `period` int(11) DEFAULT NULL,
+  `rssi` int(11) DEFAULT NULL,
   `router` varchar(16) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -118,9 +120,11 @@ CREATE TABLE `rec_data` (
   `data_type` int(11) DEFAULT NULL,
   `serial` varchar(5) DEFAULT NULL,
   `counter` int(11) DEFAULT NULL,
-  `data` float DEFAULT NULL,
+  `temp` float DEFAULT NULL,
+  `hum` float DEFAULT NULL,
   `battery` float DEFAULT NULL,
   `period` int(11) DEFAULT NULL,
+  `rssi` int(11) DEFAULT NULL,
   `router` varchar(16) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

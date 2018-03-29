@@ -30,14 +30,14 @@ $battery = intval(($battery - $batt_0) * $batt_corr);
 if ($battery > 100) $battery = 100;
 if ($battery < 1)   $battery = 0;
 
-$query = "DELETE from last_rec_data_2 where serial = '$serial'";
+$query = "DELETE from last_rec_data where serial = '$serial'";
 $result = mysqli_query($conn,$query);
 
-$query = "INSERT INTO last_rec_data_2 (serial,counter,temp,hum,battery,period,rssi,router)
+$query = "INSERT INTO last_rec_data (serial,counter,temp,hum,battery,period,rssi,router)
 VALUES('$serial','$counter','$temp','$hum','$battery','$period','$rssi','$router')";
 $result = mysqli_query($conn,$query);
 
-$query = "INSERT INTO rec_data_2 (serial,counter,temp,hum,battery,period,rssi,router)
+$query = "INSERT INTO rec_data (serial,counter,temp,hum,battery,period,rssi,router)
 VALUES('$serial','$counter','$temp','$hum','$battery','$period','$rssi','$router')";
 $result = mysqli_query($conn,$query);
 
@@ -60,7 +60,7 @@ if ($batt_alarmed == 1) {
   $result = mysqli_query($conn,$query);
 }
 
-if (($data < $min_ok) or ($data > $max_ok)) {
+if (($temp < $min_ok) or ($temp > $max_ok)) {
   // alarm condition half
   if (($armed == 1) and ($alarmed == 0)) {
     //alarm condition full
@@ -68,7 +68,7 @@ if (($data < $min_ok) or ($data > $max_ok)) {
     $result = mysqli_query($conn,$query);
 
     $subject = "Allarme $device_name $position";
-    $message = "Temperatura rilevata = $data - out of range (min = $min_ok - max = $max_ok)";
+    $message = "Temperatura rilevata = $temp - out of range (min = $min_ok - max = $max_ok)";
     $headers = "From: root@slartitorto.eu \r\n" .
     "Reply-To: root@slartitorto.eu \r\n";
 
@@ -86,7 +86,7 @@ if (($data < $min_ok) or ($data > $max_ok)) {
       curl_setopt($curl, CURLOPT_HTTPHEADER, ["Authorization: Bearer $authToken"]);
       curl_setopt($curl, CURLOPT_POSTFIELDS, [
         "type" => "note", "email" => "$to", "title" => "Allarme $device_name $position",
-        "body" => "Temperatura rilevata = $data - out of range (min = $min_ok - max = $max_ok)"]
+        "body" => "Temperatura rilevata = $temp - out of range (min = $min_ok - max = $max_ok)"]
       );
       curl_exec($curl);
       curl_close($curl);

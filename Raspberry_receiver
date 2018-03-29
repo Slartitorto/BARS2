@@ -1,29 +1,44 @@
 #!/usr/bin/env python2
-#remember to install:
+# Hooly receiver for RFM69HW version on RaspberryPi
+# remember to install:
 # requests: http://docs.python-requests.org/en/latest/user/quickstart/
 # RFM69 library: https://github.com/etrombly/RFM69 (modify RFM69.py for properly rstPin - 28 not good, used 16-)
-
 
 import RFM69
 from RFM69registers import *
 import requests
 import time
 
-sink = "http://bars.slartitorto.eu/datasink2.php"
-get_code_period_url = "http://bars.slartitorto.eu/get_period.php"
+base_url = "http://myhooly.hooly.eu/"
+data_sink = "data_sink.php"
+service_door = "service_door.php"
 router_name = "000029"
+KEY1 = 234
+KEY2 = 189
 rf69 = RFM69.RFM69(RF69_433MHZ, 1, 0, True)
 rf69.rcCalibration()
 
-
 def set_code_period(nodeID):
-    url = get_code_period_url + '?serial=' + nodeID
-    #print "sending request"
-    response = requests.get(url,stream=True)
+    url = base_url + service_door + '?service=get_code_period&serial=' + nodeID
+    response = requests.get(url,stream=True,timeout=3)
     code_period = response.text[0]
     rf69.setHighPower(True)
     #print "sending %s to %s " % (code_period,nodeID)
     string = nodeID + ':' + code_period
+    rf69.send(2,string)
+
+def node_shutdown(nodeID):
+    url = base_url + service_door + '?service=node_shutdown&serial=' + nodeID
+    response = requests.get(url,stream=True,timeout=3)
+    #print "sending %s as node_shutdown " % (nodeID)
+
+def set_nodeID():
+    url = base_url + service_door + '?service=get_nodeID'
+    response = requests.get(url,stream=True,timeout=3)
+    new_nodeID = response.text[0]
+    rf69.setHighPower(True)
+    #print "sending %s" % (new_nodeID)
+    string = new_nodeID + ':' + KEY1 +':' + KEY2
     rf69.send(2,string)
 
 while True:
@@ -36,8 +51,12 @@ while True:
     data = payload.split(":")
     if (data[1] == "get_code_period"):
        set_code_period(data[0])
+    elif ((data[0] == "get_nodeID") & (data[1] == KEY1) & (data[2] == KEY2)):
+       set_nodeID
+    elif ((data[1] == "node_shutdown") & (data[1] == KEY1) & (data[2] == KEY2)):
+       node_shutdown(data[0])
     else:
        #print "%s from %s RSSI:%s" % (payload,rf69.SENDERID, rssi)
-       url = sink + '?data=' + payload
+       url = base_url + data_sink + '?data=' + payload
        other_data = {'rssi':rssi,'router':router_name}
-       requests.get(url,params=other_data,stream=True)
+       requests.get(url,params=other_data,stream=True,timeout=3)

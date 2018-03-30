@@ -11,7 +11,7 @@ if(isset($_GET['service']) && ($_GET['service'] == "get_code_period") && isset($
   while($row = $result->fetch_assoc()) {
     $code_period = $row["code_period"];
   }
-  echo $serial . ":" . $code_period;
+  echo $code_period;
   $conn->close();
 }
 

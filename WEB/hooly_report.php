@@ -5,7 +5,8 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 include "db_connection.php";
 $mese = $_POST['mese'];
 $anno = $_POST['anno'];
-$ora = $_POST['ora'];
+$ora_min = $_POST['ora'];
+$ora_max = sprintf("%02d", $ora_min + 2);
 
 if ($mese == "01") { $ngiorni = 31;}
 elseif ($mese == "02") { $ngiorni = 28;}
@@ -19,8 +20,8 @@ elseif ($mese == "09") { $ngiorni = 30;}
 elseif ($mese == "10") { $ngiorni = 31;}
 elseif ($mese == "11") { $ngiorni = 30;}
 elseif ($mese == "12") { $ngiorni = 31;}
-?>
 
+?>
 <head>
   <title>Hooly sensors</title>
   <link href="stile.css" rel="stylesheet" type="text/css" />
@@ -33,8 +34,8 @@ elseif ($mese == "12") { $ngiorni = 31;}
 <body>
 
   <?php
-  print " <h3> <center> Report mensile Mese: " . $mese . " - Anno: " . $anno . " - Ore: " . $ora . ":00</h3>\n";
-  print "<center><br>\n";
+  print " <h3> <center> Report mensile Mese: " . $mese . " - Anno: " . $anno . " - Ore: " . $ora_min . ":00</h3>\n";
+  print "<center>\n";
   print "<table border = 1>\n";
 
   $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
@@ -57,23 +58,27 @@ elseif ($mese == "12") { $ngiorni = 31;}
   }
   print "<tr>\n";
   print "<td>giorno</td>\n";
-  for($i=0;$i<$x;$i++) {
-    print "<td align = center>" . $serial[$i] . "<br>" . $device_name[$i] . "<br>" . $position[$i] . "</td>\n";
-  }
+  for($i=0;$i<$x;$i++)
+  { print "<td align = center>" . $serial[$i] . "<br>" . $device_name[$i] . "<br>" . $position[$i] . "</td>\n"; }
   print "</tr>\n";
-
-  for ($i=1;$i<=$ngiorni;$i++) {
+  for ($i=1;$i<=$ngiorni;$i++)
+  {
     $giorno = sprintf("%02d",$i);
     print "<tr>";
     print "<td align=center><b>";
     echo $giorno;
     print "</b></td>\n";
-    for ($a=0;$a<$x;$a++) {
+    $time_ref_min = "'" . $anno . "-" . $mese . "-" . $giorno . " " . $ora_min . ":00'";
+    $time_ref_max = "'" . $anno . "-" . $mese . "-" . $giorno . " 23:59:00'";
+    for ($a=0;$a<$x;$a++)
+    {
       print "<td align=center width=100><b>";
-      $query = "select timestamp,temp from rec_data where serial = '$serial[$a]' and timestamp like '" . $anno . "-" . $mese . "-" . $giorno . " " . $ora . ":%' order by timestamp limit 1";
+      $query = "select timestamp,data from rec_data where serial = '$serial[$a]' and timestamp > $time_ref_min and timestamp < $time_ref_max limit 1";
       $result = $conn->query($query);
       while($row = $result->fetch_assoc()) {
-        echo $row["temp"];
+        $temperatura = number_format($row["data"], 1);
+        echo $temperatura;
+        echo "°";
         print "</b><br>";
         $time= explode(" ",$row["timestamp"]);
         echo $time[1];
@@ -83,3 +88,4 @@ elseif ($mese == "12") { $ngiorni = 31;}
     print "</tr>\n";
   }
   ?>
+  <a href=status.php>Indietro</a>

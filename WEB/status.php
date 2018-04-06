@@ -1,8 +1,5 @@
 <?php
 
-
-// Sistemare la query alla riga 47 modificata con tenant di test
-
 if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE =	$_COOKIE['LOGIN'];}
 else { $COD_UTENTE =	0; header("Location: index.php");}
 ?>
@@ -45,8 +42,7 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
           $tenant3 = $row["t3"];
         }
 
-        //  $query = "SELECT serial, device_name, position, batt_type, min_ok, max_ok FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
-        $query = "SELECT serial, device_name, position, batt_type, min_ok, max_ok FROM devices where tenant = '99'";
+        $query = "SELECT serial, device_name, position, batt_type, min_ok, max_ok FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
 
         $result = $conn->query($query);
         $x=0;

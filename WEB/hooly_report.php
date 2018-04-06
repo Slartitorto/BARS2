@@ -42,7 +42,7 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
 
   <script type="text/javascript">
   function generate() {
-    var doc = new jsPDF();
+    var doc = new jsPDF({orientation: 'landscape'});
     var pageContent = function (data) {
       // HEADER
       doc.setFontSize(16);
@@ -55,6 +55,7 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
     var res = doc.autoTableHtmlToJson(document.getElementById("hooly_report"));
     doc.autoTable(res.columns, res.data, {
       tableWidth: 'wrap',
+      theme: 'grid',
       styles: {cellPadding: 0.5, fontSize: 7, halign: 'center'},
       addPageContent: pageContent,
       margin: {top: 30}
@@ -68,7 +69,7 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
       <?php
       print " <h3> <center> Report mensile Mese: " . $mese_lit . " - Anno: " . $anno . " - Ore: " . $ora_min . ":00</h3>\n";
       print "<center>\n";
-      print "<table id=\"hooly_report\">\n";
+      print "<table id=\"hooly_report\" border=1>\n";
 
       $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
       $result = $conn->query($query);
@@ -89,31 +90,35 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
         ++$x;
       }
       print "<tr>\n";
-      print "<th>giorno</th>\n";
-      for($i=0;$i<$x;$i++)
-      { print "<th align = center>" . $serial[$i] . "<br>" . $device_name[$i] . "<br>" . $position[$i] . "</th>\n"; }
-      print "</tr>\n";
-      for ($i=1;$i<=$ngiorni;$i++)
+      print "<th>Hooly</th>\n";
+      for($i=1;$i<=$ngiorni;$i++)
       {
         $giorno = sprintf("%02d",$i);
+        print "<th align = center>" . $giorno . "</th>\n";
+      }
+      print "</tr>\n";
+      for ($i=0;$i<$x;$i++)
+      {
         print "<tr>";
-        print "<td align=center><b>";
-        echo $giorno;
-        print "</b></td>\n";
-        $time_ref_min = "'" . $anno . "-" . $mese . "-" . $giorno . " " . $ora_min . ":00'";
-        $time_ref_max = "'" . $anno . "-" . $mese . "-" . $giorno . " 23:59:00'";
-        for ($a=0;$a<$x;$a++)
+        print "<td align=center><b><br>" . $device_name[$i] . " - " . $position[$i] . "</b><br>(" . $serial[$i] . ")";
+        print "<br></td>\n";
+        for ($a=1;$a<=$ngiorni;$a++)
         {
           print "<td align=center width=100><b>";
-          $query = "select timestamp,data from rec_data where serial = '$serial[$a]' and timestamp > $time_ref_min and timestamp < $time_ref_max limit 1";
+          $giorno = sprintf("%02d",$a);
+          $time_ref_min = "'" . $anno . "-" . $mese . "-" . $giorno . " " . $ora_min . ":00'";
+          $time_ref_max = "'" . $anno . "-" . $mese . "-" . $giorno . " 23:59:00'";
+          $query = "select timestamp,temp from rec_data where serial = '$serial[$i]' and timestamp > $time_ref_min and timestamp < $time_ref_max limit 1";
           $result = $conn->query($query);
           while($row = $result->fetch_assoc()) {
-            $temperatura = number_format($row["data"], 1);
+            $temperatura = number_format($row["temp"], 1);
             echo $temperatura;
             echo "°";
             print "</b><br>";
-            $time= explode(" ",$row["timestamp"]);
-            echo $time[1];
+            $time= preg_split('/[ :]/',$row["timestamp"]);
+            echo($time[1]);
+            echo ":";
+            echo($time[2]);
           }
           print "</td>\n";
         }

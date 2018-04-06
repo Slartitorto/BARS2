@@ -70,7 +70,6 @@ DROP TABLE IF EXISTS `last_rec_data`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `last_rec_data` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `data_type` int(11) DEFAULT NULL,
   `serial` varchar(5) DEFAULT NULL,
   `counter` int(11) DEFAULT NULL,
   `temp` float DEFAULT NULL,
@@ -117,7 +116,6 @@ DROP TABLE IF EXISTS `rec_data`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rec_data` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `data_type` int(11) DEFAULT NULL,
   `serial` varchar(5) DEFAULT NULL,
   `counter` int(11) DEFAULT NULL,
   `temp` float DEFAULT NULL,

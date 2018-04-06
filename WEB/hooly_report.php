@@ -45,10 +45,11 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
     var doc = new jsPDF({orientation: 'landscape'});
     var pageContent = function (data) {
       // HEADER
-      doc.setFontSize(16);
+      doc.setFontSize(14);
       doc.setTextColor(40);
       doc.setFontStyle('normal');
-      doc.text("Report mensile: Mese <?php echo $mese_lit ?>  - Anno: <?php echo $anno ?>", data.settings.margin.left + 15, 22);
+      doc.text("Report mensile: Mese <?php echo $mese_lit ?> - Anno  <?php echo $anno ?>", data.settings.margin.left + 15, 22);
+      // FOOTER
       doc.setFontSize(10);
       doc.text("Report by Hooly", data.settings.margin.left, doc.internal.pageSize.height - 10);
     };

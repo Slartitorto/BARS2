@@ -61,7 +61,7 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
       addPageContent: pageContent,
       margin: {top: 30}
     });
-    doc.save("table.pdf");
+    doc.save("hooly_report.pdf");
   }
   </script>
 

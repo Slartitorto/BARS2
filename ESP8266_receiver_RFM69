@@ -1,40 +1,4 @@
 
-// Rev 0.4
-
-// --- rispetto al 0.3b
-// sostituito il transceiver da nRF24L01 a RFM69HW
-// Compila, da provare
-
-// --- rispetto al 0.3a
-// contiene l'invio ogni minuto di un keep_alive; il keep alive avviene anche quando
-// manda il dato (se ne occupa datasink.php)
-
-// ---  rispetto al 0.3
-
-// Alla prima accensione registra in Eprom il router name e la key, entrambi presi dal
-// server su db; in questo modo non ho da personalizzare il codice per ogni installazione
-// necessita della tabella new_routers popolata
-
-// ---  rispetto al 0.2c
-
-// versione senza pulsante: se riceve un count = 0000 fa una get per ottenere
-// il period di quel serial e lo ritrasmette al sensore che sta in attesa 10 sec.
-// Attenzione: deve cambiare il firmware, il DB, device_settings e get_period
-
-// ---  rispetto al 0.2b (che funziona) cambio metodo: AP con captive portal solo on demand
-
-// all'accensione prova a connettersi e se non si connette lampeggia e riprova
-// finchè non si connette oppure finchè non si preme il tasto e solo allora va
-// in APmode.
-// Anche nel ciclo loop() se premi il tasto va in APmode con captive portal.
-// Attenzione che quando premi il tasto, resetta le credenziali in eprom; quindi
-// se lo spegni mentre sta in APmode, quando lo
-// riaccendi non riuscirà a connettersi e lampeggia veloce all'infinito finchè
-// non premi il tasto.
-// Se sbagli le credenziali, non esce dalla modalità AP finchè non le metti
-// giuste; nel frattempo il led resta acceso.
-
-
 // ------ README -------
 // led lampeggiante veloce -> sta provando a connettersi alla rete
 // led fisso -> sta in APmode con captive portal attivo
@@ -57,7 +21,6 @@
 
 // vedi http://thebillplease.net/play/esp8266-with-rfm69-using-lowpowerlab/
 
-
 // usare NODE MCU (ESP-12E) come tipo di arduino
 // oppure "Generic ESP8266 Module"
 
@@ -67,16 +30,25 @@
 #include <WiFiManager.h>
 #include <WiFiClient.h>
 #include <EEPROM.h>
-
 #include <RFM69.h>
 #include <SPI.h>
-#define NETWORKID     0   // Must be the same for all nodes
-#define MYNODEID      1   // My node ID
-#define TONODEID      2   // Destination node ID
-#define FREQUENCY   RF69_433MHZ
 
-#define LED 4
-#define BUTTON 16
+#define EEPROM_ADDR_FO    60   // From here 4 bytes for check if is new or already FOrged
+#define KEY1              12   // Random number as key1 between 1 and 255
+#define KEY2             137   // idem for key2
+#define KEY3             219   // idem for key3
+#define KEY4              95   // idem for key4
+#define EEPROM_ADDR_RN     1   // From here 6 bytes for Router_Name and 0 in the 7th
+#define EEPROM_ADDR_KE    10   // From here 32 bytes for KEy used for to cript datagram
+
+// Transceiver configuration
+#define NETWORKID          0   // Must be the same for all nodes
+#define MYNODEID           1   // My node ID
+#define TONODEID           2   // Destination node ID
+#define FREQUENCY  RF69_433MHZ // transceiver frequency
+
+#define LED 4                  // pin for led
+#define BUTTON 16              // pin button for to go to captive portal
 
 // Remote site information
 const char http_site[] = "myhooly.hooly.eu";
@@ -84,6 +56,7 @@ const int http_port = 80;
 
 // global variables
 char router_name[7];
+char router_key[33];
 unsigned long keep_alive_timeout = millis();
 
 // Initialize RFM69 library
@@ -108,64 +81,96 @@ void setup() {
     delay(500);
     led_blink();
     if (digitalRead(BUTTON) == LOW) {
+      Serial.println("going to captive portal ");
       captive_portal();
     }
   }
 
-  WiFiClient client;
-
   EEPROM.begin(64);
   if (check_eeprom_new()) {
+    Serial.println("eeprom is new ");
 
     // --- case eeprom new
-    client.connect(http_site, http_port);
-    client.print("GET /service_door.php?service=get_new_router");
-    client.println(" HTTP/1.1");
-    client.print("Host: ");
-    client.println(http_site);
-    client.println("Connection: close");
-    client.println();
+    WiFiClient client;
+    if (!client.connect(http_site, http_port) ) {
+      blink_error();
+    } else {
+      Serial.print("getting router_name and key from server ");
+      client.print("GET /service_door.php?service=get_new_router");
+      client.println(" HTTP/1.1");
+      client.print("Host: ");
+      client.println(http_site);
+      client.println("Connection: close");
+      client.println();
 
-    // timeout
-    unsigned long timeout = millis();
-    while (client.available() == 0) {
-      if (millis() - timeout > 5000) {
-        client.stop();
-        return;
+      // timeout
+      unsigned long timeout = millis();
+      while (client.available() == 0) {
+        if (millis() - timeout > 5000) {
+          Serial.println("Fail to get response from server ");
+          client.stop();
+          return; // verificare che succede se va in timeout
+        }
       }
-    }
 
-    // Read the line of the reply from server and put it in the int array
-    int router_name_and_key[40];
-    while(client.available()) {
-      String line = client.readStringUntil('\r');
-      for (int i=1;i<40;i++){
-        router_name_and_key[i]=line.charAt(i);
+      // Read the line of the reply from server and put it in the int array
+      char router_name_and_key[40];
+      String line;
+      while(client.available()) {
+        line = client.readStringUntil('\n');
+        Serial.println(line);
       }
-    }
+      for (int i=0;i<40;i++){
+          router_name_and_key[i]=line.charAt(i);
+          Serial.print(router_name_and_key[i]);
+        }
+      Serial.println("   ... Done");
 
-    // eeprom clearing
-    for (int i = 1; i < 40; i++) {
-      EEPROM.write(i,0);
-    }
-    EEPROM.commit();
+      // format eeprom in router_name and router_key spaces
+      eeprom_clear();
 
-    // eeprom write router_name ":" key
-    for (int i = 1; i < 40; i++) {
-      EEPROM.write(i,router_name_and_key[i]);
-    }
-    EEPROM.commit();
+      // eeprom write router_name and key
+      Serial.print("writing in eeprom at ");
+      Serial.println(EEPROM_ADDR_RN);
+      for (int i = 0; i < 6; i++) {
+        Serial.print(router_name_and_key[i]);
+        EEPROM.write(EEPROM_ADDR_RN + i,router_name_and_key[i]);
+      }
+      EEPROM.commit();
+      Serial.println("   ... Done");
 
-    // mark eeprom as forged
-    forge_eeprom();
+      Serial.print("writing in eeprom at ");
+      Serial.println(EEPROM_ADDR_KE);
+      for (int i = 0; i < 32; i++) {
+        Serial.print(router_name_and_key[7 + i]);
+        EEPROM.write(EEPROM_ADDR_KE + i,router_name_and_key[7 + i]);
+      }
+      EEPROM.commit();
+      Serial.println("   ... Done");
+
+      // then mark eeprom as forged, not new
+      forge_eeprom();
+    }
   }
 
   // eeprom read router_name
-  for (int i = 1; i < 7; i++) {
-    router_name[i-1] = EEPROM.read(i);
+  Serial.print("Setting router_name = [");
+  for (int i = 0; i < 6; i++) {
+    router_name[i] = EEPROM.read(EEPROM_ADDR_RN + i);
+    Serial.print(router_name[i]);
   }
   router_name[6]=0;
+  Serial.println("] ... Done");
 
+  Serial.print("Setting router key = [");
+  for (int i = 0; i < 32; i++) {
+    router_key[i] = EEPROM.read(EEPROM_ADDR_KE + i);
+    Serial.print(router_key[i]);
+  }
+  router_key[32]=0;
+  Serial.println("] ... Done");
+
+  // transceiver library initialize
   radio.setCS(15);
   radio.initialize(FREQUENCY, MYNODEID, NETWORKID);
   radio.setHighPower();
@@ -176,52 +181,115 @@ void setup() {
 // main program
 
 void loop() {
+  char period[2]="";
 
   if (millis() - keep_alive_timeout > 60000) {
+    Serial.println("Sending keep_alive signal");
     keep_alive_timeout = millis();
-    void send_keep_alive();
+    send_keep_alive();
   }
 
   if (digitalRead(BUTTON) == LOW) {
+    Serial.println("Going to captive portal");
     captive_portal();
   }
 
   if (radio.receiveDone()) {
-
     Serial.print("received from node ");
     Serial.print(radio.SENDERID, DEC);
     Serial.print(", message [");
     char receivePayload[32]="";
+    String line;
 
-    // The actual message is contained in the DATA array,
-    // and is DATALEN bytes in size:
-
+    // The actual message is contained in the DATA array and is DATALEN bytes in size:
     int separator_count = 0;
+    int bad_datagram = 0;
     for (byte i = 0; i < radio.DATALEN; i++) {
       Serial.print((char)radio.DATA[i]);
-      Serial.println("]");
       receivePayload[i] = radio.DATA[i];
       if (radio.DATA[i] == ':') separator_count ++;
+      if (radio.DATA[i] < 43 || radio.DATA[i] > 58) bad_datagram = 1;
+      if (radio.DATA[i] == 0) bad_datagram = 0;
     }
-    if (separator_count == 5)  // Payload OK, processing
+    Serial.println("]");
+    Serial.print("bad_datagram (0 se ok - 1 se ko) = "); Serial.println(bad_datagram);
+
+    if (separator_count == 2  && receivePayload[5] == 'g' && receivePayload[6] == 'n')
+    // Get_code_period command OK, processing and sending to service_door
+    // callback sintax is nnnn:c (n=nodeID;c=code_period)
     {
+      Serial.println("got gn (Get Nodeid) command");
+      // get sensor serial
+      char serial[5] ="";
+      serial[0] = receivePayload[0];
+      serial[1] = receivePayload[1];
+      serial[2] = receivePayload[2];
+      serial[3] = receivePayload[3];
+      serial[4] = 0;
+
+      // send request to the service door
+      WiFiClient client;
+      if (!client.connect(http_site, http_port) ) {
+        blink_error();
+      } else {
+        Serial.println("Connection ok, sending request to the server");
+        client.print("GET /service_door.php?service=get_code_period&serial=");
+        client.print(serial);
+        client.println(" HTTP/1.1");
+        client.print("Host: ");
+        client.println(http_site);
+        client.println("Connection: close");
+        client.println();
+
+        // waiting for the answer or timeout
+        unsigned long timeout = millis();
+        int timeouted = 0;
+        while (client.available() == 0) {
+          if (millis() - timeout > 5000) {
+            timeouted = 1;
+            Serial.println("... no response, timeout");
+            client.stop();
+            return;
+          }
+        }
+
+        if (timeouted) {
+          // fail to get answer from server nothing to do
+          blink_error();
+        } else {
+          Serial.println("got response from server ");
+          // Read the char period from server
+          while(client.available()) {
+            line = client.readStringUntil('\r');
+          }
+          period[1] = line.charAt(1);
+          Serial.println(period[1]);
+
+          // Prepare outbuffer and send
+          char outBuffer[7]= "";
+          outBuffer[0]=serial[0];
+          outBuffer[1]=serial[1];
+          outBuffer[2]=serial[2];
+          outBuffer[3]=serial[3];
+          outBuffer[4]=':';
+          outBuffer[5]=period[1];
+          outBuffer[6]=0;
+          Serial.print("sending datagram to hooly ");
+          for (int i = 0; i < 4; i++) Serial.print(serial[i]);
+          Serial.print (" period = ");
+          Serial.println (period[1]);
+          radio.send(TONODEID, outBuffer, strlen(outBuffer));
+        }
+      }
+    }
+
+    if (separator_count == 6 && bad_datagram == 0)
+    // Data Payload OK, processing and sending to datasink
+    {
+      Serial.println("got datagram from Hooly, sending to the server");
+      Serial.println("");
       digitalWrite(LED, HIGH);
       int signal_strenght = (100+(((radio.RSSI)+28)*100/72));
-
-      char serial[5] ="";
-      char count[7]="";
-      serial[0] = receivePayload[2];
-      serial[1] = receivePayload[3];
-      serial[2] = receivePayload[4];
-      serial[3] = receivePayload[5];
-      serial[4] = 0;
-      count[0] = receivePayload[7];
-      count[1] = receivePayload[8];
-      count[2] = receivePayload[9];
-      count[3] = receivePayload[10];
-      count[4] = receivePayload[11];
-      count[5] = receivePayload[12];
-      count[6] = 0;
 
       // Send data to sink
       WiFiClient client;
@@ -230,7 +298,7 @@ void loop() {
       } else {
         client.print("GET /data_sink.php?data=");
         client.print(receivePayload);
-        client.print(":");
+        client.print("&rssi=");
         client.print(signal_strenght);
         client.print("&router=");
         client.print(router_name);
@@ -240,53 +308,6 @@ void loop() {
         client.println("Connection: close");
         client.println();
       }
-
-      // if count = 000000 get period and retrasmit it to that sensor
-      // callback sintax is nnnn:c (n=nodeID;c=code_period)
-      if (atoi(count) == 0) {
-        client.connect(http_site, http_port);
-        client.print("GET /get_period.php?serial=");
-        client.print(serial);
-        client.println(" HTTP/1.1");
-        client.print("Host: ");
-        client.println(http_site);
-        client.println("Connection: close");
-        client.println();
-
-        unsigned long timeout = millis();
-        while (client.available() == 0) {
-          if (millis() - timeout > 5000) {
-            client.stop();
-            return;
-          }
-        }
-        char period;
-        // Read all the lines of the reply from server
-        while(client.available()) {
-          String line = client.readStringUntil('\r');
-          period = line.charAt(1);
-        }
-        client.connect(http_site, http_port);
-        client.print("GET /get_period.php?received=");
-        client.print(period);
-        client.println(" HTTP/1.1");
-        client.print("Host: ");
-        client.println(http_site);
-        client.println("Connection: close");
-        client.println();
-
-        // Prepare outbuffer
-        char outBuffer[7]= "";
-        outBuffer[0]=serial[0];
-        outBuffer[1]=serial[1];
-        outBuffer[2]=serial[2];
-        outBuffer[3]=serial[3];
-        outBuffer[4]=':';
-        outBuffer[5]=period;
-        outBuffer[6]=0;
-
-        radio.send(TONODEID, outBuffer, strlen(outBuffer));
-      }
       digitalWrite(LED, LOW);
     }
   }
@@ -295,35 +316,45 @@ void loop() {
 // --------------------------------
 
 int check_eeprom_new(){
-  int test1 = EEPROM.read(50);
-  int test2 = EEPROM.read(51);
-  int test3 = EEPROM.read(52);
-  int test4 = EEPROM.read(53);
-
-  // test numeri chiave presi a caso per eeprom vergine si/no
-  if (test1 != 12 || test2 != 137 || test3 != 219 || test4 != 95){
+  int test1 = EEPROM.read(EEPROM_ADDR_FO);
+  int test2 = EEPROM.read(EEPROM_ADDR_FO + 1);
+  int test3 = EEPROM.read(EEPROM_ADDR_FO + 2);
+  int test4 = EEPROM.read(EEPROM_ADDR_FO + 3);
+  if (test1 != KEY1 || test2 != KEY2 || test3 != KEY3 || test4 != KEY4){
+    Serial.println("Test key failed; this router is new");
     return 1;
   }
   else {
+    Serial.println("Test key suceeded; this router is already forged - name and key are stored in eeprom");
     return 0;
   }
 }
 
 // --------------------------------
 
+void eeprom_clear(){
+  for (int i = 0; i < 6; i++) {
+    EEPROM.write(EEPROM_ADDR_RN,0);
+  }
+  for (int i = 0; i < 32; i++) {
+    EEPROM.write(EEPROM_ADDR_KE,0);
+  }
+  EEPROM.commit();
+}
+
+// --------------------------------
 
 void forge_eeprom(){
   // mark eeprom as forged
-  EEPROM.write(50,0);
-  EEPROM.write(51,0);
-  EEPROM.write(52,0);
-  EEPROM.write(53,0);
+  EEPROM.write(EEPROM_ADDR_FO,0);
+  EEPROM.write(EEPROM_ADDR_FO + 1,0);
+  EEPROM.write(EEPROM_ADDR_FO + 2,0);
+  EEPROM.write(EEPROM_ADDR_FO + 3,0);
   EEPROM.commit();
-
-  EEPROM.write(50,12);
-  EEPROM.write(51,137);
-  EEPROM.write(52,219);
-  EEPROM.write(53,95);
+  EEPROM.write(EEPROM_ADDR_FO,KEY1);
+  EEPROM.write(EEPROM_ADDR_FO + 1,KEY2);
+  EEPROM.write(EEPROM_ADDR_FO + 2,KEY3);
+  EEPROM.write(EEPROM_ADDR_FO + 3,KEY4);
   EEPROM.commit();
 }
 
@@ -331,14 +362,18 @@ void forge_eeprom(){
 
 void send_keep_alive(){
   WiFiClient client;
-  client.connect(http_site, http_port);
-  client.print("GET /service_door.php?service=keep_alive&router=");
-  client.print(router_name);
-  client.println(" HTTP/1.1");
-  client.print("Host: ");
-  client.println(http_site);
-  client.println("Connection: close");
-  client.println();
+  if (!client.connect(http_site, http_port) ) {
+    blink_error();
+  } else {
+    client.connect(http_site, http_port);
+    client.print("GET /service_door.php?service=keep_alive&router=");
+    client.print(router_name);
+    client.println(" HTTP/1.1");
+    client.print("Host: ");
+    client.println(http_site);
+    client.println("Connection: close");
+    client.println();
+  }
 }
 
 // --------------------------------
@@ -372,7 +407,6 @@ void blink_error(){
 void captive_portal() {
   delay(1000);
   digitalWrite(LED, HIGH);
-
   WiFiManager wifiManager;
   wifiManager.resetSettings();
   wifiManager.startConfigPortal("Hooly-router");

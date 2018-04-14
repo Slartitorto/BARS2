@@ -39,12 +39,11 @@ $result = $conn->query($query);
 while($row = $result->fetch_assoc()) {
   $router_name = $row["router_name"];
   $current_key = $row["router_key"];
-  $conn->close();
 }
 
 echo $router_name . ":" . $current_key;
 
-$query = "DELETE FROM new_routers WHERE router_name = $router_name";
+$query = "DELETE FROM new_routers WHERE router_name = '$router_name'";
 $result = $conn->query($query);
 
 $query = "INSERT INTO router (router,current_key) VALUES ('$router_name','$current_key')";

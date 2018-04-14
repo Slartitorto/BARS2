@@ -219,6 +219,9 @@ void loop() {
     // callback sintax is nnnn:c (n=nodeID;c=code_period)
     {
       Serial.println("got gn (Get Nodeid) command");
+      Serial.println("");
+      digitalWrite(LED, HIGH);
+
       // get sensor serial
       char serial[5] ="";
       serial[0] = receivePayload[0];
@@ -240,6 +243,7 @@ void loop() {
         client.println(http_site);
         client.println("Connection: close");
         client.println();
+        digitalWrite(LED, LOW);
 
         // waiting for the answer or timeout
         unsigned long timeout = millis();
@@ -258,6 +262,7 @@ void loop() {
           blink_error();
         } else {
           Serial.println("got response from server ");
+          digitalWrite(LED, HIGH);
           // Read the char period from server
           while(client.available()) {
             line = client.readStringUntil('\r');
@@ -279,6 +284,7 @@ void loop() {
           Serial.print (" period = ");
           Serial.println (period[1]);
           radio.send(TONODEID, outBuffer, strlen(outBuffer));
+          digitalWrite(LED, LOW);
         }
       }
     }

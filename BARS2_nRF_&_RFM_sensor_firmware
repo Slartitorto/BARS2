@@ -53,18 +53,16 @@ void setup() {
   bool radiotype;
 
   // definisce il tipo di transceiver
-  // da verificare e togliere i DEBUG <---------------------------------
+  // da verificare <---------------------------------
   radiotype=digitalRead(SWITCH1);
   radiotype=0;  //  da togliere dopo  <---------------------------------
 
 
   if (radiotype) {
     IS_NRF24L01 = 1; IS_RFM69HW = 0;
-    if(DEBUG) { Serial.println("done -> NRF24L01");} // <----------------
   }
   else {
     IS_NRF24L01 = 0; IS_RFM69HW = 1;
-    if(DEBUG) { Serial.println("done -> RFM69HW");}  // <----------------
   }
 
   // Definisce il tipo di sensore

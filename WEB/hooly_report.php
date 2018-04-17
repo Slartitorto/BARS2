@@ -45,19 +45,19 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
     var doc = new jsPDF({orientation: 'landscape'});
     var pageContent = function (data) {
       // HEADER
-      doc.setFontSize(14);
+      doc.setFontSize(10);
       doc.setTextColor(40);
       doc.setFontStyle('normal');
-      doc.text("Report mensile: Mese <?php echo $mese_lit ?> - Anno  <?php echo $anno ?>", data.settings.margin.left + 15, 22);
+      doc.text("Report mensile: Mese <?php echo $mese_lit ?> - Anno: <?php echo $anno ?>", data.settings.margin.left + 15, 22);
       // FOOTER
-      doc.setFontSize(10);
+      doc.setFontSize(8);
       doc.text("Report by Hooly", data.settings.margin.left, doc.internal.pageSize.height - 10);
     };
     var res = doc.autoTableHtmlToJson(document.getElementById("hooly_report"));
     doc.autoTable(res.columns, res.data, {
       tableWidth: 'wrap',
       theme: 'grid',
-      styles: {cellPadding: 0.5, fontSize: 7, halign: 'center'},
+      styles: {cellPadding: 1.8, columnWidth:'wrap', fontSize: 5, halign: 'center'},
       addPageContent: pageContent,
       margin: {top: 30}
     });
@@ -101,11 +101,11 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
       for ($i=0;$i<$x;$i++)
       {
         print "<tr>";
-        print "<td align=center><b><br>" . $device_name[$i] . " - " . $position[$i] . "</b><br>(" . $serial[$i] . ")";
+        print "<td align=center width=200><b>" . $device_name[$i] . "<br>" . $position[$i] . "</b><br>(" . $serial[$i] . ")";
         print "<br></td>\n";
         for ($a=1;$a<=$ngiorni;$a++)
         {
-          print "<td align=center width=100><b>";
+          print "<td align=center width=95><b>";
           $giorno = sprintf("%02d",$a);
           $time_ref_min = "'" . $anno . "-" . $mese . "-" . $giorno . " " . $ora_min . ":00'";
           $time_ref_max = "'" . $anno . "-" . $mese . "-" . $giorno . " 23:59:00'";

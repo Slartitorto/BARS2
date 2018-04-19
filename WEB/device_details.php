@@ -9,15 +9,30 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <?php
 
-  $serial=($_GET["serial"]);
-  $last=($_GET["last"]);
-  $graph=$_GET['graph'];
+  $serial=($_POST["serial"]);
+  $last=($_POST["last"]);
+  $graph=$_POST['graph'];
 
-  if ( $last == 2)
-  { $next_last = 7; $string_last = "ultima settimana"; $current = "ultime 48 ore"; }
-  else if ( $last == 7)
-  { $next_last = 30; $string_last = "ultimo mese";  $current = "ultima settimana";}
-  else { $current = "ultimo mese";}
+  $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
+  $result = $conn->query($query);
+  while($row = $result->fetch_assoc()) {
+    $idUtente = $row["idUtente"];
+    $tenant0 = $row["t0"];
+    $tenant1 = $row["t1"];
+    $tenant2 = $row["t2"];
+    $tenant3 = $row["t3"];
+  }
+
+  $query = "SELECT serial, device_name, position FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
+
+  $result = $conn->query($query);
+  $serial_qty=0;
+  while($row = $result->fetch_assoc()) {
+    $serial_array[$serial_qty]=$row["serial"];
+    $device_name_array[$serial_qty]=$row["device_name"];
+    $position_array[$serial_qty]=$row["position"];
+    ++$serial_qty;
+  }
 
   // SELECT for data to graph
 
@@ -192,14 +207,54 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     echo "<table width=100%>";
     echo "<tr>";
     echo "<td width=33%></td>";
-    echo "<td width=34% align=center>" . $current . "</td>";
-    echo "<td width=33% align=right>";
+    echo "<td width=34% align=center>";
     if ($graph == "temp") {
-      echo "<A href=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$next_last&graph=temp');\">" . $string_last . "</a>";
+
+      echo "<form action =\"" . $_SERVER['PHP_SELF'] . "\" method=\"POST\">";
+      echo "<select class=\"stileCampiInput\" name=\"last\" onchange=\"this.form.submit()\">\n";
+      echo "<option value= \"1\"";
+      if ($last == 1) { echo " selected";}
+      echo "> Ultime 24 ore</option>\n";
+
+      echo "<option value= \"2\"";
+      if ($last == 2) { echo " selected";}
+      echo "> Ultime 48 ore</option>\n";
+
+      echo "<option value= \"7\"";
+      if ($last == 7) { echo " selected";}
+      echo "> Ultima settimana</option>\n";
+
+      echo "<option value= \"30\"";
+      if ($last == 30) { echo " selected";}
+      echo "> Ultimo mese</option>\n";
+
+      echo "<input type=hidden name=serial value=" . $serial . ">";
+      echo "<input type=hidden name=graph value=" . $graph . ">";
+      echo "</form>";
+
+      echo "</td>";
+
     } else {
       echo "<A href=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$next_last&graph=battery');\">" . $string_last . "</a>";
 
     }
+    echo "<td width=33% align=right>";
+    echo "<form action =\"" . $_SERVER['PHP_SELF'] . "\" method=\"POST\">";
+    echo "Passa a:  ";
+    echo "<select class=\"stileCampiInput\" name=\"serial\" onchange=\"this.form.submit()\">\n";
+    for($i=0;$i<$serial_qty;$i++) {
+      echo "<option value= \"$serial_array[$i]\"";
+      if ($serial_array[$i] == $serial) { echo " selected";}
+      echo ">$device_name_array[$i] - $position_array[$i]</option>\n";
+    }
+    echo "</select>";
+    echo "<input type=hidden name=last value=" . $last . ">";
+    echo "<input type=hidden name=graph value=" . $graph . ">";
+    echo "</form>";
+
+
+
+
     echo "</td>";
     echo "</tr>";
     echo "</table>";

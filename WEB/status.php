@@ -16,6 +16,7 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
   function navigator_Go(url) { window.location.assign(url);}
   </SCRIPT>
 </head>
+
 <body>
   <CENTER>
     <table width="300">
@@ -27,7 +28,7 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
     </table>
     <BR>
       <table width="300" class="gridtable">
-        <tr><th>Termometro</th><th>Posizione</th><th>Temp</th><th>Status</th></tr>
+        <tr><th>Termometro</th><th>Posizione</th><th>Temp</th><th>Stato</th></tr>
 
         <?php
         include "db_connection.php";
@@ -43,7 +44,6 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
         }
 
         $query = "SELECT serial, device_name, position, batt_type, min_ok, max_ok FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
-
         $result = $conn->query($query);
         $x=0;
         while($row = $result->fetch_assoc()) {
@@ -83,8 +83,18 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
           }
 
           echo "<TR>";
-          echo "<TD><A HREF=\"javascript:navigator_Go('device_details.php?serial=";
-          echo  $serial[$i] . "&last=2&graph=temp');\">" . $device_name[$i]. "</A></TD><TD>" . $position[$i] . "</TD>";
+          echo "<form action=device_details.php method=post>";
+          echo "<TD>";
+
+          //echo "<A HREF=\"javascript:navigator_Go('device_details.php?serial=";
+          //echo  $serial[$i] . "&last=2&graph=temp');\">" . $device_name[$i]. "</A>";
+          echo "<input type=submit value=$device_name[$i] > ";
+          echo "<input type=hidden name=serial value=$serial[$i] > ";
+          echo "<input type=hidden name=last value=1 > ";
+          echo "<input type=hidden name=graph value=temp > ";
+
+          echo "</form>";
+          echo "</TD><TD>" . $position[$i] . "</TD>";
           echo "<TD>" . round($last_temp[$i],1) . "</TD>";
           echo "<TD><img src=\"icone/" . $warn[$i] . "_signal.png\" width=\"25\"></TD>";
           echo "</TR>\n";

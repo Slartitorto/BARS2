@@ -28,9 +28,7 @@ if(@$_POST["invio"])
     header('Location: index.php?act=RegistrazioneOn');
 
   } else {
-
     header('Location: index.php?act=RegistrazioneOffEmailAlreadyExists');
-
   }
 
 }

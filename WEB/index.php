@@ -22,7 +22,7 @@ if(isset($_COOKIE['LOGIN']))
       <div class="container">
         <h1>Recupero password</h1>
         <label for="uname"><b>Inserisci il tuo indirizzo email</b></label>
-        <input type="text" placeholder="email" name="email" required>
+        <input type="email" placeholder="email" name="email" required>
         <input type="hidden" name="act" value="recuperaPassword">
         <button type="submit">Invia</button>
         Ti invieremo un messaggio con una nuova password.
@@ -63,7 +63,7 @@ if(isset($_COOKIE['LOGIN']))
 
 
 
-    <?php } else if(@$_GET["act"] == "RecuperoOn") {// --------------------------  ?>
+    <?php } else if(@$_GET["act"] == "RecuperoPwdMailSent") {// --------------------------  ?>
 
 
       <div class="modal-content animate">
@@ -78,15 +78,43 @@ if(isset($_COOKIE['LOGIN']))
       </div>
 
 
-    <?php } else if(@$_GET["act"] == "RecuperoOff") {// --------------------------   ?>
+    <?php } else if(@$_GET["act"] == "RecuperoPwdKOUserNotExists") {// --------------------------   ?>
 
 
       <div class="modal-content animate">
         <div class="container">
           <h1>Recupero password</h1>
-          L'indirizzo email non corrisponde ad un utente attivo
+          L'indirizzo email non corrisponde ad un utente attivo<br>
+          Se hai difficoltà non esitare a <a href=mailto:admin@hooly.eu>contattarci</a>.
           <br><br>
           <button type="button" onclick="location.href='index.php?act=Recovery';" class="cancelbtn">Torna indietro</button>
+        </div>
+      </div>
+
+
+    <?php } else if(@$_GET["act"] == "RecuperoPwdTokenKO") {// --------------------------   ?>
+
+
+      <div class="modal-content animate">
+        <div class="container">
+          <h1>Recupero password</h1>
+          C'e' stato un problema nella procedura di reset password, forse hai utilizzato un link errato o obsoleto.<br>
+          Se hai difficoltà non esitare a <a href=mailto:admin@hooly.eu>contattarci</a>.
+          <br><br>
+          <button type="button" onclick="location.href='index.php?act=Recovery';" class="cancelbtn">Torna indietro</button>
+        </div>
+      </div>
+
+
+    <?php } else if(@$_GET["act"] == "RecuperoPwdDone") {// --------------------------   ?>
+
+
+      <div class="modal-content animate">
+        <div class="container">
+          <h1>Recupero password</h1>
+          La tua password è stata reimpostata correttamente
+          <br><br>
+          <button type="button" onclick="location.href='index.php';" class="otherbtn">Torna alla pagina di login</button>
         </div>
       </div>
 
@@ -97,7 +125,8 @@ if(isset($_COOKIE['LOGIN']))
       <div class="modal-content animate">
         <div class="container">
           <h1>Errore di credenziali</h1>
-          L'indirizzo email e la password non corrispondono a nessun utente attivo
+          L'indirizzo email e la password non corrispondono a nessun utente attivo.<br>
+          Se hai difficoltà non esitare a <a href=mailto:admin@hooly.eu>contattarci</a>.
           <br><br>
           <button type="button" onclick="location.href='index.php';" class="cancelbtn">Torna indietro</button>
         </div>
@@ -110,7 +139,8 @@ if(isset($_COOKIE['LOGIN']))
       <div class="modal-content animate">
         <div class="container">
           <h1>Errore di registrazione</h1>
-          L'indirizzo email risulta già presente
+          L'indirizzo email risulta già presente.<br>
+          Se hai difficoltà non esitare a <a href=mailto:admin@hooly.eu>contattarci</a>.
           <br><br>
           <button type="button" onclick="location.href='registrazione.php';" class="cancelbtn">Torna indietro</button>
         </div>
@@ -124,7 +154,7 @@ if(isset($_COOKIE['LOGIN']))
         <div class="container">
           <h1>Login</h1>
           <label for="uname"><b>Email</b></label>
-          <input type="text" placeholder="Inserisci il tuo username" name="email" required>
+          <input type="email" placeholder="Inserisci la tua email" name="email" required>
           <label for="psw"><b>Password</b></label>
           <input type="password" placeholder="Inserici la tua password" name="password" required>
           <button type="submit">Login</button>

@@ -6,7 +6,7 @@ function SettaCoockie($ID_UTENTE, $TEMPO)
 { setcookie('LOGIN', $ID_UTENTE, time()+$TEMPO); }
 
 function PasswordRandom()
-{ $PASSWORD = ""; mt_srand(); for($i=0; $i<6; $i++) { $PASSWORD .= "".mt_rand(0, 9).""; } return $PASSWORD; }
+{ $PASSWORD = ""; mt_srand(); for($i=0; $i<8; $i++) { $PASSWORD .= "".mt_rand(0, 9).""; } return $PASSWORD; }
 
 function token_gen()
 { $TOKEN = ""; mt_srand(); for($i=0; $i<24; $i++) { $TOKEN .= "".mt_rand(0, 9).""; } return $TOKEN; }
@@ -14,8 +14,6 @@ function token_gen()
 
 if(@$_POST["act"] == "recuperaPassword") { // ---------------------------------------
 
-
-  // da verificare e sistemare
   $Sql		=	"SELECT * FROM `utenti` WHERE `email`='".@$_POST["email"]."' AND `stato`='1';";
   $result	=	$conn->query($Sql);
   if(($result->num_rows) == 1)
@@ -29,33 +27,42 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
     $Query	=	$conn->query($Sql);
 
     $to = $_POST["email"];
-    $subject = "BAsic Remote Sensors - Recupero Password";
-    $message	=	"Ciao ".$Dati["username"].",\n
+    $subject = "MyHooly - Recupero Password";
+    $message	=	"Ciao ".$Dati["email"].",\n
     questa e-mail ti giunge perchè hai richiesto il cambio password.\n\n
-    Il tuo Username è ".$Dati["username"]."\n
-    Ti abbiamo attivato una nuova password: ".$Password." che dovrai confermare tramite questo link:\n
-    $URLSITO/azioni.php?act=attiva_nuova_pwd&email=$to&token=$Token \n\n
-    In caso di problemi ti invitiamo a contattarci direttamente all'indirizzo admin@hooly.eu
+    Ti abbiamo predisposto una nuova password; la nuova password è ".$Password." \n
+    Dovrai attivare la nuova password tramite questo link:\n
+    http://myhooly.hooly.eu/azioni.php?act=attiva_nuova_pwd&email=" . $to . "&token=" . $Token ." \n\n
+    In caso di problemi ti invitiamo a contattarci direttamente all'indirizzo admin@hooly.eu\n
+    Ciao !
     ";
     $headers = "From: admin@hooly.eu \r\n" .
     "Reply-To: admin@hooly.eu \r\n";
     mail($to, $subject, $message, $headers);
 
-    header('Location: index.php?act=RecuperoOn');
+    header('Location: index.php?act=RecuperoPwdMailSent');
   }
   else
   {
-    header('Location: index.php?act=RecuperoOff');
+    header('Location: index.php?act=RecuperoPwdKOUserNotExists');
   }
 
 
 } else if(@$_GET["act"] == "attiva_nuova_pwd") { // ---------------------------------------
 
 
-  // da verificare e sistemare
-  $Sql          =       "UPDATE `utenti` SET password = new_password WHERE `email`='".@$_GET["to"]."' AND `stato`='1';";
-  $result               =       $conn->query($Sql);
-  header('Location: index.php');
+  $token = $_GET["token"];
+  $email = $_GET["email"];
+  $Sql   = "SELECT * FROM `utenti` WHERE `email`='" . $email . "' AND `token`='" . $token . "';";
+  $result = $conn->query($Sql);
+  if(($result->num_rows) == 1)
+  {
+    $Sql          =       "UPDATE `utenti` SET password = new_password WHERE `email`='" . $email . "' AND `token`='" . $token . "';";
+    $result               =       $conn->query($Sql);
+    header('Location: index.php?act=RecuperoPwdDone');
+  } else {
+    header('Location: index.php?act=RecuperoPwdTokenKO');
+  }
 
 
 } else if(@$_POST["act"] == "login") { // ---------------------------------------

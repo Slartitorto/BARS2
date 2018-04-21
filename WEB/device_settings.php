@@ -18,6 +18,13 @@ print  "
 <link rel=\"apple-touch-icon\" href=\"/icone/app_icon128.png\">
 <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />
 
+<script src=\"scripts/jquery.min.js\"></script>
+<script>
+$(document).ready(function(){
+  $(\"#btn1\").click(function(){ $(\"#advanced_preferences\").toggle(1000); });
+});
+</script>
+
 <script type=\"text/javascript\">
 function navigator_Go(url)
 { window.location.assign(url); }
@@ -184,10 +191,14 @@ if ($result->num_rows > 0) {
 $conn->close();
 ?>
 <br><br>
-<form action="add_sensor.php" method="post">
-Serial: <input type="text" name="serial" maxlength="4" size="4">
-Pin: <input type="text" name="pin" maxlength="4" size="4">
-<input type="hidden" name="idUtente" value="<?php echo $idUtente; ?>">
-<input type="hidden" name="tenant" value="<?php echo $tenant0; ?>">
-<input type="submit" value="Aggiungi un sensore">
-</form>
+<button id=btn1>Click per aprire o chiudere le preferenze avanzate</button>
+<br><br>
+<div id=advanced_preferences style=display:none;>
+  <form action="add_sensor.php" method="post">
+    Serial: <input type="text" name="serial" maxlength="4" size="4">
+    Pin: <input type="text" name="pin" maxlength="4" size="4">
+    <input type="hidden" name="idUtente" value="<?php echo $idUtente; ?>">
+    <input type="hidden" name="tenant" value="<?php echo $tenant0; ?>">
+    <input type="submit" value="Aggiungi un sensore">
+  </form>
+</div>

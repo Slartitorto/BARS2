@@ -14,6 +14,6 @@ if ($conn->connect_error) {
         exit();
 }
 
-define("NOMESITO", "Hooly");
+define("NOMESITO", "MyHooly");
 define("URLSITO", "http://myhooly.hooly.eu");
 ?>

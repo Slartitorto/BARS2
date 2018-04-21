@@ -290,7 +290,9 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     }
     </script>
 
-    <button onclick="download_csv()">Download CSV</button>
+    <button class=graybtn onclick="download_csv()">Download CSV</button>
+    <button class=graybtn onClick="window.print()">Print</button>
+
     <?php
 
 

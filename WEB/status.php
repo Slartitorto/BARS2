@@ -28,7 +28,7 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
     </table>
     <BR>
       <table width="300" class="gridtable">
-        <tr><th>Termometro</th><th>Posizione</th><th>Temp</th><th>Stato</th></tr>
+        <tr><th>Dettagli</th><th>Termometro</th><th>Posizione</th><th>Temp</th><th>Stato</th></tr>
 
         <?php
         include "db_connection.php";
@@ -86,14 +86,13 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
           echo "<form action=device_details.php method=post>";
           echo "<TD>";
 
-          //echo "<A HREF=\"javascript:navigator_Go('device_details.php?serial=";
-          //echo  $serial[$i] . "&last=2&graph=temp');\">" . $device_name[$i]. "</A>";
-          echo "<input type=submit value=$device_name[$i] > ";
+          echo "<button type=submit class=imgbtn> <img src=icone/grafico.png height=\"30\" width=\"30\"></button>";
           echo "<input type=hidden name=serial value=$serial[$i] > ";
           echo "<input type=hidden name=last value=1 > ";
           echo "<input type=hidden name=graph value=temp > ";
 
           echo "</form>";
+          echo "</TD><TD>" . $device_name[$i] . "</TD>";
           echo "</TD><TD>" . $position[$i] . "</TD>";
           echo "<TD>" . round($last_temp[$i],1) . "</TD>";
           echo "<TD><img src=\"icone/" . $warn[$i] . "_signal.png\" width=\"25\"></TD>";
@@ -149,6 +148,6 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
               <option value="2019">2019</option>
             </select>
 
-            <input type="submit" value="Report">
+            <button type="submit" class="graybtn">Report SA-04</button>
           </form>
         </body>

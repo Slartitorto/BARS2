@@ -105,10 +105,9 @@ if ($result->num_rows > 0) {
     echo "<TR>";
     echo "<TD>" . $serial[$x] . "</TD>\n";
     echo "<input type=\"hidden\" name=\"serial\" value=\"" . $serial[$x] . "\">\n";
-    echo "<TD><input type=\"text\" class=\"stileCampiInput\" name=\"device_name\" value=\"" . $device_name[$x] . "\" size=15 onchange=\"this.form.submit()\"></TD>\n";
-    echo "<TD><input type=\"text\" class=\"stileCampiInput\" name=\"position\" value=\"" . $position[$x] . "\" size=15 onchange=\"this.form.submit()\"></TD>\n";
-
-    echo "<TD><select class=\"stileCampiInput\" name=\"code_period\" onchange=\"this.form.submit()\">\n";
+    echo "<TD><input type=\"text\" class=\"slim\" name=\"device_name\" value=\"" . $device_name[$x] . "\" size=15 onchange=\"this.form.submit()\"></TD>\n";
+    echo "<TD><input type=\"text\" class=\"slim\" name=\"position\" value=\"" . $position[$x] . "\" size=15 onchange=\"this.form.submit()\"></TD>\n";
+    echo "<TD><select class=\"slim\" name=\"code_period\" onchange=\"this.form.submit()\">\n";
 
     echo "<option value= \"1\"";
     if ($code_period[$x] == 1) { echo " selected";}
@@ -148,7 +147,7 @@ if ($result->num_rows > 0) {
     echo "</select>";
 
 
-    echo "<TD><select class=\"stileCampiInput\" name=\"min_ok\" onchange=\"this.form.submit()\">\n";
+    echo "<TD><select class=\"slim\" name=\"min_ok\" onchange=\"this.form.submit()\">\n";
     for ($i = -40; $i <= 80; $i++) {
       echo "<option value= \"$i\"";
       if ($min_ok[$x] == $i) { echo " selected";}
@@ -157,7 +156,7 @@ if ($result->num_rows > 0) {
     }
     echo "</select>";
 
-    echo "<TD><select class=\"stileCampiInput\" name=\"max_ok\" onchange=\"this.form.submit()\">\n";
+    echo "<TD><select class=\"slim\" name=\"max_ok\" onchange=\"this.form.submit()\">\n";
     for ($i = -40; $i <= 80; $i++) {
       echo "<option value= \"$i\"";
       if ($max_ok[$x] == $i) { echo " selected";}
@@ -191,14 +190,14 @@ if ($result->num_rows > 0) {
 $conn->close();
 ?>
 <br><br>
-<button id=btn1>Click per aprire o chiudere le preferenze avanzate</button>
+<button id=btn1 class=graybtn>Click per aprire o chiudere le preferenze avanzate</button>
 <br><br>
 <div id=advanced_preferences style=display:none;>
   <form action="add_sensor.php" method="post">
-    Serial: <input type="text" name="serial" maxlength="4" size="4">
-    Pin: <input type="text" name="pin" maxlength="4" size="4">
+    Serial: <input type="text" class="slim" name="serial" size="6" maxlength="4">
+    Pin: <input type="text" class="slim" name="pin" size="6" maxlength="4">
     <input type="hidden" name="idUtente" value="<?php echo $idUtente; ?>">
     <input type="hidden" name="tenant" value="<?php echo $tenant0; ?>">
-    <input type="submit" value="Aggiungi un sensore">
+    <button type="submit" class=graybtn>Aggiungi un sensore</button>
   </form>
 </div>

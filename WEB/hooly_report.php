@@ -38,7 +38,7 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
   <script src="scripts/jspdf.min.js"></script>
   <script src="scripts/jspdf.plugin.autotable.js"></script>
 
-  <button onclick="generate();">PDF</button>
+  <button class="graybtn" onclick="generate();">PDF SA-04</button>
 
   <script type="text/javascript">
   function generate() {

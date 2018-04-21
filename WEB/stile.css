@@ -1,7 +1,70 @@
 @charset "utf-8";
 
+input[type=text], input[type=password], input[type=email] {
+  width: auto;
+  padding: 12px 20px;
+  margin: 8px 0;
+  border-radius: 8px;
+  font-size: 14px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  background: #f1f1f1;
+}
+
+.slim {
+  height: 30px;
+  width: auto;
+}
+
+select {
+  padding: 12px 20px;
+  height: 30px;
+  margin: 8px 0;
+  border-radius: 12px;
+  font-size: 14px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  background: #f1f1f1;
+}
+
+button {
+  height: 30px;
+  background-color: #4CAF50;
+  outline:none;
+  font-size: 14px;
+  color: white;
+  border-radius: 8px;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: auto;
+  opacity: 0.8;
+}
+
+button:hover {
+  opacity: 1;
+}
+
+.graybtn {
+  width: auto;
+  border: 1px solid #ccc;
+  color: black;
+  padding: 6px 20px;
+  background-color: #f1f1f1;
+}
+
+.imgbtn {
+  width: auto;
+  border: none;
+  padding: 0px 0px;
+  background-color: #ffffff;
+}
+
 body {
-	font-family: avenir,arial,sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	color: #000;
 	background-color: #ffffff;
@@ -16,7 +79,6 @@ table.gridtable {
 table.gridtable th {
         border-width: 0px;
         text-align: center;
-        font-size:14;
         padding: 8px;
         border-style: solid;
         border-color: #666666;
@@ -25,7 +87,6 @@ table.gridtable th {
 table.gridtable td {
         border-width: 0px;
         padding: 8px;
-        font-size:13;
         text-align: center;
         border-style: solid;
         border-color: #666666;

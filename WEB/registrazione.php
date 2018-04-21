@@ -3,27 +3,42 @@ include "db_connection.php";
 
 if(@$_POST["invio"])
 {
-  $codUtente	=	md5($_POST["email"]);
-  $codPassword	=	md5($_POST["password"]);
-  $Sql		=	"INSERT INTO `utenti` SET `username`='".@$_POST["email"]."', `codUtente`='".$codUtente."', `password`='".$codPassword."', `email`='".@$_POST["email"]."';";
-  $result		=	$conn->query($Sql);
-  $Messaggio	=	"
-  Ciao, questa e-mail ti giunge dall'area riservata di ".NOMESITO.".\n\n
-  I tuoi dati di accesso sono:\n
-  Username: ".$_POST["email"]."\n
-  Password: ".$_POST["password"]."\n\n\n
-  Questa è la url per confermare l'attivazione del tuo account:\n\n
-  ".URLSITO."/azioni.php?act=conferma&cod=".$codUtente."\n\n
-  In caso di problemi ti invitiamo a contattarci direttamente.
-  ";
+  $email	= $_POST["email"];
+  $password	= $_POST["password"];
+  $codUtente	= md5($email);
+  $codPassword	= md5($password);
+  $Sql		= "SELECT * from `utenti` WHERE `email`='" . $email . "';";
+  $result       = $conn->query($Sql);
+  if(($result->num_rows) == 0)
+  {
 
-  //	mail($_POST["email"], "Home Sensors - Conferma registrazione", $Messaggio, "From: registrazione@slatitorto.eu");
-  //	header('Location: index.php?act=RegistrazioneOn');
+    $Sql		= "INSERT INTO `utenti` SET `username`='".@$_POST["email"]."', `codUtente`='".$codUtente."', `password`='".$codPassword."', `email`='".@$_POST["email"]."';";
+    $result	= $conn->query($Sql);
+    $Messaggio	= "
+    Ciao, questa e-mail ti giunge dall'area riservata di ".NOMESITO.".\n\n
+    I tuoi dati di accesso sono:\n
+    Username: ".$_POST["email"]."\n
+    Password: ".$_POST["password"]."\n\n\n
+    Questa è la url per confermare l'attivazione del tuo account:\n\n
+    ".URLSITO."/azioni.php?act=conferma&cod=".$codUtente."\n\n
+    In caso di problemi ti invitiamo a contattarci direttamente.
+    ";
+
+    mail($_POST["email"], "Home Sensors - Conferma registrazione", $Messaggio, "From: admin@hooly.eu");
+    header('Location: index.php?act=RegistrazioneOn');
+
+  } else {
+
+    header('Location: index.php?act=RegistrazioneOffEmailAlreadyExists');
+
+  }
+
 }
 ?>
+<!DOCTYPE html>
+<html>
 <head>
-  <!DOCTYPE html>
-  <html>
+
   <link href="style.css" rel="stylesheet" type="text/css">
 
   <script>
@@ -49,7 +64,7 @@ if(@$_POST["invio"])
       <p>Inserisci i tuoi dati per creare il nuovo account:</p>
 
       <label for="email"><b>Email</b></label>
-      <input type="text" placeholder="Enter Email" name="email" required>
+      <input type="email" placeholder="Enter Email" name="email" required>
 
       <label for="psw"><b>Password</b></label>
       <input type="password" placeholder="Enter Password" name="password" id="password" required>

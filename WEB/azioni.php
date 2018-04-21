@@ -3,36 +3,19 @@
 include "db_connection.php";
 
 function SettaCoockie($ID_UTENTE, $TEMPO)
-{
-  setcookie('LOGIN', $ID_UTENTE, time()+$TEMPO);	//IDENTIFICATIVO DELL'UTENTE
-}
+{ setcookie('LOGIN', $ID_UTENTE, time()+$TEMPO); }
 
 function PasswordRandom()
-{
-  $PASSWORD = "";
-  mt_srand();
-  for($i=0; $i<6; $i++)
-  {
-    $PASSWORD .= "".mt_rand(0, 9)."";
-  }
-  return $PASSWORD;
-}
+{ $PASSWORD = ""; mt_srand(); for($i=0; $i<6; $i++) { $PASSWORD .= "".mt_rand(0, 9).""; } return $PASSWORD; }
 
 function token_gen()
-{
-  $TOKEN = "";
-  mt_srand();
-  for($i=0; $i<24; $i++)
-  {
-    $TOKEN .= "".mt_rand(0, 9)."";
-  }
-  return $TOKEN;
-}
+{ $TOKEN = ""; mt_srand(); for($i=0; $i<24; $i++) { $TOKEN .= "".mt_rand(0, 9).""; } return $TOKEN; }
 
 
-if(@$_GET["act"] == "recuperaPassword")
+if(@$_POST["act"] == "recuperaPassword") { // ---------------------------------------
 
-{
+
+  // da verificare e sistemare
   $Sql		=	"SELECT * FROM `utenti` WHERE `email`='".@$_POST["email"]."' AND `stato`='1';";
   $result	=	$conn->query($Sql);
   if(($result->num_rows) == 1)
@@ -54,8 +37,8 @@ if(@$_GET["act"] == "recuperaPassword")
     $URLSITO/azioni.php?act=attiva_nuova_pwd&email=$to&token=$Token \n\n
     In caso di problemi ti invitiamo a contattarci direttamente all'indirizzo admin@hooly.eu
     ";
-    $headers = "From: root@slartitorto.eu \r\n" .
-    "Reply-To: root@slartitorto.eu \r\n";
+    $headers = "From: admin@hooly.eu \r\n" .
+    "Reply-To: admin@hooly.eu \r\n";
     mail($to, $subject, $message, $headers);
 
     header('Location: index.php?act=RecuperoOn');
@@ -64,23 +47,22 @@ if(@$_GET["act"] == "recuperaPassword")
   {
     header('Location: index.php?act=RecuperoOff');
   }
-}
 
 
-else if(@$_GET["act"] == "attiva_nuova_pwd")
-{
+} else if(@$_GET["act"] == "attiva_nuova_pwd") { // ---------------------------------------
+
+
   // da verificare e sistemare
-
   $Sql          =       "UPDATE `utenti` SET password = new_password WHERE `email`='".@$_GET["to"]."' AND `stato`='1';";
   $result               =       $conn->query($Sql);
   header('Location: index.php');
-}
 
-else if(@$_GET["act"] == "login")
 
-{
+} else if(@$_POST["act"] == "login") { // ---------------------------------------
+
+
   $codPassword	=	md5($_POST["password"]);
-  $Sql		=	"SELECT * FROM `utenti` WHERE `username`='".@$_POST["username"]."' AND `password`='".$codPassword."' AND `stato`='1';";
+  $Sql		=	"SELECT * FROM `utenti` WHERE `email`='".@$_POST["email"]."' AND `password`='".$codPassword."' AND `stato`='1';";
   $result		=	$conn->query($Sql);
   if(($result->num_rows) == 1)
   {
@@ -94,19 +76,26 @@ else if(@$_GET["act"] == "login")
   }
   else
   {
-    header('Location: index.php');
+    header('Location: index.php?act=wrongLoginPassword');
   }
-}
-else if(@$_GET["act"]	==	"logout")
-{
+
+
+} else if(@$_GET["act"]	==	"logout") { // ---------------------------------------
+
+
+  // da verificare e sistemare
   SettaCoockie(" ", -1);
   header('Location: index.php');
-}
-else if(@$_GET["act"]	==	"conferma")
-{
+
+
+} else if(@$_GET["act"]	==	"conferma") { // ---------------------------------------
+
+
+  // da verificare e sistemare
   $Sql		=	"UPDATE `utenti` SET `stato` = '1' WHERE `codUtente`='".@$_GET["cod"]."' LIMIT 1 ;";
   $result		=	$conn->query($Sql);
   header('Location: index.php');
-}
 
+
+}
 ?>

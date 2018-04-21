@@ -18,11 +18,12 @@ if(isset($_COOKIE['LOGIN']))
   <?php if(@$_GET["act"] == "Recovery") {// --------------------------   ?>
 
 
-    <form class="modal-content animate" method="post" action="azioni.php?act=recuperaPassword">
+    <form class="modal-content animate" method="post" action="azioni.php">
       <div class="container">
         <h1>Recupero password</h1>
         <label for="uname"><b>Inserisci il tuo indirizzo email</b></label>
         <input type="text" placeholder="email" name="email" required>
+        <input type="hidden" name="act" value="recuperaPassword">
         <button type="submit">Invia</button>
         Ti invieremo un messaggio con una nuova password.
         <div>
@@ -90,18 +91,45 @@ if(isset($_COOKIE['LOGIN']))
       </div>
 
 
+   <?php } else if(@$_GET["act"] == "wrongLoginPassword") {// --------------------------   ?>
+
+
+      <div class="modal-content animate">
+        <div class="container">
+          <h1>Errore di credenziali</h1>
+          L'indirizzo email e la password non corrispondono a nessun utente attivo
+          <br><br>
+          <button type="button" onclick="location.href='index.php';" class="cancelbtn">Torna indietro</button>
+        </div>
+      </div>
+
+
+   <?php } else if(@$_GET["act"] == "RegistrazioneOffEmailAlreadyExists") {// --------------------------   ?>
+
+
+      <div class="modal-content animate">
+        <div class="container">
+          <h1>Errore di registrazione</h1>
+          L'indirizzo email risulta già presente
+          <br><br>
+          <button type="button" onclick="location.href='registrazione.php';" class="cancelbtn">Torna indietro</button>
+        </div>
+      </div>
+
+
     <?php } else { // ---------- normale login ---------------  ?>
 
 
-      <form class="modal-content animate" action="azioni.php?act=login">
+      <form class="modal-content animate" action="azioni.php" method="post">
         <div class="container">
           <h1>Login</h1>
           <label for="uname"><b>Email</b></label>
-          <input type="text" placeholder="Inserisci il tuo username" name="uname" required>
+          <input type="text" placeholder="Inserisci il tuo username" name="email" required>
           <label for="psw"><b>Password</b></label>
-          <input type="password" placeholder="Inserici la tua password" name="psw" required>
+          <input type="password" placeholder="Inserici la tua password" name="password" required>
           <button type="submit">Login</button>
           <label>
+            <input type="hidden" name="act" value="login">
             <input type="checkbox" checked="checked" name="remember" value="1"> Ricordami al prossimo accesso
           </label>
           <div>

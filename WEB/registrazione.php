@@ -65,12 +65,10 @@ if(@$_POST["invio"])
       <input type="email" placeholder="Enter Email" name="email" required>
 
       <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="password" id="password" required>
+      <input type="password" placeholder="Enter Password" name="password" id="password" pattern="[A-Za-z0-9]{6,8}" title="La passowrd può contenere lettere e numeri, un minimo di 6 ed un massimo di 8 caratteri" required>
 
       <label for="psw-repeat"><b>Repeat Password</b></label>
       <input type="password" placeholder="Repeat Password" name="psw-repeat" id="confirm_password" required>
-
-      <p>La creazione dell'account comporta l'accettazione dei nostri <a href="#" style="color:dodgerblue">Termini e condizioni</a>.</p>
 
       <div>
         <br><br>

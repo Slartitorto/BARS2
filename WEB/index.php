@@ -22,10 +22,15 @@ if(isset($_COOKIE['LOGIN']))
       <div class="container">
         <h1>Recupero password</h1>
         <label for="uname"><b>Inserisci il tuo indirizzo email</b></label>
+        <br>
+        Ti invieremo un messaggio con una nuova password.
+        <br> <br>
         <input type="email" placeholder="email" name="email" required>
         <input type="hidden" name="act" value="recuperaPassword">
-        <button type="submit">Invia</button>
-        Ti invieremo un messaggio con una nuova password.
+        <div>
+          <center>
+          <button type="submit">Invia</button>
+        </div>
         <div>
           <br><br>
           <button type="button" onclick="location.href='index.php';" class="cancelbtn">Annulla</button>
@@ -36,7 +41,7 @@ if(isset($_COOKIE['LOGIN']))
     <?php } else if(@$_GET["act"] == "RegistrazioneOn") {// --------------------------   ?>
 
 
-     <div class="modal-content animate">
+      <div class="modal-content animate">
         <div class="container">
           <h1>Registrazione avvenuta</h1>
           Registrazione effettutata con successo; a breve riceverai una e-mail con un link per attivare la registrazione.<br><br>
@@ -119,7 +124,7 @@ if(isset($_COOKIE['LOGIN']))
       </div>
 
 
-   <?php } else if(@$_GET["act"] == "wrongLoginPassword") {// --------------------------   ?>
+    <?php } else if(@$_GET["act"] == "wrongLoginPassword") {// --------------------------   ?>
 
 
       <div class="modal-content animate">
@@ -133,7 +138,7 @@ if(isset($_COOKIE['LOGIN']))
       </div>
 
 
-   <?php } else if(@$_GET["act"] == "RegistrazioneOffEmailAlreadyExists") {// --------------------------   ?>
+    <?php } else if(@$_GET["act"] == "RegistrazioneOffEmailAlreadyExists") {// --------------------------   ?>
 
 
       <div class="modal-content animate">
@@ -157,21 +162,22 @@ if(isset($_COOKIE['LOGIN']))
           <input type="email" placeholder="Inserisci la tua email" name="email" required>
           <label for="psw"><b>Password</b></label>
           <input type="password" placeholder="Inserici la tua password" name="password" required>
-          <button type="submit">Login</button>
-          <label>
+          <div>
+            <center>
+              <button type="submit">Login</button>
+            </div>
+            <br><br>
             <input type="hidden" name="act" value="login">
             <input type="checkbox" checked="checked" name="remember" value="1"> Ricordami al prossimo accesso
-          </label>
-          <div>
-            <br><br>
-            <button type="button" onclick="location.href='http://www.hooly.eu';" class="cancelbtn">Annulla</button>
-            <button type="button" onclick="location.href='registrazione.php';" class="otherbtn">Registrati come nuovo utente</button>
-            <span class="psw"><a href="index.php?act=Recovery">Ho dimenticato la password</a></span>
+            <div>
+              <button type="button" onclick="location.href='http://www.hooly.eu';" class="cancelbtn">Annulla</button>
+              <button type="button" onclick="location.href='registrazione.php';" class="otherbtn">Registrati come nuovo utente</button>
+              <span class="psw"><a href="index.php?act=Recovery">Ho dimenticato la password</a></span>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
 
-    <?php } ?>
+      <?php } ?>
 
-  </body>
-  </html>
+    </body>
+    </html>

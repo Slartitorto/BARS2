@@ -24,6 +24,7 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
 ?>
 <head>
   <title>Hooly sensors</title>
+  <link href='https://fonts.googleapis.com/css?family=Source Sans Pro' rel='stylesheet'>
   <link href="stile.css" rel="stylesheet" type="text/css" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -38,6 +39,7 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
   <script src="scripts/jspdf.min.js"></script>
   <script src="scripts/jspdf.plugin.autotable.js"></script>
 
+  <button class="graybtn" onclick="location.href='status.php';">Indietro</button>
   <button class="graybtn" onclick="generate();">PDF SA-04</button>
 
   <script type="text/javascript">
@@ -129,4 +131,3 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
     </table>
   </div>
 </div>
-<a href=status.php>Indietro</a>

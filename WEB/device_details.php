@@ -7,6 +7,8 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 <html lang="en-US">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href='https://fonts.googleapis.com/css?family=Source Sans Pro' rel='stylesheet'>
+
   <?php
 
   $serial=($_POST["serial"]);
@@ -194,7 +196,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     }
     $link_qlt = intval(1000/($link_qlt0 - $link_qlt1));
 
-    echo " <table class=\"gridtable\">	";
+    echo " <table class=\"padded centered\">";
     echo " <tr><th>" . $device_name . "</th><th>" . $position . "</th></tr><tr> <th colspan = 2>Temp: " . round($temp,2) . "&deg C</th></tr>";
     if ($graph == "temp" ){
       echo " <TR><TD>Serial: <B> " . $serial . "</B></TD><TD><A HREF=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$last&graph=battery');\">Batteria:</a>  <B>" . $batt . "% </B> </TD></TR>";
@@ -211,7 +213,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     if ($graph == "temp") {
 
       echo "<form action =\"" . $_SERVER['PHP_SELF'] . "\" method=\"POST\">";
-      echo "<select class=\"stileCampiInput\" name=\"last\" onchange=\"this.form.submit()\">\n";
+      echo "<select name=\"last\" onchange=\"this.form.submit()\">\n";
       echo "<option value= \"1\"";
       if ($last == 1) { echo " selected";}
       echo "> Ultime 24 ore</option>\n";
@@ -241,7 +243,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     echo "<td width=33% align=right>";
     echo "<form action =\"" . $_SERVER['PHP_SELF'] . "\" method=\"POST\">";
     echo "Passa a:  ";
-    echo "<select class=\"stileCampiInput\" name=\"serial\" onchange=\"this.form.submit()\">\n";
+    echo "<select name=\"serial\" onchange=\"this.form.submit()\">\n";
     for($i=0;$i<$serial_qty;$i++) {
       echo "<option value= \"$serial_array[$i]\"";
       if ($serial_array[$i] == $serial) { echo " selected";}

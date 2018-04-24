@@ -12,7 +12,7 @@ if(@$_POST["invio"])
   if(($result->num_rows) == 0)
   {
 
-    $Sql		= "INSERT INTO `utenti` SET `username`='".@$_POST["email"]."', `codUtente`='".$codUtente."', `password`='".$codPassword."', `email`='".@$_POST["email"]."';";
+    $Sql		= "INSERT INTO `utenti` SET `username`='".@$_POST["email"]."', `codUtente`='".$codUtente."', `password`='".$codPassword."', `t0`= 1, `email`='".@$_POST["email"]."';";
     $result	= $conn->query($Sql);
     $Messaggio	= "
     Ciao, questa e-mail ti giunge dall'area riservata di ".NOMESITO.".\n\n

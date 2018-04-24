@@ -14,7 +14,6 @@ include "db_connection.php";
 <head><title>Hooly settings</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="/icone/app_icon128.png">
-  <link href='https://fonts.googleapis.com/css?family=Source Sans Pro' rel='stylesheet'>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <script src="scripts/jquery.min.js"></script>

@@ -52,19 +52,19 @@ table {
 @charset "utf-8";
 
 body {
-  font-family: "Source Sans Pro";
+  font-family: Verdana, Geneva, sans-serif;
   font-size: 16px;
   color: #000;
   background-color: #ffffff;
 }
 
 form {
-  font-family: "Source Sans Pro";
+  font-family: Verdana, Geneva, sans-serif;
   font-size:16px
 }
 
 table {
-  font-family: "Source Sans Pro";
+  font-family: Verdana, Geneva, sans-serif;
   font-size:16px
   border-width: 0px;
   border-collapse: collapse;
@@ -103,7 +103,7 @@ h3 {
   height: 24px;
 }
 input[type=text], input[type=password], input[type=email] {
-  font-family: "Source Sans Pro";
+  font-family: Verdana, Geneva, sans-serif;
   width: auto;
   padding: 12px 20px;
   margin: 8px 0;
@@ -115,7 +115,7 @@ input[type=text], input[type=password], input[type=email] {
   background: #efefef;
 }
 select {
-  font-family: "Source Sans Pro";
+  font-family: Verdana, Geneva, sans-serif;
   padding: 12px 20px;
   height: 30px;
   margin: 8px 0;
@@ -127,7 +127,7 @@ select {
   background: #efefef;
 }
 button {
-  font-family: "Source Sans Pro";
+  font-family: Verdana, Geneva, sans-serif;
   height: 30px;
   background-color: #4CAF50;
   outline:none;
@@ -173,9 +173,21 @@ button:hover {
   border-radius: 12px;
   width: 500px;
 }
+table.hooly_report {
+  table-layout: auto;
+  width: 1300px;
+}
 #hooly_report {
-  font-size: 12px;
-  border-collapse: collapse;
+  font-size: 9px;
+}
+#hooly_report td {
+  border: 1px solid #888;
+  padding: 6px 0px;
+  width: 95px;
+  text-align: center;
+}
+#hooly_report tr {
+  border: 1px solid #888;
 }
 #hooly_report tr:nth-child(odd) {
   background-color: #efefef;

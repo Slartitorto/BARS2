@@ -7,7 +7,6 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
 <head>
   <title>Hooly sensors</title>
   <link href="stile.css" rel="stylesheet" type="text/css" />
-  <link href='https://fonts.googleapis.com/css?family=Source Sans Pro' rel='stylesheet'>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="apple-touch-icon" href="/icone/temp_icon.png">

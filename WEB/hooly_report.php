@@ -24,7 +24,6 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
 ?>
 <head>
   <title>Hooly sensors</title>
-  <link href='https://fonts.googleapis.com/css?family=Source Sans Pro' rel='stylesheet'>
   <link href="stile.css" rel="stylesheet" type="text/css" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -68,11 +67,11 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
   </script>
 
   <div id="report">
-    <div class="table-responsive">
+    <div>
       <?php
       print " <h3> <center> Report mensile Mese: " . $mese_lit . " - Anno: " . $anno . " - Ore: " . $ora_min . ":00</h3>\n";
       print "<center>\n";
-      print "<table id=\"hooly_report\" border=1>\n";
+      print "<table class=\"hooly_report\" id=\"hooly_report\" border=1>\n";
 
       $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
       $result = $conn->query($query);
@@ -103,11 +102,11 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
       for ($i=0;$i<$x;$i++)
       {
         print "<tr>";
-        print "<td align=center width=200><b>" . $device_name[$i] . "<br>" . $position[$i] . "</b><br>(" . $serial[$i] . ")";
+        print "<td width=200><b>" . $device_name[$i] . "<br>" . $position[$i] . "</b><br>(" . $serial[$i] . ")";
         print "<br></td>\n";
         for ($a=1;$a<=$ngiorni;$a++)
         {
-          print "<td align=center width=95><b>";
+          print "<td><b>";
           $giorno = sprintf("%02d",$a);
           $time_ref_min = "'" . $anno . "-" . $mese . "-" . $giorno . " " . $ora_min . ":00'";
           $time_ref_max = "'" . $anno . "-" . $mese . "-" . $giorno . " 23:59:00'";

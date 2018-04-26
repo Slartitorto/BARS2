@@ -11,9 +11,13 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
   <?php
 
-  $serial=($_POST["serial"]);
-  $last=($_POST["last"]);
-  $graph=$_POST['graph'];
+  if(isset($_POST["serial"])) { $serial=($_POST["serial"]);}
+  if(isset($_POST["last"])) { $last=($_POST["last"]);}
+  if(isset($_POST["graph"])) { $graph=$_POST['graph'];}
+
+  if(isset($_GET["serial"])) { $serial=($_GET["serial"]);}
+  if(isset($_GET["last"])) { $last=($_GET["last"]);}
+  if(isset($_GET["graph"])) { $graph=$_GET['graph'];}
 
   $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
   $result = $conn->query($query);
@@ -138,15 +142,19 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
   </head>
   <body>
 
-  <BR>
-  <TABLE width=\"100%\"><TR>
+<BR>
+    <center>
+    <TABLE width=\"800\">
+      <TR>
   <TD align=\"left\" width=\"90%\">
-  <A href=\"javascript:navigator_Go('index.php');\"><img src=\"icone/left37.png\" width=\"35\"></A></TD>
+  <A href=\"javascript:navigator_Go('index.php');\"><img src=\"icone/left37.png\" width=\"35\"></A>
+  </TD>
   <TD align=\"right\">
   <A href=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$last&graph=temp');\"><img src=\"icone/refresh57.png\" width=\"30\">
   </TD>
-  </TR></TABLE>
-  <BR><CENTER>
+      </TR>
+    </table>
+    <BR> <BR> <BR>
   ";
   function format_time($t,$f=':') // t = seconds, f = separator
   {

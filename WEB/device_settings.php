@@ -31,12 +31,12 @@ function navigator_Go(url)
 <link href="stile.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-  <BR>
-    <TABLE width="100%">
+    <BR>
+    <center>
+    <TABLE width="800">
       <TR><TD align="left"><A href="javascript:navigator_Go('index.php');"><img src="icone/left37.png" width="35"></TD></TR>
-      </TABLE>
-      <BR><CENTER>
-
+    </TABLE>
+    <BR><BR><BR>
         <?php
         if(isset($_POST['serial']))
         // START self_reload
@@ -94,7 +94,7 @@ function navigator_Go(url)
             ++$x;
           }
 
-          echo "<table class=\"centered\">\n";
+          echo "<table width=\"800\" class=\"centered\">\n";
           echo "<tr><th>Seriale</th><th>Nome hooly</th><th>Posizione</th><th>Rilevamento</th>";
           echo "<th>Min</th><th>Max</th><th>Notifica</th></tr>\n";
 

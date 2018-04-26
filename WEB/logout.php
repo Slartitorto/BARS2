@@ -1,4 +1,4 @@
 <?php
   setcookie('LOGIN', null);
-  header('Location: index.php');
+  header('Location: http://www.hooly.eu');
 ?>

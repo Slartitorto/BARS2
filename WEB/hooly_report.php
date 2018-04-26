@@ -6,7 +6,7 @@ include "db_connection.php";
 $mese = $_POST['mese'];
 $anno = $_POST['anno'];
 $ora_min = $_POST['ora'];
-$ora_max = sprintf("%02d", $ora_min + 2);
+$ora_max = sprintf("%02d", $ora_min + 3);
 
 if ($mese == "01") { $mese_lit = "Gennaio"; $ngiorni = 31;}
 elseif ($mese == "02") { $mese_lit = "Febbraio"; $ngiorni = 28;}
@@ -20,8 +20,8 @@ elseif ($mese == "09") { $mese_lit = "Settembre"; $ngiorni = 30;}
 elseif ($mese == "10") { $mese_lit = "Ottobre"; $ngiorni = 31;}
 elseif ($mese == "11") { $mese_lit = "Novembre"; $ngiorni = 30;}
 elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
-
 ?>
+
 <head>
   <title>Hooly sensors</title>
   <link href="stile.css" rel="stylesheet" type="text/css" />
@@ -30,16 +30,9 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
   <link rel="apple-touch-icon" href="/icone/temp_icon.png">
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <link rel="icon" href="/icone/temp_icon.png">
-
-</head>
-<body>
-
   <script src="scripts/jquery-1.12.3.min.js"></script>
   <script src="scripts/jspdf.min.js"></script>
   <script src="scripts/jspdf.plugin.autotable.js"></script>
-
-  <button class="graybtn" onclick="location.href='status.php';">Indietro</button>
-  <button class="graybtn" onclick="generate();">PDF SA-04</button>
 
   <script type="text/javascript">
   function generate() {
@@ -64,69 +57,84 @@ elseif ($mese == "12") { $mese_lit = "Dicembre"; $ngiorni = 31;}
     });
     doc.save("hooly_report.pdf");
   }
-  </script>
+</script>
+</head>
 
-  <div id="report">
-    <div>
-      <?php
-      print " <h3> <center> Report mensile Mese: " . $mese_lit . " - Anno: " . $anno . " - Ore: " . $ora_min . ":00</h3>\n";
-      print "<center>\n";
-      print "<table class=\"hooly_report\" id=\"hooly_report\" border=1>\n";
+<body>
+  <BR>
+    <center>
+      <TABLE width="800">
+        <TR>
+          <TD align="left" width="90%">
+            <button type="button" onclick="location.href='status.php';"class="imgbtn"><img src="icone/left37.png" width="35"></button>
+          </TD>
+          <TD align="right">
+          </TD>
+        </TR>
+      </table>
+      <BR> <BR> <BR>
 
-      $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
-      $result = $conn->query($query);
-      while($row = $result->fetch_assoc()) {
-        $idUtente = $row["idUtente"];
-        $tenant0 = $row["t0"];
-        $tenant1 = $row["t1"];
-        $tenant2 = $row["t2"];
-        $tenant3 = $row["t3"];
-      }
-      $query = "SELECT serial, device_name, position FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
-      $result = $conn->query($query);
-      $x=0;
-      while($row = $result->fetch_assoc()) {
-        $serial[$x]=$row["serial"];
-        $device_name[$x]=$row["device_name"];
-        $position[$x]=$row["position"];
-        ++$x;
-      }
-      print "<tr>\n";
-      print "<th>Hooly</th>\n";
-      for($i=1;$i<=$ngiorni;$i++)
-      {
-        $giorno = sprintf("%02d",$i);
-        print "<th align = center>" . $giorno . "</th>\n";
-      }
-      print "</tr>\n";
-      for ($i=0;$i<$x;$i++)
-      {
-        print "<tr>";
-        print "<td width=200><b>" . $device_name[$i] . "<br>" . $position[$i] . "</b><br>(" . $serial[$i] . ")";
-        print "<br></td>\n";
-        for ($a=1;$a<=$ngiorni;$a++)
-        {
-          print "<td><b>";
-          $giorno = sprintf("%02d",$a);
-          $time_ref_min = "'" . $anno . "-" . $mese . "-" . $giorno . " " . $ora_min . ":00'";
-          $time_ref_max = "'" . $anno . "-" . $mese . "-" . $giorno . " 23:59:00'";
-          $query = "select timestamp,temp from rec_data where serial = '$serial[$i]' and timestamp > $time_ref_min and timestamp < $time_ref_max limit 1";
-          $result = $conn->query($query);
-          while($row = $result->fetch_assoc()) {
-            $temperatura = number_format($row["temp"], 1);
-            echo $temperatura;
-            echo "°";
-            print "</b><br>";
-            $time= preg_split('/[ :]/',$row["timestamp"]);
-            echo($time[1]);
-            echo ":";
-            echo($time[2]);
-          }
-          print "</td>\n";
-        }
-        print "</tr>\n";
-      }
-      ?>
-    </table>
-  </div>
-</div>
+        <div id="report">
+          <h3>Report mensile Mese: <?php echo $mese_lit ?> - Anno: <?php echo $anno ?> - Ore: <?php echo $ora_min ?>:00</h3>
+          <table class="hooly_report" id="hooly_report" border=1>
+
+            <?php
+            $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
+            $result = $conn->query($query);
+            while($row = $result->fetch_assoc()) {
+              $idUtente = $row["idUtente"];
+              $tenant0 = $row["t0"];
+              $tenant1 = $row["t1"];
+              $tenant2 = $row["t2"];
+              $tenant3 = $row["t3"];
+            }
+            $query = "SELECT serial, device_name, position FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
+            $result = $conn->query($query);
+            $x=0;
+            while($row = $result->fetch_assoc()) {
+              $serial[$x]=$row["serial"];
+              $device_name[$x]=$row["device_name"];
+              $position[$x]=$row["position"];
+              ++$x;
+            }
+            print "<tr>\n";
+            print "<th>Hooly</th>\n";
+            for($i=1;$i<=$ngiorni;$i++)
+            {
+              $giorno = sprintf("%02d",$i);
+              print "<th align = center>" . $giorno . "</th>\n";
+            }
+            print "</tr>\n";
+            for ($i=0;$i<$x;$i++)
+            {
+              print "<tr>";
+              print "<td width=200><b>" . $device_name[$i] . "<br>" . $position[$i] . "</b><br>(" . $serial[$i] . ")";
+              print "<br></td>\n";
+              for ($a=1;$a<=$ngiorni;$a++)
+              {
+                print "<td><b>";
+                $giorno = sprintf("%02d",$a);
+                $time_ref_min = "'" . $anno . "-" . $mese . "-" . $giorno . " " . $ora_min . ":00'";
+                $time_ref_max = "'" . $anno . "-" . $mese . "-" . $giorno . " " . $ora_max . ":00'";
+
+                $query = "select timestamp,temp from rec_data where serial = '$serial[$i]' and timestamp > $time_ref_min and timestamp < $time_ref_max limit 1";
+                $result = $conn->query($query);
+                while($row = $result->fetch_assoc()) {
+                  $temperatura = number_format($row["temp"], 1);
+                  echo $temperatura;
+                  echo "°";
+                  print "</b><br>";
+                  $time= preg_split('/[ :]/',$row["timestamp"]);
+                  echo($time[1]);
+                  echo ":";
+                  echo($time[2]);
+                }
+                print "</td>\n";
+              }
+              print "</tr>\n";
+            }
+            ?>
+          </table>
+          <button class="graybtn" onclick="generate();">PDF SA-04</button>
+        </div>
+      </body>

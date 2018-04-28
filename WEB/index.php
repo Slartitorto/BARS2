@@ -18,7 +18,7 @@ if(isset($_COOKIE['LOGIN']))
   <?php if(@$_GET["act"] == "Recovery") {// --------------------------   ?>
 
 
-    <form class="modal-content animate" method="post" action="azioni.php">
+    <form class="modal-content animate" method="post" action="provisioning_actions.php">
       <div class="container">
         <h1>Recupero password</h1>
         <label for="uname"><b>Inserisci il tuo indirizzo email</b></label>
@@ -155,7 +155,7 @@ if(isset($_COOKIE['LOGIN']))
     <?php } else { // ---------- normale login ---------------  ?>
 
 
-      <form class="modal-content animate" action="azioni.php" method="post">
+      <form class="modal-content animate" action="provisioning_actions.php" method="post">
         <div class="container">
           <h1>Login</h1>
           <label for="uname"><b>Email</b></label>

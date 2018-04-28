@@ -12,7 +12,7 @@ if(@$_POST["invio"])
   if(($result->num_rows) == 0)
   {
 
-    $Sql		= "INSERT INTO `utenti` SET `username`='".@$_POST["email"]."', `codUtente`='".$codUtente."', `password`='".$codPassword."', `t0`= 1, `email`='".@$_POST["email"]."';";
+    $Sql		= "INSERT INTO `utenti` SET `username`='".@$_POST["email"]."', `codUtente`='".$codUtente."', `password`='".$codPassword."', `t0`= 1, `t1`= 0, `t2`= 0, `t3`= 0, `email`='".@$_POST["email"]."';";
     $result	= $conn->query($Sql);
     $Messaggio	= "
     Ciao, questa e-mail ti giunge dall'area riservata di ".NOMESITO.".\n\n
@@ -20,7 +20,7 @@ if(@$_POST["invio"])
     Username: ".$_POST["email"]."\n
     Password: ".$_POST["password"]."\n\n\n
     Questa è la url per confermare l'attivazione del tuo account:\n\n
-    ".URLSITO."/azioni.php?act=conferma&cod=".$codUtente."\n\n
+    ".URLSITO."/provisioning_actions.php?act=conferma&cod=".$codUtente."\n\n
     In caso di problemi ti invitiamo a contattarci direttamente.
     ";
 

@@ -133,20 +133,29 @@ $(function() {
           <br><br>
           <div id="advanced_preferences" style="display:none;">
             <div class="modal-content" style="margin:1% auto 1% auto;"> <br> <center>
-              <h3> Gestione non conformità</h3>
+              <h3> Inserisci non conformità</h3>
               <br>
-              <form action="nc_insert.php" method="post">
+              <form action="hooly_db_actions.php" method="post">
+                <input type="hidden" name="act" value="nc_record">
+                <input type="hidden" name="cod_utente" value="<?php echo $COD_UTENTE; ?>">
                 Data: <input type="text" id="datepicker" name="nc_date">
                 <br>
+                Seleziona dispositivo: <select name="serial">
+                  <?php for ($i=0;$i<$count;$i++) {
+                    echo "<option value= \"$serial[$i]\" > $device_name[$i]  $position[$i] </option>\n";
+                  }
+                  ?>
+                </select>
+                <br>
                 Seleziona Non Conformità: <select name="nc_type">
-                  <option value="a">A</option>
-                  <option value="b">B</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
                 </select>
                 <br>
                 Seleziona Azione Correttiva<select name="nc_ac">
-                  <option value="c">C</option>
-                  <option value="d">D</option>
-                  <option value="e">E</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
                 </select>
                 <br>
                 <br>
@@ -169,30 +178,15 @@ $(function() {
                   <br>
                 </div>
 
-                <button type="submit" class="graybtn">Registra</button>
+                <button type="submit" class="greenbtn">Registra</button>
               </form>
             </div>
 
             <div class="modal-content" style="margin:1% auto 1% auto;"> <br> <center>
               <br> <center>
-                <h3> Genera report mensili </h3>
+                <h3> Mostra e gestisci le Non Conformità registrate</h3>
                 <br>
-                <form action="hooly_report.php" method="post">
-
-                  <select name="ora">
-                    <option value="00">00:00</option>
-                    <option value="02">02:00</option>
-                    <option value="04">04:00</option>
-                    <option value="06">06:00</option>
-                    <option value="08" selected>08:00</option>
-                    <option value="10">10:00</option>
-                    <option value="12">12:00</option>
-                    <option value="14">14:00</option>
-                    <option value="16">16:00</option>
-                    <option value="18">18:00</option>
-                    <option value="20">20:00</option>
-                    <option value="22">22:00</option>
-                  </select>
+                <form action="gestione_nc.php" method="post">
 
                   <select name="mese">
                     <option value="01">Gennaio</option>
@@ -215,9 +209,118 @@ $(function() {
                     <option value="2019">2019</option>
                   </select>
 
-                  <button type="submit" class="graybtn">Report SA-04</button>
+                  <button type="submit" class="greenbtn">Seleziona</button>
                 </form>
               </div>
-            </div>
 
-          </body>
+              <div class="modal-content" style="margin:1% auto 1% auto;"> <br> <center>
+                <br> <center>
+                  <h3> Genera report mensili </h3>
+                  <br>
+                  <form action="hooly_report.php" method="post">
+
+                    <select name="ora">
+                      <option value="00">00:00</option>
+                      <option value="02">02:00</option>
+                      <option value="04">04:00</option>
+                      <option value="06">06:00</option>
+                      <option value="08" selected>08:00</option>
+                      <option value="10">10:00</option>
+                      <option value="12">12:00</option>
+                      <option value="14">14:00</option>
+                      <option value="16">16:00</option>
+                      <option value="18">18:00</option>
+                      <option value="20">20:00</option>
+                      <option value="22">22:00</option>
+                    </select>
+
+                    <select name="mese">
+                      <option value="01">Gennaio</option>
+                      <option value="02">Febbraio</option>
+                      <option value="03">Marzo</option>
+                      <option value="04">Aprile</option>
+                      <option value="05">Maggio</option>
+                      <option value="06">Giugno</option>
+                      <option value="07">Luglio</option>
+                      <option value="08">Agosto</option>
+                      <option value="09">Settembre</option>
+                      <option value="10">Ottobre</option>
+                      <option value="11">Novembre</option>
+                      <option value="12">Dicembre</option>
+                    </select>
+
+                    <select name="anno">
+                      <option value="2017">2017</option>
+                      <option value="2018" selected>2018</option>
+                      <option value="2019">2019</option>
+                    </select>
+
+                    <button type="submit" class="greenbtn">Report SA-04</button>
+                  </form>
+                </div>
+
+
+                <div class="modal-content" style="margin:1% auto 1% auto;"> <br> <center>
+                  <br> <center>
+                    <h3>Non inviare allarmi</h3>
+                    <br>
+                    <form action="standby_alarm.php" method="post">
+                      Dalle ore:
+                      <select name="standby_alarm_from">
+                        <option value="01">01:00</option>
+                        <option value="02">02:00</option>
+                        <option value="03">03:00</option>
+                        <option value="04">04:00</option>
+                        <option value="05">05:00</option>
+                        <option value="06">06:00</option>
+                        <option value="07">07:00</option>
+                        <option value="08">08:00</option>
+                        <option value="09">09:00</option>
+                        <option value="10">10:00</option>
+                        <option value="11">11:00</option>
+                        <option value="12">12:00</option>
+                        <option value="13">13:00</option>
+                        <option value="14">14:00</option>
+                        <option value="15">15:00</option>
+                        <option value="16">16:00</option>
+                        <option value="17">17:00</option>
+                        <option value="18">18:00</option>
+                        <option value="19">19:00</option>
+                        <option value="20">20:00</option>
+                        <option value="21">21:00</option>
+                        <option value="22">22:00</option>
+                      </select>
+                      <br>
+                      Alle ore:
+                      <select name="standby_alarm_to">
+                        <option value="01">01:00</option>
+                        <option value="02">02:00</option>
+                        <option value="03">03:00</option>
+                        <option value="04">04:00</option>
+                        <option value="05">05:00</option>
+                        <option value="06">06:00</option>
+                        <option value="07">07:00</option>
+                        <option value="08">08:00</option>
+                        <option value="09">09:00</option>
+                        <option value="10">10:00</option>
+                        <option value="11">11:00</option>
+                        <option value="12">12:00</option>
+                        <option value="13">13:00</option>
+                        <option value="14">14:00</option>
+                        <option value="15">15:00</option>
+                        <option value="16">16:00</option>
+                        <option value="17">17:00</option>
+                        <option value="18">18:00</option>
+                        <option value="19">19:00</option>
+                        <option value="20">20:00</option>
+                        <option value="21">21:00</option>
+                        <option value="22">22:00</option>
+                      </select>
+                      <br>
+
+                      <button type="submit" class="greenbtn">Imposta</button>
+                    </form>
+                  </div>
+                </div>
+
+              </body>

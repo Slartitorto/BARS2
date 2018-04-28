@@ -32,7 +32,7 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
     questa e-mail ti giunge perchè hai richiesto il cambio password.\n\n
     Ti abbiamo predisposto una nuova password; la nuova password è ".$Password." \n
     Dovrai attivare la nuova password tramite questo link:\n
-    http://myhooly.hooly.eu/azioni.php?act=attiva_nuova_pwd&email=" . $to . "&token=" . $Token ." \n\n
+    http://myhooly.hooly.eu/provisioning_actions.php?act=attiva_nuova_pwd&email=" . $to . "&token=" . $Token ." \n\n
     In caso di problemi ti invitiamo a contattarci direttamente all'indirizzo admin@hooly.eu\n
     Ciao !
     ";
@@ -58,6 +58,10 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
   if(($result->num_rows) == 1)
   {
     $Sql          =       "UPDATE `utenti` SET password = new_password WHERE `email`='" . $email . "' AND `token`='" . $token . "';";
+    $result               =       $conn->query($Sql);
+    $Sql          =       "UPDATE `utenti` SET new_password = '' WHERE `email`='" . $email . "' AND `token`='" . $token . "';";
+    $result               =       $conn->query($Sql);
+    $Sql          =       "UPDATE `utenti` SET token = '' WHERE `email`='" . $email . "' AND `token`='" . $token . "';";
     $result               =       $conn->query($Sql);
     header('Location: index.php?act=RecuperoPwdDone');
   } else {

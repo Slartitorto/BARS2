@@ -108,6 +108,27 @@ CREATE TABLE `new_routers` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `non_conformita`
+--
+
+DROP TABLE IF EXISTS `non_conformita`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `non_conformita` (
+  `nc_id` int(11) NOT NULL AUTO_INCREMENT,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `nc_date` varchar(16) DEFAULT NULL,
+  `nc_type` varchar(8) DEFAULT NULL,
+  `nc_ac` varchar(8) DEFAULT NULL,
+  `serial` varchar(8) DEFAULT NULL,
+  `device_name` varchar(64) DEFAULT NULL,
+  `position` varchar(32) DEFAULT NULL,
+  `codUtente` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`nc_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `rec_data`
 --
 
@@ -123,7 +144,9 @@ CREATE TABLE `rec_data` (
   `battery` float DEFAULT NULL,
   `period` int(11) DEFAULT NULL,
   `rssi` int(11) DEFAULT NULL,
-  `router` varchar(16) DEFAULT NULL
+  `router` varchar(16) DEFAULT NULL,
+  KEY `timestamp_index` (`timestamp`),
+  KEY `serial_index` (`serial`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -153,8 +176,8 @@ CREATE TABLE `utenti` (
   `codUtente` varchar(32) NOT NULL,
   `username` varchar(30) NOT NULL,
   `password` varchar(32) NOT NULL,
-  `token` varchar(32) NULL,
-  `new_password` varchar(32) NULL,
+  `token` varchar(32) DEFAULT NULL,
+  `new_password` varchar(32) DEFAULT NULL,
   `email` varchar(50) NOT NULL,
   `stato` int(1) NOT NULL DEFAULT '0',
   `t0` int(11) DEFAULT NULL,

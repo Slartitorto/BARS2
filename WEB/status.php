@@ -6,8 +6,9 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
 
 <head>
   <title>Hooly sensors</title>
-  <link href="stile.css" rel="stylesheet" type="text/css" />
-  <link href="jquery-ui.css" rel="stylesheet">
+  <link href="css/reset.css" rel="stylesheet" type="text/css" />
+  <link href="css/stile.css" rel="stylesheet" type="text/css" />
+  <link href="css/jquery-ui.css" rel="stylesheet">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="apple-touch-icon" href="/icone/temp_icon.png">
@@ -36,12 +37,12 @@ $(function() {
   };
   $.datepicker.setDefaults($.datepicker.regional['it']);
   $("#datepicker").datepicker();
+  $("#datepicker").datepicker('setDate', new Date());
 });
 </script>
 </head>
 
 <body>
-
   <BR>
     <center>
       <TABLE width="800">
@@ -138,7 +139,7 @@ $(function() {
               <form action="hooly_db_actions.php" method="post">
                 <input type="hidden" name="act" value="nc_record">
                 <input type="hidden" name="cod_utente" value="<?php echo $COD_UTENTE; ?>">
-                Data: <input type="text" id="datepicker" name="nc_date">
+                Data: <input type="text" class="slim" id="datepicker" name="nc_date">
                 <br>
                 Seleziona dispositivo: <select name="serial">
                   <?php for ($i=0;$i<$count;$i++) {
@@ -209,6 +210,7 @@ $(function() {
                     <option value="2019">2019</option>
                   </select>
 
+                  <input type="hidden" name="cod_utente" value="<?php echo $COD_UTENTE; ?>">
                   <button type="submit" class="greenbtn">Seleziona</button>
                 </form>
               </div>

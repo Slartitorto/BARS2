@@ -1,0 +1,141 @@
+@charset "utf-8";
+* {
+  font-size: 100%;
+  font-family: Verdana, Geneva, sans-serif;
+}
+table {
+  border-width: 0px;
+  border-collapse: collapse;
+}
+th {
+  text-align: center;
+  background-color: #efefef;
+  padding: 12px;
+}
+table.padded td {
+  padding: 8px;
+}
+table.centered td {
+  text-align: center;
+}
+h1 {
+  font-size: 24px;
+}
+h2 {
+  font-size: 20px;
+}
+input[type=text], input[type=password], input[type=email] {
+  width: auto;
+  padding: 2% 5%;
+  margin: 8px 0;
+  border-radius: 8px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  background: #efefef;
+}
+select {
+  padding: 12px 20px;
+  height: 30px;
+  margin: 8px 0;
+  border-radius: 12px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  background: #efefef;
+}
+button {
+  padding: 10px 30px;
+  outline:none;
+  border-radius: 8px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+}
+button:hover {
+  opacity: 1;
+}
+span.psw {
+  float: right;
+}
+.redbtn {
+  color: white;
+  background-color: #f44336;
+}
+.greenbtn {
+  color: white;
+  background-color: #4CAF50;
+}
+.graybtn {
+  border: 1px solid #ccc;
+  color: black;
+  background-color: #efefef;
+}
+.imgbtn {
+  border: none;
+  padding: 0px 0px;
+  background-color: #ffffff;
+}
+.centeredbtn {
+  width: 60%;
+  margin-left: 20%;
+  margin-top: 10%;
+  margin-bottom: 5%;
+}
+.slim {
+  height: 30px;
+  width: auto;
+}
+.container {
+  margin: 5% auto;
+  width: 550px;
+}
+.modal-content {
+  padding: 3% 3%;
+  margin: 5% auto;
+  border: 1px solid #888;
+  border-radius: 12px;
+  width: 500px;
+}
+.animate {
+  -webkit-animation: animatezoom 0.3s;
+  animation: animatezoom 0.3s
+}
+table.hooly_report {
+  table-layout: auto;
+  width: 1300px;
+}
+#hooly_report {
+  font-size: 9px;
+}
+#hooly_report td {
+  border: 1px solid #888;
+  padding: 6px 0px;
+  width: 95px;
+  text-align: center;
+}
+#hooly_report tr {
+  border: 1px solid #888;
+}
+#hooly_report tr:nth-child(odd) {
+  background-color: #efefef;
+}
+#hooly_report th {
+  background-color: #efefef;
+}
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)}
+  to {-webkit-transform: scale(1)}
+}
+@keyframes animatezoom {
+  from {transform: scale(0)}
+  to {transform: scale(1)}
+}
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  span.psw {
+    display: block;
+    float: none;
+  }
+}

@@ -1,14 +1,7 @@
 <?php
-
-if(isset($_COOKIE['LOGIN']))
-{ $COD_UTENTE =	$_COOKIE['LOGIN'];
-} else {
-  $COD_UTENTE =	0;
-  header("Location: index.php");
-}
-
+if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE =	$_COOKIE['LOGIN'];
+} else { $COD_UTENTE =	0; header("Location: index.php"); }
 include "db_connection.php";
-
 ?>
 
 <head><title>Hooly settings</title>
@@ -28,7 +21,8 @@ function navigator_Go(url)
 { window.location.assign(url); }
 </script>
 
-<link href="stile.css" rel="stylesheet" type="text/css" />
+<link href="css/reset.css" rel="stylesheet" type="text/css" />
+<link href="css/stile.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
     <BR>

@@ -6,11 +6,15 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
+<title>Sensor details</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link href='https://fonts.googleapis.com/css?family=Source Sans Pro' rel='stylesheet'>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="/icone/app_icon128.png">
+  <link href="css/reset.css" rel="stylesheet" type="text/css" />
+  <link href="css/stile.css" rel="stylesheet" type="text/css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <?php
-
   if(isset($_POST["serial"])) { $serial=($_POST["serial"]);}
   if(isset($_POST["last"])) { $last=($_POST["last"]);}
   if(isset($_POST["graph"])) { $graph=$_POST['graph'];}
@@ -71,17 +75,10 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
       $timestamp = $row['timestamp'];
       $timestamp *=1000;
       $battery = $row['battery'];
-
       $data4[] = "[$timestamp, $battery]";
     }
-
   }
-
-  print  "<title>Sensor details</title>
-  <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">
-  <link rel=\"apple-touch-icon\" href=\"/icone/app_icon128.png\">
-  <link href=\"stile.css\" rel=\"stylesheet\" type=\"text/css\" />
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />
+  print  "
   <script type=\"text/javascript\">
   function navigator_Go(url) {
     window.location.assign(url);
@@ -164,11 +161,9 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
   $result = $conn->query($sql);
   if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
-
       $device_name = $row["device_name"];
       $position = $row["position"];
       $batt_type = $row["batt_type"];
-
     }
   }
 
@@ -177,7 +172,6 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
   $result = $conn->query($sql);
   if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
-
       $time_stamp = $row["timestamp"];
       $temp = $row["temp"];
       $hum = $row["hum"];
@@ -187,7 +181,6 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
       $min_period = format_time($period);
       $sec_delay=$row["sec_delay"];
       $min_delay=format_time($sec_delay);
-
     }
 
     // SELECT last counter
@@ -246,7 +239,6 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
     } else {
       echo "<A href=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$next_last&graph=battery');\">" . $string_last . "</a>";
-
     }
     echo "<td width=33% align=right>";
     echo "<form action =\"" . $_SERVER['PHP_SELF'] . "\" method=\"POST\">";
@@ -303,8 +295,6 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     <button class=graybtn onClick="window.print()">Print</button>
 
     <?php
-
-
 
   } else {
     echo "0 results";

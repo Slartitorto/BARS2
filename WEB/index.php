@@ -3,6 +3,7 @@ include "db_connection.php";
 if(isset($_COOKIE['LOGIN']))
 { $COD_UTENTE =	$_COOKIE['LOGIN']; header("Location: status.php"); }
 ?>
+skhfslkdfhs
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />

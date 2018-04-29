@@ -36,7 +36,7 @@ if(isset($_COOKIE['LOGIN']))
 
     <div class="modal-content animate">
       <form method="post" action="provisioning_actions.php">
-        <h1>Recupero password</h1>
+        <h2>Recupero password</h2>
         <br> <br>
         <b>Inserisci il tuo indirizzo email</b>
         <br><br>
@@ -54,7 +54,7 @@ if(isset($_COOKIE['LOGIN']))
 
 
     <div class="modal-content animate">
-      <h1>Registrazione avvenuta</h1>
+      <h2>Registrazione avvenuta</h2>
       <br> <br>
       Registrazione effettutata con successo; a breve riceverai una e-mail con un link per attivare la registrazione.
       <br><br>
@@ -69,7 +69,7 @@ if(isset($_COOKIE['LOGIN']))
 
 
     <div class="modal-content animate">
-      <h1>Attivazione effettuata</h1>
+      <h2>Attivazione effettuata</h2>
       <br><br>
       La procedura di registrazione si è conclusa con successo, ora puoi effettuare il log-in.
       <br><br>
@@ -82,7 +82,7 @@ if(isset($_COOKIE['LOGIN']))
 
 
     <div class="modal-content animate">
-      <h1>Recupero password</h1>
+      <h2>Recupero password</h2>
       <br><br>
       Ti è stata inviata una e-mail con nuovi dati di accesso.<br>
       Se non la trovi, prova a controllare nella casella della posta indesiderata, alcuni provider potrebbero scambiarla per spam.<br>
@@ -96,7 +96,7 @@ if(isset($_COOKIE['LOGIN']))
 
 
     <div class="modal-content animate">
-      <h1>Recupero password</h1>
+      <h2>Recupero password</h2>
       <br><br>
       L'indirizzo email non corrisponde ad un utente attivo.
       <br><br>
@@ -109,7 +109,7 @@ if(isset($_COOKIE['LOGIN']))
 
 
     <div class="modal-content animate">
-      <h1>Recupero password</h1>
+      <h2>Recupero password</h2>
       <br><br>
 
       C'e' stato un problema nella procedura di reset password, forse hai utilizzato un link errato o obsoleto.
@@ -123,7 +123,7 @@ if(isset($_COOKIE['LOGIN']))
 
 
     <div class="modal-content animate">
-      <h1>Recupero password</h1>
+      <h2>Recupero password</h2>
       <br><br>
       La tua password è stata reimpostata correttamente
       <button type="button" onclick="location.href='index.php';" class="greenbtn centeredbtn">Torna alla pagina di login</button>
@@ -134,7 +134,7 @@ if(isset($_COOKIE['LOGIN']))
 
 
     <div class="modal-content animate">
-      <h1>Errore di credenziali</h1>
+      <h2>Errore di credenziali</h2>
       <br><br>
       L'indirizzo email e la password non corrispondono a nessun utente attivo.<br>
       <br><br>
@@ -147,7 +147,7 @@ if(isset($_COOKIE['LOGIN']))
 
 
     <div class="modal-content animate">
-      <h1>Errore di registrazione</h1>
+      <h2>Errore di registrazione</h2>
       <br><br>
       L'indirizzo email risulta già presente.
       <br><br>
@@ -161,7 +161,7 @@ if(isset($_COOKIE['LOGIN']))
 
     <div class="modal-content animate">
       <form action="provisioning_actions.php" onsubmit="return checkPassword()" method="get">
-        <h1>Registrazione</h1>
+        <h2>Registrazione</h2>
         <br> <br>
         Inserisci i tuoi dati per creare il nuovo account:
         <br> <br>
@@ -187,9 +187,9 @@ if(isset($_COOKIE['LOGIN']))
   <?php } else { // ---------- normale login ---------------  ?>
 
 
-    <div class="modal-content animate" style="margin:5% auto 0% auto;">
+    <div class="modal-content animate">
       <form action="provisioning_actions.php" method="post">
-        <h1>Login</h1>
+        <h2>Login</h2>
         <br> <br> <br>
         <b>Email</b>
         <br>
@@ -199,6 +199,7 @@ if(isset($_COOKIE['LOGIN']))
         <br>
         <input type="password" style="width:100%" placeholder="Inserici la password" name="password" required>
         <button type="submit" class="greenbtn centeredbtn" >Login</button>
+        <center><a href="index.php?act=Recovery">Ho dimenticato la password</a></center>
         <br><br><br>
         <input type="hidden" name="act" value="login">
         <input type="checkbox" checked="checked" name="remember" value="1"> Ricordami al prossimo accesso
@@ -207,10 +208,6 @@ if(isset($_COOKIE['LOGIN']))
         <button type="button" onclick="location.href='index.php?act=Registrazione';" class="greenbtn">Registrati come nuovo utente</button>
       </form>
     </div>
-    <div class="modal-content animate" style="margin:0% auto 0% auto; border: 0; padding:1% 1%;">
-      <span class="psw"><a href="index.php?act=Recovery">Ho dimenticato la password</a></span>
-    </div>
-    <br><br>
 
   <?php } ?>
 

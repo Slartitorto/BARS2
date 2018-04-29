@@ -53,6 +53,7 @@ $(function() {
         </TR>
       </table>
       <BR> <BR> <BR>
+    <div class="modal-content animate">
         <table width="500" class="centered">
           <tr><th>Dettagli</th><th>Termometro</th><th>Posizione</th><th>Temp</th><th>Stato</th></tr>
 
@@ -131,6 +132,7 @@ $(function() {
 
           <br><br>
           <button id="btn1" class="graybtn">Click per aprire o chiudere la gestione Ristorante</button>
+          </div>
           <br><br>
           <div id="advanced_preferences" style="display:none;">
             <div class="modal-content" style="margin:1% auto 1% auto;"> <br> <center>

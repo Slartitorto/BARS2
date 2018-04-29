@@ -3,6 +3,9 @@
   font-size: 100%;
   font-family: Verdana, Geneva, sans-serif;
 }
+body {
+  background-color: #ff9933;
+}
 table {
   border-width: 0px;
   border-collapse: collapse;
@@ -19,15 +22,18 @@ table.centered td {
   text-align: center;
 }
 h1 {
-  font-size: 24px;
+  font-size: 30px;
+  margin: 50px 0px 0px 0px;;
+  color: white;
+  text-align: center;
 }
 h2 {
   font-size: 20px;
 }
 input[type=text], input[type=password], input[type=email] {
   width: auto;
-  padding: 2% 5%;
-  margin: 8px 0;
+  padding: 2% 3%;
+  margin: 8px 3px;
   border-radius: 8px;
   display: inline-block;
   border: 1px solid #ccc;
@@ -35,9 +41,8 @@ input[type=text], input[type=password], input[type=email] {
   background: #efefef;
 }
 select {
-  padding: 12px 20px;
   height: 30px;
-  margin: 8px 0;
+  margin: 8px 3px;
   border-radius: 12px;
   display: inline-block;
   border: 1px solid #ccc;
@@ -97,8 +102,9 @@ span.psw {
   width: 500px;
 }
 .modal-content {
-  padding: 3% 3%;
-  margin: 5% auto;
+  background-color: white;
+  padding: 1% 3%;
+  margin: 2% auto;
   border: 1px solid #888;
   border-radius: 12px;
   width: 500px;

@@ -91,6 +91,11 @@ span.psw {
   margin: 5% auto;
   width: 550px;
 }
+.content {
+  margin: 0% auto;
+  padding: 3% 3%;
+  width: 500px;
+}
 .modal-content {
   padding: 3% 3%;
   margin: 5% auto;
@@ -133,9 +138,10 @@ table.hooly_report {
   to {transform: scale(1)}
 }
 /* Change styles for span and cancel button on extra small screens */
-@media screen and (max-width: 300px) {
-  span.psw {
-    display: block;
-    float: none;
-  }
+@media screen and (max-device-width: 640px) {
+
+.modal-content {
+  width: 80%;
+}
+
 }

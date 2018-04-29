@@ -48,6 +48,36 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
   }
 
 
+} else if(@$_GET["act"] == "registrazione") { // ---------------------------------------
+
+  $email	= $_GET["email"];
+  $password	= $_GET["password"];
+  $codUtente	= md5($email);
+  $codPassword	= md5($password);
+  $Sql		= "SELECT * from `utenti` WHERE `email`='" . $email . "';";
+  $result       = $conn->query($Sql);
+  if(($result->num_rows) == 0)
+  {
+
+    $Sql		= "INSERT INTO `utenti` SET `username`='".@$_POST["email"]."', `codUtente`='".$codUtente."', `password`='".$codPassword."', `t0`= 1, `t1`= 0, `t2`= 0, `t3`= 0, `email`='".@$_POST["email"]."';";
+    $result	= $conn->query($Sql);
+    $Messaggio	= "
+    Ciao, questa e-mail ti giunge dall'area riservata di ".NOMESITO.".\n\n
+    I tuoi dati di accesso sono:\n
+    Username: ".$_POST["email"]."\n
+    Password: ".$_POST["password"]."\n\n\n
+    Questa è la url per confermare l'attivazione del tuo account:\n\n
+    ".URLSITO."/provisioning_actions.php?act=conferma&cod=".$codUtente."\n\n
+    In caso di problemi ti invitiamo a contattarci direttamente.
+    ";
+
+    mail($_POST["email"], "Home Sensors - Conferma registrazione", $Messaggio, "From: admin@hooly.eu");
+    header('Location: index.php?act=RegistrazioneOn');
+
+  } else {
+    header('Location: index.php?act=RegistrazioneOffEmailAlreadyExists');
+  }
+
 } else if(@$_GET["act"] == "attiva_nuova_pwd") { // ---------------------------------------
 
 
@@ -77,11 +107,8 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
   $result		=	$conn->query($Sql);
   if(($result->num_rows) == 1)
   {
-    $Dati		=	$result->fetch_array();
-    if(@$_POST["ricorda"]	==	1)
-    $TempoDiValidita	=	31536000;
-    else
-    $TempoDiValidita	=	72000;
+    $Dati = $result->fetch_array();
+    if(@$_POST["remember"] == 1) $TempoDiValidita = 31536000; else $TempoDiValidita = 72000;
     SettaCoockie($Dati["codUtente"], $TempoDiValidita);
     header('Location: status.php');
   }

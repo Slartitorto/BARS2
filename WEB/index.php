@@ -9,7 +9,9 @@ if(isset($_COOKIE['LOGIN']))
   <title><?php echo NOMESITO; ?></title>
   <link href="css/reset.css" rel="stylesheet" type="text/css" />
   <link href="css/stile.css" rel="stylesheet" type="text/css" />
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+
   <script>
   function checkPassword() {
     var pass1 = document.getElementById("password").value;
@@ -176,6 +178,7 @@ if(isset($_COOKIE['LOGIN']))
         <input type="password" style="width:100%" placeholder="Repeat Password" name="psw-repeat" id="confirm_password" required>
         <input name="act" type="hidden" value="registrazione">
         <button type="submit" class="greenbtn centeredbtn">Registrati</button>
+        <br>
         <button type="button" onclick="location.href='index.php';" class="redbtn">Annulla</button>
       </form>
     </div>
@@ -184,29 +187,30 @@ if(isset($_COOKIE['LOGIN']))
   <?php } else { // ---------- normale login ---------------  ?>
 
 
-    <div class="container">
-      <div class="modal-content animate">
-        <form action="provisioning_actions.php" method="post">
-          <h1>Login</h1>
-          <br> <br> <br>
-          <b>Email</b>
-          <br>
-          <input type="email" style="width:100%" placeholder="Inserisci la tua email" name="email" required>
-          <br> <br>
-          <b>Password</b>
-          <br>
-          <input type="password" style="width:100%" placeholder="Inserici la password" name="password" required>
-          <button type="submit" class="greenbtn centeredbtn" >Login</button>
-          <br><br><br>
-          <input type="hidden" name="act" value="login">
-          <input type="checkbox" checked="checked" name="remember" value="1"> Ricordami al prossimo accesso
-          <br>
-          <button type="button" onclick="location.href='http://www.hooly.eu';" class="redbtn">Annulla</button>
-          <button type="button" onclick="location.href='index.php?act=Registrazione';" class="greenbtn">Registrati come nuovo utente</button>
-        </form>
-      </div>
+    <div class="modal-content animate" style="margin:5% auto 0% auto;">
+      <form action="provisioning_actions.php" method="post">
+        <h1>Login</h1>
+        <br> <br> <br>
+        <b>Email</b>
+        <br>
+        <input type="email" style="width:100%" placeholder="Inserisci la tua email" name="email" required>
+        <br> <br>
+        <b>Password</b>
+        <br>
+        <input type="password" style="width:100%" placeholder="Inserici la password" name="password" required>
+        <button type="submit" class="greenbtn centeredbtn" >Login</button>
+        <br><br><br>
+        <input type="hidden" name="act" value="login">
+        <input type="checkbox" checked="checked" name="remember" value="1"> Ricordami al prossimo accesso
+        <br>
+        <button type="button" onclick="location.href='http://www.hooly.eu';" class="redbtn">Annulla</button>
+        <button type="button" onclick="location.href='index.php?act=Registrazione';" class="greenbtn">Registrati come nuovo utente</button>
+      </form>
+    </div>
+    <div class="modal-content animate" style="margin:0% auto 0% auto; border: 0; padding:1% 1%;">
       <span class="psw"><a href="index.php?act=Recovery">Ho dimenticato la password</a></span>
     </div>
+    <br><br>
 
   <?php } ?>
 

@@ -5,9 +5,6 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
 ?>
 
 <head>
-  ldsòlkjsdf
-  fòsòfdsfsd
-
   <title>Hooly sensors</title>
   <link href="css/reset.css" rel="stylesheet" type="text/css" />
   <link href="css/stile.css" rel="stylesheet" type="text/css" />

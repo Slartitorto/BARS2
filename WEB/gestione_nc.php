@@ -1,8 +1,10 @@
 <?php
 if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE =	$_COOKIE['LOGIN'];}
 else { $COD_UTENTE =	0; header("Location: index.php");}
-$mese = $_POST["mese"];
-$anno = $_POST["anno"];
+if(isset($_POST["mese"])) { $mese=($_POST["mese"]);}
+if(isset($_POST["anno"])) { $anno=($_POST["anno"]);}
+if(isset($_GET["mese"])) { $mese=($_GET["mese"]);}
+if(isset($_GET["anno"])) { $anno=($_GET["anno"]);}
 ?>
 
 <head>
@@ -82,30 +84,32 @@ $(function() {
 
             ?>
             <TR>
-                <TD>
-                  <form action="hooly_db_actions.php" method="post">
+              <TD>
+                <form action="hooly_db_actions.php" method="post">
                   <input type="hidden" name="act" value="nc_delete">
                   <input type="hidden" name="nc_id" value=<?php echo $nc_id[$i] ?> >
+                  <input type="hidden" name="mese" value=<?php echo $mese ?> >
+                  <input type="hidden" name="anno" value=<?php echo $anno ?> >
                   <button type="submit" class="imgbtn"> <img src="icone/trash.png" height="30" width="30"></button>
                 </form></td>
                 <TD>
                   <form action="hooly_db_actions.php" method="post">
-                  <input type="hidden" name="act" value="nc_modify">
-                  <input type="hidden" name="nc_id" value=<?php echo $nc_id[$i] ?> >
-                  <button type="submit" class="imgbtn"> <img src="icone/edit.png" height="25" width="30"></button>
-                </form></td>
-                <TD><?php echo $nc_date[$i] ?></TD>
-                <TD><?php echo $device_name[$i] ?></TD>
-                <TD><?php echo $position[$i] ?></TD>
-                <TD><?php echo $nc_type[$i] ?></TD>
-                <TD><?php echo $nc_ac[$i] ?></TD>
-              </TR>
-              <?php
+                    <input type="hidden" name="act" value="nc_modify">
+                    <input type="hidden" name="nc_id" value=<?php echo $nc_id[$i] ?> >
+                    <button type="submit" class="imgbtn"> <img src="icone/edit.png" height="25" width="30"></button>
+                  </form></td>
+                  <TD><?php echo $nc_date[$i] ?></TD>
+                  <TD><?php echo $device_name[$i] ?></TD>
+                  <TD><?php echo $position[$i] ?></TD>
+                  <TD><?php echo $nc_type[$i] ?></TD>
+                  <TD><?php echo $nc_ac[$i] ?></TD>
+                </TR>
+                <?php
+              }
+              echo "</TABLE> ";
             }
-            echo "</TABLE> ";
-          }
 
-          $conn->close();
-          ?>
+            $conn->close();
+            ?>
 
-        </body>
+          </body>

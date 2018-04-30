@@ -169,11 +169,11 @@ if(isset($_COOKIE['LOGIN']))
         <br>
         <input type="email" style="width:100%" placeholder="Enter Email" name="email" required>
         <br> <br>
-        <b>Password</b>
+        <b>Password:</b>
         <br>
-        <input type="password" style="width:100%" placeholder="Enter Password" name="password" id="password" pattern="[A-Za-z0-9]{6,8}" title="La passowrd può contenere lettere e numeri, un minimo di 6 ed un massimo di 8 caratteri" required>
+        <input type="password" style="width:100%" placeholder="Enter Password" name="password" id="password" pattern="[A-Za-z0-9]{5,12}" title="La passowrd può contenere lettere e numeri, un minimo di 5 ed un massimo di 12 caratteri alfanumerici" required>
         <br> <br>
-        <b>Repeat Password</b>
+        <b>Ripeti la password:</b>
         <br>
         <input type="password" style="width:100%" placeholder="Repeat Password" name="psw-repeat" id="confirm_password" required>
         <input name="act" type="hidden" value="registrazione">

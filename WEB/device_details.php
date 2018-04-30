@@ -6,7 +6,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
-<title>Sensor details</title>
+  <title>Sensor details</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="/icone/app_icon128.png">
@@ -139,19 +139,19 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
   </head>
   <body>
 
-<BR>
-    <center>
-    <TABLE class=\"top-menu\">
-      <TR>
+  <BR>
+  <center>
+  <TABLE class=\"top-menu\">
+  <TR>
   <TD align=\"left\" width=\"90%\">
   <A href=\"javascript:navigator_Go('index.php');\"><img src=\"icone/left37.png\" width=\"35\"></A>
   </TD>
   <TD align=\"right\">
   <A href=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$last&graph=temp');\"><img src=\"icone/refresh57.png\" width=\"30\">
   </TD>
-      </TR>
-    </table>
-    <BR> <BR> <BR>
+  </TR>
+  </table>
+  <BR> <BR> <BR>
   ";
   function format_time($t,$f=':') // t = seconds, f = separator
   {
@@ -298,6 +298,6 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
   $conn->close();
   ?>
-  </div>
+</div>
 </body>
 </html>

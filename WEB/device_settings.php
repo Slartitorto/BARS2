@@ -27,7 +27,7 @@ function navigator_Go(url)
 <body>
     <BR>
     <center>
-    <TABLE width="800">
+    <TABLE class="top-menu">
       <TR><TD align="left"><A href="javascript:navigator_Go('index.php');"><img src="icone/left37.png" width="35"></TD></TR>
     </TABLE>
     <BR><BR><BR>
@@ -88,7 +88,8 @@ function navigator_Go(url)
             ++$x;
           }
 
-          echo "<table width=\"800\" class=\"centered\">\n";
+          echo "<div class=\"modal-content device_settings\">";
+          echo "<table class=\"centered device_settings\">\n";
           echo "<tr><th>Seriale</th><th>Nome hooly</th><th>Posizione</th><th>Rilevamento</th>";
           echo "<th>Min</th><th>Max</th><th>Notifica</th></tr>\n";
 
@@ -178,6 +179,7 @@ function navigator_Go(url)
         <div align=center>
           <button id=btn1 class=graybtn>Click per aprire o chiudere le preferenze avanzate</button>
           <br><br>
+          </div>
 
           <div id=advanced_preferences style=display:none;>
             <div class=modal-content style=margin:1% auto 1% auto;>

@@ -141,7 +141,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
 <BR>
     <center>
-    <TABLE width=\"800\">
+    <TABLE class=\"top-menu\">
       <TR>
   <TD align=\"left\" width=\"90%\">
   <A href=\"javascript:navigator_Go('index.php');\"><img src=\"icone/left37.png\" width=\"35\"></A>
@@ -197,7 +197,8 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     }
     $link_qlt = intval(1000/($link_qlt0 - $link_qlt1));
 
-    echo " <table class=\"padded centered\">";
+    echo "<div class=\"modal-content\" style=\"width:90%;\">";
+    echo " <table class=\"padded centered device_details\">";
     echo " <tr><th>" . $device_name . "</th><th>" . $position . "</th></tr><tr> <th colspan = 2>Temp: " . round($temp,2) . "&deg C</th></tr>";
     if ($graph == "temp" ){
       echo " <TR><TD>Serial: <B> " . $serial . "</B></TD><TD><A HREF=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$last&graph=battery');\">Batteria:</a>  <B>" . $batt . "% </B> </TD></TR>";
@@ -209,8 +210,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     echo "</table><br><br>";
     echo "<table width=100%>";
     echo "<tr>";
-    echo "<td width=33%></td>";
-    echo "<td width=34% align=center>";
+    echo "<td align=left>";
     if ($graph == "temp") {
 
       echo "<form action =\"" . $_SERVER['PHP_SELF'] . "\" method=\"POST\">";
@@ -240,7 +240,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     } else {
       echo "<A href=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$next_last&graph=battery');\">" . $string_last . "</a>";
     }
-    echo "<td width=33% align=right>";
+    echo "<td align=right>";
     echo "<form action =\"" . $_SERVER['PHP_SELF'] . "\" method=\"POST\">";
     echo "Passa a:  ";
     echo "<select name=\"serial\" onchange=\"this.form.submit()\">\n";
@@ -253,10 +253,6 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     echo "<input type=hidden name=last value=" . $last . ">";
     echo "<input type=hidden name=graph value=" . $graph . ">";
     echo "</form>";
-
-
-
-
     echo "</td>";
     echo "</tr>";
     echo "</table>";
@@ -302,5 +298,6 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
   $conn->close();
   ?>
+  </div>
 </body>
 </html>

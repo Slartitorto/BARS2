@@ -45,16 +45,16 @@ $(function() {
 <body>
   <BR>
     <center>
-      <TABLE width="800">
+      <TABLE class="top-menu">
         <TR>
-          <TD align="left"><A href="javascript:navigator_Go('device_settings.php');"><img src="icone/very-basic-settings-icon.png" width="40"></A></TD>
-          <TD align="center"><A href="javascript:navigator_Go('logout.php');"><img src="icone/home_button.png" width="35"></A></TD>
-          <TD align="right"><A href="javascript:navigator_Go('index.php');"><img src="icone/refresh57.png" width="30"></A></TD>
+          <TD align="left" width="33%"><A href="javascript:navigator_Go('device_settings.php');"><img src="icone/very-basic-settings-icon.png" width="40"></A></TD>
+          <TD align="center" width="34%"><A href="javascript:navigator_Go('logout.php');"><img src="icone/home_button.png" width="35"></A></TD>
+          <TD align="right" width="33%"><A href="javascript:navigator_Go('index.php');"><img src="icone/refresh57.png" width="30"></A></TD>
         </TR>
       </table>
       <BR> <BR> <BR>
-    <div class="modal-content animate">
-        <table width="500" class="centered">
+    <div class="modal-content animate status">
+        <table class="centered status">
           <tr><th>Dettagli</th><th>Termometro</th><th>Posizione</th><th>Temp</th><th>Stato</th></tr>
 
           <?php

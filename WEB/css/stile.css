@@ -92,10 +92,6 @@ span.psw {
   height: 30px;
   width: auto;
 }
-.container {
-  margin: 5% auto;
-  width: 550px;
-}
 .content {
   margin: 0% auto;
   padding: 3% 3%;
@@ -109,9 +105,21 @@ span.psw {
   border-radius: 12px;
   width: 500px;
 }
+.device_details {
+  width: 650px;
+}
+.device_settings {
+  width: 800px;
+}
+.status {
+  width: 500px;
+}
 .animate {
   -webkit-animation: animatezoom 0.3s;
   animation: animatezoom 0.3s
+}
+.top-menu{
+  width: 80%;
 }
 table.hooly_report {
   table-layout: auto;
@@ -146,8 +154,21 @@ table.hooly_report {
 /* Change styles for span and cancel button on extra small screens */
 @media screen and (max-device-width: 640px) {
 
+
+* {
+  font-size: 95%;
+}
 .modal-content {
   width: 80%;
+}
+.device_settings {
+  width: 600px;
+}
+.device_details {
+  width: 400px;
+}
+.status {
+  width: 400px;
 }
 
 }

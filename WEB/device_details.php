@@ -3,6 +3,7 @@ include "db_connection.php";
 if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE = $_COOKIE['LOGIN']; }
 else { $COD_UTENTE =	0; header("Location: index.php"); }
 ?>
+
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
@@ -12,7 +13,10 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
   <link rel="apple-touch-icon" href="/icone/app_icon128.png">
   <link href="css/reset.css" rel="stylesheet" type="text/css" />
   <link href="css/stile.css" rel="stylesheet" type="text/css" />
+  <link href="css/dropDownMenu.css" rel="stylesheet" type="text/css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <?php include 'includes/headerTableMenu.php'; ?>
 
   <?php
   if(isset($_POST["serial"])) { $serial=($_POST["serial"]);}
@@ -141,17 +145,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
   <BR>
   <center>
-  <TABLE class=\"top-menu\">
-  <TR>
-  <TD align=\"left\" width=\"90%\">
-  <A href=\"javascript:navigator_Go('index.php');\"><img src=\"icone/left37.png\" width=\"35\"></A>
-  </TD>
-  <TD align=\"right\">
-  <A href=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$last&graph=temp');\"><img src=\"icone/refresh57.png\" width=\"30\">
-  </TD>
-  </TR>
-  </table>
-  <BR> <BR> <BR>
+
   ";
   function format_time($t,$f=':') // t = seconds, f = separator
   {

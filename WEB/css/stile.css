@@ -4,7 +4,8 @@
   font-family: Verdana, Geneva, sans-serif;
 }
 body {
-  background-color: #ff9933;
+  /* background-color: #ff9933; */
+  background-color: #ffffff;
 }
 table {
   border-width: 0px;
@@ -114,6 +115,9 @@ span.psw {
 .status {
   width: 500px;
 }
+.NC_manage {
+  width: 800px;
+}
 .animate {
   -webkit-animation: animatezoom 0.3s;
   animation: animatezoom 0.3s
@@ -154,12 +158,11 @@ table.hooly_report {
 /* Change styles for span and cancel button on extra small screens */
 @media screen and (max-device-width: 640px) {
 
-
-* {
-  font-size: 95%;
-}
 .modal-content {
   width: 80%;
+}
+* {
+  font-size: 95%;
 }
 .device_settings {
   width: 600px;
@@ -169,6 +172,9 @@ table.hooly_report {
 }
 .status {
   width: 400px;
+}
+.NC_manage {
+  width: 500px;
 }
 
 }

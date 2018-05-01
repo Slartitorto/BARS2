@@ -128,6 +128,25 @@ CREATE TABLE `non_conformita` (
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+--
+-- Table structure for table `alarm_pause`
+--
+
+DROP TABLE IF EXISTS `alarm_pause`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `alarm_pause` (
+  `codUtente` varchar(32) NOT NULL,
+  `alarm_pause_from_1` varchar(8) DEFAULT NULL,
+  `alarm_pause_to_1` varchar(8) DEFAULT NULL,
+  `alarm_pause_from_2` varchar(8) DEFAULT NULL,
+  `alarm_pause_to_2` varchar(8) DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
 --
 -- Table structure for table `rec_data`
 --

@@ -11,6 +11,4 @@ $(function() {
   };
   $.datepicker.setDefaults($.datepicker.regional['it']);
   $("#datepicker").datepicker();
-  $("#datepicker").datepicker('setDate', new Date());
 });
-

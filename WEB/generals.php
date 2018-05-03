@@ -2,6 +2,7 @@
 include "db_connection.php";
 if(isset($_COOKIE['LOGIN']))
 { $COD_UTENTE =	$_COOKIE['LOGIN'];}
+session_start();
 ?>
 
 <head>
@@ -19,6 +20,19 @@ if(isset($_COOKIE['LOGIN']))
   <script src="scripts/checkMatchPasswords.js"></script>
   <script src="scripts/checkOrari.js"></script>
   <script src="scripts/datePickerLocalized.js"></script>
+  <script>
+  function checkConfirm() {
+    var r = confirm("confermi la cancellazione ?");
+    if (r == true) {return true;}
+    else {return false;}
+  }
+  </script>
+  <script>
+  function preventMultiSubmit() {
+    form.button.disabled = true;
+    return true;
+  }
+  </script>
 
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -65,7 +79,7 @@ if(isset($_COOKIE['LOGIN']))
           <form action="hooly_db_actions.php" method="post">
             <input type="hidden" name="act" value="nc_record">
             <input type="hidden" name="cod_utente" value="<?php echo $COD_UTENTE; ?>">
-            Data: <input type="text" class="slim" id="datepicker" name="nc_date">
+            Data: <input type="text" class="slim" id="datepicker" name="nc_date" maxlength="10" value="<?php echo date("d/m/Y"); ?>" required>
             <br>
             Seleziona dispositivo: <select name="serial">
               <?php for ($i=0;$i<$count;$i++) {
@@ -83,6 +97,101 @@ if(isset($_COOKIE['LOGIN']))
               <option value="C">C</option>
               <option value="D">D</option>
               <option value="E">E</option>
+            </select>
+            <br>
+            <br>
+            <br>
+            <div style=font-size:12px;text-align:left;margin:1% auto 1% auto;padding:30px;>
+              <b>Legenda Non Conformità</b>
+              <br>
+              A. Temperatura dell’apparecchio fuori limite ma temperatura degli alimenti entro i limiti
+              <br>
+              B. Temperatura dell’apparecchio e degli alimenti fuori limite
+              <br>
+              <br>
+              <b>Legenda Azioni correttive</b>
+              <br>
+              C. Trasferimento degli alimenti in altro apparecchio di riserva e riparazione dell’impianto
+              <br>
+              D. Eliminazione degli alimenti con temperatura superiore ai limiti e riparazione dell’impianto
+              <br>
+              E. Immediato impiego dei prodotti e riparazione dell’impianto
+              <br>
+            </div>
+
+            <button  name="button" type="submit" class="greenbtn">Registra</button>
+          </form>
+        </div>
+
+
+      <?php } else if(@$_POST["act"] == "NC_modify") { // ---------- Modifica NC   ?>
+
+        <?php
+        $mese=$_POST['mese'];
+        $anno=$_POST['anno'];
+
+        $nc_id = $_POST['nc_id'];
+        $query = "SELECT * FROM non_conformita where nc_id = '$nc_id'";
+        $result = $conn->query($query);
+        while($row = $result->fetch_assoc()) {
+          $nc_date=$row["nc_date"];
+          $nc_type=$row["nc_type"];
+          $nc_ac=$row["nc_ac"];
+          $serial_found=$row["serial"];
+        }
+
+        $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
+        $result = $conn->query($query);
+        while($row = $result->fetch_assoc()) {
+          $idUtente = $row["idUtente"];
+          $tenant0 = $row["t0"];
+          $tenant1 = $row["t1"];
+          $tenant2 = $row["t2"];
+          $tenant3 = $row["t3"];
+        }
+
+        $query = "SELECT serial, device_name, position, batt_type, min_ok, max_ok FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
+        $result = $conn->query($query);
+        $x=0;
+        while($row = $result->fetch_assoc()) {
+          $serial[$x]=$row["serial"];
+          $device_name[$x]=$row["device_name"];
+          $position[$x]=$row["position"];
+          $batt_type[$x]=$row["batt_type"];
+          $min_ok[$x]=$row["min_ok"];
+          $max_ok[$x]=$row["max_ok"];
+          ++$x;
+        }
+        $count=count($serial);
+
+        ?>
+        <div class="modal-content"> <br> <center>
+          <h3> Modifica non conformità</h3>
+          <br>
+          <form action="hooly_db_actions.php" method="post">
+            <input type="hidden" name="mese" value="<?php echo $mese; ?>">
+            <input type="hidden" name="anno" value="<?php echo $anno; ?>">
+            <input type="hidden" name="act" value="nc_modify">
+            <input type="hidden" name="nc_id" value="<?php echo $nc_id; ?>">
+            Data: <input type="text" class="slim" name="nc_date" id="datepicker" value="<?php echo $nc_date; ?>" maxlength="10" required>
+            <br>
+            Seleziona dispositivo: <select name="serial">
+              <?php for ($i=0;$i<$count;$i++) {
+                echo "<option value= \"$serial[$i]\"";
+                if ($serial[$i] == $serial_found) { echo "selected"; }
+                echo "> $device_name[$i]  $position[$i] </option>\n";
+              } ?>
+            </select>
+            <br>
+            Seleziona Non Conformità: <select name="nc_type">
+              <option value="A" <?php if ($nc_type == "A") {echo "selected"; } ?> >A</option>
+              <option value="B" <?php if ($nc_type == "B") {echo "selected"; } ?> >B</option>
+            </select>
+            <br>
+            Seleziona Azione Correttiva<select name="nc_ac">
+              <option value="C" <?php if ($nc_ac == "C") {echo "selected"; } ?> >C</option>
+              <option value="D" <?php if ($nc_ac == "D") {echo "selected"; } ?> >D</option>
+              <option value="E" <?php if ($nc_ac == "E") {echo "selected"; } ?> >E</option>
             </select>
             <br>
             <br>
@@ -170,8 +279,8 @@ if(isset($_COOKIE['LOGIN']))
         <div class="modal-content"> <br> <center>
           <form action="generals.php?act=add_hooly_response" method="post">
             <br>
-            Seriale: <input type="text" class="slim" name="serial" size="6" maxlength="4">
-            Pin: <input type="text" class="slim" name="pin" size="6" maxlength="4">
+            Seriale: <input type="text" class="slim" name="serial" size="6" maxlength="4" pattern="[A-Z0-9]{4,4}" title= "Il codice seriale consiste di 4 caratteri (numeri o lettere maiuscole) ed è indicato sulla confezione del tuo Hooly" required>
+            Pin: <input type="text" class="slim" name="pin" size="6" maxlength="4" pattern="[0-9]{4,4}" title="Il pin consiste di 4 caratteri (solo numeri) ed è indicato sulla confezione del tuo Hooly" required>
             <input type="hidden" name="idUtente" value="<?php echo $idUtente; ?>">
             <input type="hidden" name="tenant" value="<?php echo $tenant0; ?>">
             <br>
@@ -219,55 +328,60 @@ if(isset($_COOKIE['LOGIN']))
         </div>
 
 
-      <?php } else if(@$_GET["act"] == "NC_manage") { // ---------- Gestione NC -  ?>
+      <?php } else if(@$_GET["act"] == "NC_manage") { // ---------- Mostra e gestisce NC -  ?>
 
+
+        <?php
+        if(isset($_POST["mese"])) { $mese=($_POST["mese"]);}
+        if(isset($_POST["anno"])) { $anno=($_POST["anno"]);}
+        if(isset($_GET["mese"])) { $mese=($_GET["mese"]);}
+        if(isset($_GET["anno"])) { $anno=($_GET["anno"]);}
+        if(isset($_SESSION["mese"])) { $mese=($_SESSION["mese"]);}
+        if(isset($_SESSION["anno"])) { $anno=($_SESSION["anno"]);}
+        ?>
 
         <div class="modal-content NC_manage">
           <br><br>
           <center>
+            Non conformità trovate per il mese: <?php echo $mese; ?> - anno: <?php echo $anno; ?>
+            <br> <br>
             <table class="centered NC_manage">
               <tr><th>Elimina</th><th>Modifica</th><th>Data</th><th>Impianto</th><th>Posizione</th><th>Non conformità</th><th>Azione correttiva</th></tr>
 
               <?php
-              if(isset($_POST["mese"])) { $mese=($_POST["mese"]);}
-              if(isset($_POST["anno"])) { $anno=($_POST["anno"]);}
-              if(isset($_GET["mese"])) { $mese=($_GET["mese"]);}
-              if(isset($_GET["anno"])) { $anno=($_GET["anno"]);}
-
-              $query = "SELECT nc_id, nc_date, nc_type, nc_ac, serial, device_name, position FROM non_conformita where codUtente = '$COD_UTENTE' and nc_date like '%$mese/$anno'";
+              $query = "SELECT nc_id, nc_date, nc_type, nc_ac, serial, device_name, position FROM non_conformita where codUtente = '$COD_UTENTE' and nc_date like '%$mese/$anno' order by nc_date";
               $result = $conn->query($query);
-              if(($result->num_rows) == 0)
-              { ?>
-              </table> nessun record trovato
-            <?php } else {
+              if(($result->num_rows) == 0) { ?> </table> nessun record trovato <?php }
+              else {
+                $x=0;
+                while($row = $result->fetch_assoc()) {
+                  $nc_id[$x]=$row["nc_id"];
+                  $nc_date[$x]=$row["nc_date"];
+                  $nc_type[$x]=$row["nc_type"];
+                  $nc_ac[$x]=$row["nc_ac"];
+                  $device_name[$x]=$row["device_name"];
+                  $position[$x]=$row["position"];
+                  ++$x;
+                }
 
-              $x=0;
-              while($row = $result->fetch_assoc()) {
-                $nc_id[$x]=$row["nc_id"];
-                $nc_date[$x]=$row["nc_date"];
-                $nc_type[$x]=$row["nc_type"];
-                $nc_ac[$x]=$row["nc_ac"];
-                $device_name[$x]=$row["device_name"];
-                $position[$x]=$row["position"];
-                ++$x;
-              }
+                for($i=0;$i<$x;$i++) {
 
-              for($i=0;$i<$x;$i++) {
-
-                ?>
-                <TR>
-                  <TD>
-                    <form action="hooly_db_actions.php" method="post">
-                      <input type="hidden" name="act" value="nc_delete">
-                      <input type="hidden" name="nc_id" value=<?php echo $nc_id[$i] ?> >
-                      <input type="hidden" name="mese" value=<?php echo $mese ?> >
-                      <input type="hidden" name="anno" value=<?php echo $anno ?> >
-                      <button type="submit" class="imgbtn"> <img src="icone/trash.png" height="30" width="30"></button>
-                    </form></td>
+                  ?>
+                  <TR>
                     <TD>
-                      <form action="hooly_db_actions.php" method="post">
-                        <input type="hidden" name="act" value="nc_modify">
+                      <form action="hooly_db_actions.php" onsubmit="return checkConfirm()" method="post">
+                        <input type="hidden" name="act" value="nc_delete">
                         <input type="hidden" name="nc_id" value=<?php echo $nc_id[$i] ?> >
+                        <input type="hidden" name="mese" value=<?php echo $mese ?> >
+                        <input type="hidden" name="anno" value=<?php echo $anno ?> >
+                        <button type="submit" class="imgbtn"> <img src="icone/trash.png" height="30" width="30"></button>
+                      </form>
+                    </td> <TD>
+                      <form action="generals.php" method="post">
+                        <input type="hidden" name="act" value="NC_modify">
+                        <input type="hidden" name="nc_id" value=<?php echo $nc_id[$i] ?> >
+                        <input type="hidden" name="mese" value=<?php echo $mese ?> >
+                        <input type="hidden" name="anno" value=<?php echo $anno ?> >
                         <button type="submit" class="imgbtn"> <img src="icone/edit.png" height="25" width="30"></button>
                       </form></td>
                       <TD><?php echo $nc_date[$i] ?></TD>
@@ -424,11 +538,11 @@ if(isset($_COOKIE['LOGIN']))
                       <br>
                       Password:
                       <br>
-                      <input type="password" style="width:100%" placeholder="Enter Password" name="password" id="password" pattern="[A-Za-z0-9]{5,12}" title="La passowrd può contenere lettere e numeri, un minimo di 5 ed un massimo di 12 caratteri alfanumerici" required>
+                      <input type="password" style="width:100%" placeholder="Enter Password" name="password" id="password" maxlength="14" pattern="[A-Za-z0-9]{5,12}" title="La passowrd può contenere lettere e numeri, un minimo di 5 ed un massimo di 12 caratteri alfanumerici" required>
                       <br> <br>
                       Ripeti la Password:
                       <br>
-                      <input type="password" style="width:100%" placeholder="Repeat Password" name="psw-repeat" id="confirm_password" required>
+                      <input type="password" style="width:100%" placeholder="Repeat Password" name="psw-repeat" id="confirm_password"  maxlenght="14" required>
                       <input name="act" type="hidden" value="registrazione">
                       <br>
                       <button type="submit" class=greenbtn>Cambia la tua password</button>
@@ -461,22 +575,48 @@ if(isset($_COOKIE['LOGIN']))
 
                   <?php } else if(@$_GET["act"] == "set_notifyMethod") { // ---------- Imposta metodo di notifica  ?>
 
+                    <?php
+                    $query = "SELECT * FROM notify_method WHERE codUtente='$COD_UTENTE' limit 1";
+                    $result = $conn->query($query);
+                    if(($result->num_rows) == 1)
+                    {
+                      while($row = $result->fetch_assoc()) {
+                        $telegram_flag = $row["telegram_flag"];
+                        $telegram_chatid = $row["telegram_chatid"];
+                        $pushbullett_flag = $row["pushbullett_flag"];
+                        $pushbullett_addr = $row["pushbullett_addr"];
+                        $email_flag = $row["email_flag"];
+                        $email_addr = $row["email_addr"];
+                        $whatsapp_flag = $row["whatsapp_flag"];
+                        $whatsapp_tel = $row["whatsapp_tel"];
+                      }
+                    } else {
+                      $telegram_flag = "";
+                      $telegram_chatid = "";
+                      $pushbullett_flag = "";
+                      $pushbullett_addr = "";
+                      $email_flag = "";
+                      $email_addr = "";
+                      $whatsapp_flag = "";
+                      $whatsapp_tel = "";
+                    }
+                    ?>
 
                     <div class=modal-content>
                       <form action="hooly_db_actions.php" method="post">
                         <br><br>Desidero ricevere le notifiche tramite:<br><br>
                         <table>
-                          <tr><td><input type="checkbox" name="notif_telegram" value="1">Telegram </td><td></td><td>
-                            ChatId:</td><td> <input type="text" class=slim name="notif_teleg_chatid" value=<?php echo $user_chatid ?> ></td>
+                          <tr><td><input type="checkbox" name="telegram_flag" value="1" <?php if($telegram_flag) echo "checked"; ?> >Telegram </td><td></td><td>
+                            ChatId:</td><td> <input type="text" class=slim name="telegram_chatid" maxlength="20" value=<?php echo $telegram_chatid ?> ></td>
                           </tr>
-                          <tr><td><input type="checkbox" name="notif_pushbullett" value="1">Pushbullett</td><td>&nbsp&nbsp&nbsp</td><td>
-                            Addr:</td><td> <input type="text" class=slim name="notif_pushb_email" value=<?php echo $user_email ?> ></td>
+                          <tr><td><input type="checkbox" name="pushbullett_flag" value="1" <?php if($pushbullett_flag) echo "checked"; ?> >Pushbullett</td><td>&nbsp&nbsp&nbsp</td><td>
+                            Addr:</td><td> <input type="email" class=slim name="pushbullett_addr" maxlength="50" value=<?php echo $pushbullett_addr ?> ></td>
                           </tr>
-                          <tr><td><input type="checkbox" name="notif_mail" value="1">Email</td><td></td><td>
-                            Addr:</td><td> <input type="text" class=slim name="notif_email_addr" value=<?php echo $user_email ?> ></td>
+                          <tr><td><input type="checkbox" name="email_flag" value="1" <?php if($email_flag) echo "checked"; ?> >Email</td><td></td><td>
+                            Addr:</td><td> <input type="email" class=slim name="email_addr" maxlength="50" value=<?php echo $email_addr ?> ></td>
                           </tr>
-                          <tr><td><input type="checkbox" name="notif_whatsapp" value="1">WhatsApp</td><td>&nbsp</td><td>
-                            #Tel:</td><td> <input type="text" class=slim name="notif_whatsapp_tel" value=<?php echo $user_email ?> ></td>
+                          <tr><td><input type="checkbox" name="whatsapp_flag" value="1" <?php if($whatsapp_flag) echo "checked"; ?> >WhatsApp</td><td>&nbsp</td><td>
+                            #Tel:</td><td> <input type="text" class=slim name="whatsapp_tel" maxlength="20" value=<?php echo $whatsapp_tel ?> ></td>
                           </tr>
                         </table>
                         <br>
@@ -488,16 +628,41 @@ if(isset($_COOKIE['LOGIN']))
 
                   <?php } else if(@$_GET["act"] == "set_personalInfo") { // ---------- Imposta info utente  ?>
 
+
+                    <?php
+                    $query = "SELECT * FROM personal_info WHERE codUtente='$COD_UTENTE' limit 1";
+                    $result = $conn->query($query);
+                    if(($result->num_rows) == 1)
+                    {
+                      while($row = $result->fetch_assoc()) {
+                        $ragione_sociale = $row["ragione_sociale"];
+                        $indirizzo_1 = $row["indirizzo_1"];
+                        $indirizzo_2 = $row["indirizzo_2"];
+                        $cap = $row["cap"];
+                        $citta = $row["citta"];
+                        $telefono = $row["telefono"];
+                      }
+                    } else {
+                      $ragione_sociale = "";
+                      $indirizzo_1 = "";
+                      $indirizzo_2 = "";
+                      $cap = "";
+                      $citta = "";
+                      $telefono = "";
+                    }
+                    ?>
+
+
                     <div class=modal-content>
                       <form action="hooly_db_actions.php" method="post">
                         <br>
                         <table>
-                          <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale"></td></tr>
-                          <tr><td>Indirizzo 1: </td><td><input type="text" class="slim" name="indirizzo1"></td></tr>
-                          <tr><td>Indirizzo 2: </td><td><input type="text" class="slim" name="indirizzo2"></td></tr>
-                          <tr><td>CAP: </td><td><input type="text" class="slim" name="cap"></td></tr>
-                          <tr><td>Città: </td><td><input type="text" class="slim" name="citta"></td></tr>
-                          <tr><td>Telefono: </td><td><input type="text" class="slim" name="telefono"></td></tr>
+                          <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale" maxlength="50" value="<?php echo $ragione_sociale; ?>"></td></tr>
+                          <tr><td>Indirizzo 1: </td><td><input type="text" class="slim" name="indirizzo_1" maxlength="50" value="<?php echo $indirizzo_1; ?>"></td></tr>
+                          <tr><td>Indirizzo 2: </td><td><input type="text" class="slim" name="indirizzo_2" maxlength="50" value="<?php echo $indirizzo_2; ?>"></td></tr>
+                          <tr><td>CAP: </td><td><input type="text" class="slim" name="cap" maxlength="5" value="<?php echo $cap; ?>"></td></tr>
+                          <tr><td>Città: </td><td><input type="text" class="slim" name="citta" maxlength="32" value="<?php echo $citta; ?>"></td></tr>
+                          <tr><td>Telefono: </td><td><input type="text" class="slim" name="telefono" maxlength="32" value="<?php echo $telefono; ?>"></td></tr>
                         </table>
                         <br>
                         <input type="hidden" name="act" value="set_personalInfo">

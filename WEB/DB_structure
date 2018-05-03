@@ -129,6 +129,47 @@ CREATE TABLE `non_conformita` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
+
+--
+-- Table structure for table `notify_method`
+--
+
+DROP TABLE IF EXISTS `notify_method`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notify_method` (
+  `codUtente` varchar(32) NOT NULL,
+  `telegram_flag` bool DEFAULT 0,
+  `telegram_chatid` varchar(32) DEFAULT NULL,
+  `pushbullett_flag` bool DEFAULT 0,
+  `pushbullett_addr` varchar(50) DEFAULT NULL,
+  `email_flag` bool DEFAULT 0,
+  `email_addr` varchar(50) DEFAULT NULL,
+  `whatsapp_flag` bool DEFAULT 0,
+  `whatsapp_tel` varchar(32) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Table structure for table `personal_info`
+--
+
+DROP TABLE IF EXISTS `personal_info`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `personal_info` (
+  `codUtente` varchar(32) NOT NULL,
+  `ragione_sociale` varchar(50) DEFAULT NULL,
+  `indirizzo_1` varchar(50) DEFAULT NULL,
+  `indirizzo_2` varchar(50) DEFAULT NULL,
+  `cap` varchar(8) DEFAULT NULL,
+  `citta` varchar(32) DEFAULT NULL,
+  `telefono` varchar(32) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
 --
 -- Table structure for table `alarm_pause`
 --

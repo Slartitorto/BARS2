@@ -16,24 +16,8 @@ include "db_connection.php";
 
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/jquery-ui.js"></script>
-  <script src="scripts/checkMatchPasswords.js"></script>
-  <script src="scripts/checkOrari.js"></script>
   <script src="scripts/datePickerLocalized.js"></script>
-  <script>
-  function checkConfirm() {
-    var r = confirm("confermi la cancellazione ?");
-    if (r == true) {return true;}
-    else {return false;}
-  }
-  </script>
-  <script>
-  function preventMultiSubmit() {
-    document.getElementById("mybutton").disabled='true';
-    document.getElementById("mybutton").style.background='#ff0000';
-    return true;
-  }
-  </script>
-
+  <script src="scripts/utils.js"></script>
 
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -70,10 +54,9 @@ include "db_connection.php";
           $max_ok[$x]=$row["max_ok"];
           ++$x;
         }
-
         $count=count($serial);
-
         ?>
+
         <div class="modal-content"> <br> <center>
           <h3> Inserisci non conformità</h3>
           <br>
@@ -103,21 +86,7 @@ include "db_connection.php";
             <br>
             <br>
             <div style=font-size:12px;text-align:left;margin:1% auto 1% auto;padding:30px;>
-              <b>Legenda Non Conformità</b>
-              <br>
-              A. Temperatura dell’apparecchio fuori limite ma temperatura degli alimenti entro i limiti
-              <br>
-              B. Temperatura dell’apparecchio e degli alimenti fuori limite
-              <br>
-              <br>
-              <b>Legenda Azioni correttive</b>
-              <br>
-              C. Trasferimento degli alimenti in altro apparecchio di riserva e riparazione dell’impianto
-              <br>
-              D. Eliminazione degli alimenti con temperatura superiore ai limiti e riparazione dell’impianto
-              <br>
-              E. Immediato impiego dei prodotti e riparazione dell’impianto
-              <br>
+              <?php include("includes/legenda_nc.php"); ?>
             </div>
             <button id="mybutton" type="submit" class="greenbtn">Registra</button>
           </form>
@@ -125,6 +94,7 @@ include "db_connection.php";
 
 
       <?php } else if(@$_POST["act"] == "NC_modify") { // ---------- Modifica NC   ?>
+
 
         <?php
         $mese=$_POST['mese'];
@@ -150,16 +120,13 @@ include "db_connection.php";
           $tenant3 = $row["t3"];
         }
 
-        $query = "SELECT serial, device_name, position, batt_type, min_ok, max_ok FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
+        $query = "SELECT serial, device_name, position FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
         $result = $conn->query($query);
         $x=0;
         while($row = $result->fetch_assoc()) {
           $serial[$x]=$row["serial"];
           $device_name[$x]=$row["device_name"];
           $position[$x]=$row["position"];
-          $batt_type[$x]=$row["batt_type"];
-          $min_ok[$x]=$row["min_ok"];
-          $max_ok[$x]=$row["max_ok"];
           ++$x;
         }
         $count=count($serial);
@@ -197,21 +164,7 @@ include "db_connection.php";
             <br>
             <br>
             <div style=font-size:12px;text-align:left;margin:1% auto 1% auto;padding:30px;>
-              <b>Legenda Non Conformità</b>
-              <br>
-              A. Temperatura dell’apparecchio fuori limite ma temperatura degli alimenti entro i limiti
-              <br>
-              B. Temperatura dell’apparecchio e degli alimenti fuori limite
-              <br>
-              <br>
-              <b>Legenda Azioni correttive</b>
-              <br>
-              C. Trasferimento degli alimenti in altro apparecchio di riserva e riparazione dell’impianto
-              <br>
-              D. Eliminazione degli alimenti con temperatura superiore ai limiti e riparazione dell’impianto
-              <br>
-              E. Immediato impiego dei prodotti e riparazione dell’impianto
-              <br>
+              <?php include("includes/legenda_nc.php"); ?>
             </div>
 
             <button type="submit" class="greenbtn">Registra</button>
@@ -298,28 +251,7 @@ include "db_connection.php";
             <h3> Mostra e gestisci le Non Conformità registrate</h3>
             <br>
             <form action="generals.php?act=NC_manage" method="post">
-
-              <select name="mese">
-                <option value="01">Gennaio</option>
-                <option value="02">Febbraio</option>
-                <option value="03">Marzo</option>
-                <option value="04">Aprile</option>
-                <option value="05">Maggio</option>
-                <option value="06">Giugno</option>
-                <option value="07">Luglio</option>
-                <option value="08">Agosto</option>
-                <option value="09">Settembre</option>
-                <option value="10">Ottobre</option>
-                <option value="11">Novembre</option>
-                <option value="12">Dicembre</option>
-              </select>
-
-              <select name="anno">
-                <option value="2017">2017</option>
-                <option value="2018" selected>2018</option>
-                <option value="2019">2019</option>
-              </select>
-
+              <?php include 'includes/select_mese_anno.php'; ?>
               <input type="hidden" name="cod_utente" value="<?php echo $COD_UTENTE; ?>">
               <br>
               <button type="submit" class="greenbtn">Seleziona</button>
@@ -398,19 +330,54 @@ include "db_connection.php";
 
               <?php } else if(@$_GET["act"] == "monthly_report") { // ---------- Report mensili -  ?>
 
+<?php
+$query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
+        $result = $conn->query($query);
+        while($row = $result->fetch_assoc()) {
+          $idUtente = $row["idUtente"];
+          $tenant0 = $row["t0"];
+          $tenant1 = $row["t1"];
+          $tenant2 = $row["t2"];
+          $tenant3 = $row["t3"];
+        }
+
+        $query = "SELECT serial, device_name, position FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
+        $result = $conn->query($query);
+        $x=0;
+        while($row = $result->fetch_assoc()) {
+          $serial[$x]=$row["serial"];
+          $device_name[$x]=$row["device_name"];
+          $position[$x]=$row["position"];
+          ++$x;
+        }
+        $count=count($serial);
+?>
+
 
                 <div class="modal-content"> <br> <center>
                   <br> <center>
-                    <h3> Genera report mensili </h3>
+                    <h3> Genera report mensile </h3>
                     <br>
                     <form action="hooly_report.php" method="post">
+  <select name="serial">
+              <?php for ($i=0;$i<$count;$i++) {
+                echo "<option value= \"$serial[$i]\"";
+                if ($serial[$i] == $serial_found) { echo "selected"; }
+                echo "> $device_name[$i]  $position[$i] </option>\n";
+              } ?>
+            </select>
 
-                      <select name="ora">
+                      <?php include 'includes/select_mese_anno.php'; ?>
+
+                      <br> <br> <br>
+Seleziona i tre orari giornalieri:
+<br> <br>
+                      <select name="ora1">
                         <option value="00">00:00</option>
                         <option value="02">02:00</option>
                         <option value="04">04:00</option>
-                        <option value="06">06:00</option>
-                        <option value="08" selected>08:00</option>
+                        <option value="06" selected>06:00</option>
+                        <option value="08">08:00</option>
                         <option value="10">10:00</option>
                         <option value="12">12:00</option>
                         <option value="14">14:00</option>
@@ -419,29 +386,36 @@ include "db_connection.php";
                         <option value="20">20:00</option>
                         <option value="22">22:00</option>
                       </select>
-
-                      <select name="mese">
-                        <option value="01">Gennaio</option>
-                        <option value="02">Febbraio</option>
-                        <option value="03">Marzo</option>
-                        <option value="04">Aprile</option>
-                        <option value="05">Maggio</option>
-                        <option value="06">Giugno</option>
-                        <option value="07">Luglio</option>
-                        <option value="08">Agosto</option>
-                        <option value="09">Settembre</option>
-                        <option value="10">Ottobre</option>
-                        <option value="11">Novembre</option>
-                        <option value="12">Dicembre</option>
+                      <select name="ora2">
+                        <option value="00">00:00</option>
+                        <option value="02">02:00</option>
+                        <option value="04">04:00</option>
+                        <option value="06">06:00</option>
+                        <option value="08">08:00</option>
+                        <option value="10" selected>10:00</option>
+                        <option value="12">12:00</option>
+                        <option value="14">14:00</option>
+                        <option value="16">16:00</option>
+                        <option value="18">18:00</option>
+                        <option value="20">20:00</option>
+                        <option value="22">22:00</option>
                       </select>
-
-                      <select name="anno">
-                        <option value="2017">2017</option>
-                        <option value="2018" selected>2018</option>
-                        <option value="2019">2019</option>
+                      <select name="ora3">
+                        <option value="00">00:00</option>
+                        <option value="02">02:00</option>
+                        <option value="04">04:00</option>
+                        <option value="06">06:00</option>
+                        <option value="08">08:00</option>
+                        <option value="10">10:00</option>
+                        <option value="12">12:00</option>
+                        <option value="14">14:00</option>
+                        <option value="16" selected>16:00</option>
+                        <option value="18">18:00</option>
+                        <option value="20">20:00</option>
+                        <option value="22">22:00</option>
                       </select>
+<br><br>
 
-                      <br>
                       <button type="submit" class="greenbtn">Report SA-04</button>
                     </form>
                   </div>

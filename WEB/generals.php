@@ -1,8 +1,7 @@
 <?php
-include "db_connection.php";
 if(isset($_COOKIE['LOGIN']))
 { $COD_UTENTE =	$_COOKIE['LOGIN'];}
-session_start();
+include "db_connection.php";
 ?>
 
 <head>
@@ -29,10 +28,12 @@ session_start();
   </script>
   <script>
   function preventMultiSubmit() {
-    form.button.disabled = true;
+    document.getElementById("mybutton").disabled='true';
+    document.getElementById("mybutton").style.background='#ff0000';
     return true;
   }
   </script>
+
 
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -76,7 +77,7 @@ session_start();
         <div class="modal-content"> <br> <center>
           <h3> Inserisci non conformità</h3>
           <br>
-          <form action="hooly_db_actions.php" method="post">
+          <form onsubmit="preventMultiSubmit()" action="hooly_db_actions.php" method="post">
             <input type="hidden" name="act" value="nc_record">
             <input type="hidden" name="cod_utente" value="<?php echo $COD_UTENTE; ?>">
             Data: <input type="text" class="slim" id="datepicker" name="nc_date" maxlength="10" value="<?php echo date("d/m/Y"); ?>" required>
@@ -118,8 +119,7 @@ session_start();
               E. Immediato impiego dei prodotti e riparazione dell’impianto
               <br>
             </div>
-
-            <button  name="button" type="submit" class="greenbtn">Registra</button>
+            <button id="mybutton" type="submit" class="greenbtn">Registra</button>
           </form>
         </div>
 
@@ -336,8 +336,6 @@ session_start();
         if(isset($_POST["anno"])) { $anno=($_POST["anno"]);}
         if(isset($_GET["mese"])) { $mese=($_GET["mese"]);}
         if(isset($_GET["anno"])) { $anno=($_GET["anno"]);}
-        if(isset($_SESSION["mese"])) { $mese=($_SESSION["mese"]);}
-        if(isset($_SESSION["anno"])) { $anno=($_SESSION["anno"]);}
         ?>
 
         <div class="modal-content NC_manage">

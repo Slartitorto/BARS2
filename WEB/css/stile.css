@@ -125,28 +125,6 @@ span.psw {
 .top-menu{
   width: 80%;
 }
-table.hooly_report {
-  table-layout: auto;
-  width: 1300px;
-}
-#hooly_report {
-  font-size: 9px;
-}
-#hooly_report td {
-  border: 1px solid #888;
-  padding: 6px 0px;
-  width: 95px;
-  text-align: center;
-}
-#hooly_report tr {
-  border: 1px solid #888;
-}
-#hooly_report tr:nth-child(odd) {
-  background-color: #efefef;
-}
-#hooly_report th {
-  background-color: #efefef;
-}
 @-webkit-keyframes animatezoom {
   from {-webkit-transform: scale(0)}
   to {-webkit-transform: scale(1)}

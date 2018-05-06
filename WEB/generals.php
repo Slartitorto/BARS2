@@ -362,7 +362,6 @@ $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'"
   <select name="serial">
               <?php for ($i=0;$i<$count;$i++) {
                 echo "<option value= \"$serial[$i]\"";
-                if ($serial[$i] == $serial_found) { echo "selected"; }
                 echo "> $device_name[$i]  $position[$i] </option>\n";
               } ?>
             </select>

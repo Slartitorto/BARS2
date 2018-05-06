@@ -1,0 +1,59 @@
+.hooly_report {
+  table-layout: auto;
+  width: 1300px;
+}
+
+
+#header_table {
+  font-size: 16px;
+}
+#header_table td {
+  border: 1px solid #888;
+  padding: 6px 0px;
+  text-align: left;
+}
+#header_table tr {
+  border: 1px solid #888;
+}
+
+
+
+#hooly_reportTemp {
+  font-size: 9px;
+}
+#hooly_reportTemp td {
+  border: 1px solid #888;
+  padding: 6px 0px;
+  width: 95px;
+  text-align: center;
+}
+#hooly_reportTemp tr {
+  border: 1px solid #888;
+}
+#hooly_reportTemp th {
+  background-color: #efefef;
+}
+
+
+
+#hooly_reportNC {
+  font-size: 9px;
+}
+#hooly_reportNC td {
+  border: 1px solid #888;
+  padding: 6px 0px;
+  width: 95px;
+  text-align: center;
+}
+#hooly_reportNC tr {
+  border: 1px solid #888;
+}
+#hooly_reportNC th {
+  background-color: #efefef;
+}
+
+@media print {
+  .hide-print {
+    display: none;
+  }
+}

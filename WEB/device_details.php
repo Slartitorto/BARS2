@@ -38,7 +38,6 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
   }
 
   $query = "SELECT serial, device_name, position FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
-
   $result = $conn->query($query);
   $serial_qty=0;
   while($row = $result->fetch_assoc()) {
@@ -48,8 +47,8 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     ++$serial_qty;
   }
 
-  // SELECT for data to graph
-
+  $min_ok=0;
+  $max_ok=100;
   if ($graph == "temp") {
     $query = "SELECT min_ok, max_ok FROM devices where serial = '$serial'";
     $result = $conn->query($query);
@@ -57,39 +56,34 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
       $min_ok=$row["min_ok"];
       $max_ok=$row["max_ok"];
     }
-
-    $sqla = "SELECT unix_timestamp(timestamp) as timestamp, temp FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-    $sql_csv = "SELECT timestamp, counter,  temp FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-
-    $result = $conn->query($sqla);
-    while ($row = $result->fetch_array()) {
-      $timestamp = $row['timestamp'];
-      $timestamp *=1000;
-      $data = $row['temp'];
-
-      $data1[] = "[$timestamp, $data]";
-      $data2[] = "[$timestamp, $min_ok]";
-      $data3[] = "[$timestamp, $max_ok]";
-    }
-  } else {
-    $sqla = "SELECT unix_timestamp(timestamp) as timestamp, battery FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-    $sql_csv = "SELECT timestamp, battery FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-    $result = $conn->query($sqla);
-    while ($row = $result->fetch_array()) {
-      $timestamp = $row['timestamp'];
-      $timestamp *=1000;
-      $battery = $row['battery'];
-      $data4[] = "[$timestamp, $battery]";
-    }
   }
-  print  "
-  <script type=\"text/javascript\">
-  function navigator_Go(url) {
-    window.location.assign(url);
+  if ($graph == "temp") {
+    $query = "SELECT unix_timestamp(timestamp) as timestamp, temp as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+    $sql_csv = "SELECT timestamp, counter, temp FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+  } else if ($graph == "batt") {
+    $query = "SELECT unix_timestamp(timestamp) as timestamp, battery as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+    $sql_csv = "SELECT timestamp, counter, battery FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+  } else if ($graph == "hum") {
+    $query = "SELECT unix_timestamp(timestamp) as timestamp, hum as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+    $sql_csv = "SELECT timestamp, counter, hum FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+  } else if ($graph == "rssi") {
+    $query = "SELECT unix_timestamp(timestamp) as timestamp, rssi as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+    $sql_csv = "SELECT timestamp, counter, rssi FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
   }
-  </script>
-  <script src=\"scripts/jquery.min.js\"></script>
-  <script src=\"scripts/highcharts.js\"></script>
+
+  $result = $conn->query($query);
+  while ($row = $result->fetch_array()) {
+    $timestamp = $row['timestamp'];
+    $timestamp *=1000;
+    $data = $row['data'];
+
+    $data1[] = "[$timestamp, $data]";
+    $data2[] = "[$timestamp, $min_ok]";
+    $data3[] = "[$timestamp, $max_ok]";
+  }
+  ?>
+  <script src="scripts/jquery.min.js"></script>
+  <script src="scripts/highcharts.js"></script>
   <script>
   $(function () {
     Highcharts.setOptions({
@@ -116,183 +110,165 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
         },
       },
       series: [{
-        data: [";
-        if ($graph == "temp"){
-          echo join($data1, ',') ;
-          print			"]
-        },{
-          color:'#ff0000',
-          enableMouseTracking: false,
-          data: [";
-          echo join($data2, ',') ;
-          print                   "]
-        },{
-          color:'#ff0000',
-          enableMouseTracking: false,
-          data: [";
-          echo join($data3, ',') ;
-        } else {
-
-          echo join($data4, ',') ;
-        }
-        print                   "]
-      } ]
+        data: [<?php echo join($data1, ',') ;?>]
+      },{
+        color:'#ff0000',
+        enableMouseTracking: false,
+        data: [<?php echo join($data2, ',') ;?>]
+      },{
+        color:'#ff0000',
+        enableMouseTracking: false,
+        data: [<?php echo join($data3, ',') ;?>]
+      }]
     });
   });
   </script>
-  </head>
-  <body>
+</head>
+<body>
 
   <BR>
-  <center>
+    <center>
+      <?php
 
-  ";
-  function format_time($t,$f=':') // t = seconds, f = separator
-  {
-    return sprintf("%3d%s%02d", ($t/60) , $f, $t%60);
-  }
-  $sql = "SELECT device_name, position, batt_type FROM devices where serial = '$serial'" ;
-  $result = $conn->query($sql);
-  if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-      $device_name = $row["device_name"];
-      $position = $row["position"];
-      $batt_type = $row["batt_type"];
-    }
-  }
+      function format_time($t,$f=':') // t = seconds, f = separator
+      {
+        return sprintf("%3d%s%02d", ($t/60) , $f, $t%60);
+      }
+      $sql = "SELECT device_name, position, batt_type FROM devices where serial = '$serial'" ;
+      $result = $conn->query($sql);
+      if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+          $device_name = $row["device_name"];
+          $position = $row["position"];
+          $batt_type = $row["batt_type"];
+        }
+      }
 
-  // SELECT last record
-  $sql = "SELECT timestamp, temp, hum, battery, period, rssi, timestampdiff(second,timestamp,now()) as sec_delay FROM last_rec_data where serial = '$serial' order by timestamp desc limit 1";
-  $result = $conn->query($sql);
-  if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-      $time_stamp = $row["timestamp"];
-      $temp = $row["temp"];
-      $hum = $row["hum"];
-      $batt = $row["battery"];
-      $period = $row["period"];
-      $rssi = $row["rssi"];
-      $min_period = format_time($period);
-      $sec_delay=$row["sec_delay"];
-      $min_delay=format_time($sec_delay);
-    }
+      // SELECT last record
+      $sql = "SELECT timestamp, temp, hum, battery, period, rssi, timestampdiff(second,timestamp,now()) as sec_delay FROM last_rec_data where serial = '$serial' order by timestamp desc limit 1";
+      $result = $conn->query($sql);
+      if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+          $time_stamp = $row["timestamp"];
+          $temp = $row["temp"];
+          $hum = $row["hum"];
+          $batt = $row["battery"];
+          $period = $row["period"];
+          $rssi = $row["rssi"];
+          $min_period = format_time($period);
+          $sec_delay=$row["sec_delay"];
+          $min_delay=format_time($sec_delay);
+        }
 
-    // SELECT last counter
-    $query = "select counter from last_rec_data where serial = '$serial' order by timestamp desc limit 1";
-    $result = $conn->query($query);
-    while($row = $result->fetch_assoc()) {
-      $link_qlt0=$row["counter"];
-    }
-    // SELECT last counter -10
-    $query = "select counter from rec_data where serial = '$serial' order by timestamp desc limit 10,1";
-    $result = $conn->query($query);
-    while($row = $result->fetch_assoc()) {
-      $link_qlt1=$row["counter"];
-    }
-    $link_qlt = intval(1000/($link_qlt0 - $link_qlt1));
+        // SELECT last counter
+        $query = "select counter from last_rec_data where serial = '$serial' order by timestamp desc limit 1";
+        $result = $conn->query($query);
+        while($row = $result->fetch_assoc()) {
+          $link_qlt0=$row["counter"];
+        }
+        // SELECT last counter -10
+        $query = "select counter from rec_data where serial = '$serial' order by timestamp desc limit 10,1";
+        $result = $conn->query($query);
+        while($row = $result->fetch_assoc()) {
+          $link_qlt1=$row["counter"];
+        }
+        $link_qlt = intval(1000/($link_qlt0 - $link_qlt1));
+        ?>
 
-    echo "<div class=\"modal-content\" style=\"width:90%;\">";
-    echo " <table class=\"padded centered device_details\">";
-    echo " <tr><th>" . $device_name . "</th><th>" . $position . "</th></tr><tr> <th colspan = 2>Temp: " . round($temp,2) . "&deg C</th></tr>";
-    if ($graph == "temp" ){
-      echo " <TR><TD>Serial: <B> " . $serial . "</B></TD><TD><A HREF=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$last&graph=battery');\">Batteria:</a>  <B>" . $batt . "% </B> </TD></TR>";
-    } else {
-      echo " <TR><TD>Serial: <B> " . $serial . "</B></TD><TD>Batteria: <B>" . $batt . "</B> (" . $perc_batt . "%) - " . $batt_type . "</TD></TR>";
-    }
-    echo " <TR><TD>Periodo di rilevazione (min.)<B>" . $min_period . "</B><TD>Ultimo aggiornamento: <B>" . $min_delay . "</B></TD></TR>";
-    echo " <TR><TD colspan=2>Link quality: <B>" . $link_qlt . "%</B>  (RSSI = <B>" . $rssi . ")</B></TD></TR>";
-    echo "</table><br><br>\n";
-    echo "<table width=100%>";
-    echo "<tr>";
-    echo "<td align=left>";
-    if ($graph == "temp") {
+        <div class="modal-content" style="width:90%;">
+          <table class="padded centered device_details">
+            <tr><th><?php echo $device_name?></th><th><?php echo $position ?></th></tr>
+            <tr> <th colspan = 2>Temp: <?php echo round($temp,2)?> &deg C</th></tr>
+            <TR><TD>Serial: <B><?php echo $serial ?></B></TD><TD>Batteria: <B><?php echo $batt ?>%</B></TD></TR>
+            <TR><TD>Periodo di rilevazione (min.)<B><?php echo $min_period ?></B><TD>Ultimo aggiornamento: <B><?php echo $min_delay ?></B></TD></TR>
+            <TR><TD colspan=2>Link quality: <B><?php echo $link_qlt ?>%</B> (RSSI = <B><?php echo $rssi ?>)</B></TD></TR>
+          </table>
+          <br><br>
 
-      echo "<form action =\"" . $_SERVER['PHP_SELF'] . "\" method=\"POST\">";
-      echo "<select name=\"last\" onchange=\"this.form.submit()\">\n";
-      echo "<option value= \"1\"";
-      if ($last == 1) { echo " selected";}
-      echo "> Ultime 24 ore</option>\n";
+          <table width=100%>
+            <tr>
+              <td width="33%" align="left">
+                <form action = "<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+                  <select name="graph" onchange="this.form.submit()">
+                    <option value= "temp" <?php if ($graph == "temp") { echo " selected";} ?>> Temperatura</option>
+                    <option value= "hum" <?php if ($graph == "hum") { echo " selected";} ?>> Umidità</option>
+                    <option value= "rssi" <?php if ($graph == "rssi") { echo " selected";} ?>> Forza del segnale</option>
+                    <option value= "batt" <?php if ($graph == "batt") { echo " selected";} ?>> Livello batteria</option>
+                  </select>
+                  <input type="hidden" name="serial" value="<?php echo $serial; ?>">
+                  <input type=hidden name=last value="<?php echo $last; ?>">
+                </form>
+              </td>
 
-      echo "<option value= \"2\"";
-      if ($last == 2) { echo " selected";}
-      echo "> Ultime 48 ore</option>\n";
+              <td width="34%" align="center">
+                <form action = "<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+                  Periodo: <select name="last" onchange="this.form.submit()">
+                    <option value= "1" <?php if ($last == 1) { echo " selected";} ?>> Ultime 24 ore</option>
+                    <option value= "2" <?php if ($last == 2) { echo " selected";} ?>> Ultime 48 ore</option>
+                    <option value= "7" <?php if ($last == 7) { echo " selected";} ?>> Ultima settimana</option>
+                    <option value= "30" <?php if ($last == 30) { echo " selected";} ?>> Ultimo mese</option>
+                  </select>
+                  <input type="hidden" name="serial" value="<?php echo $serial?>">
+                  <input type="hidden" name="graph" value="<?php echo $graph?>">
+                </form>
+              </td>
 
-      echo "<option value= \"7\"";
-      if ($last == 7) { echo " selected";}
-      echo "> Ultima settimana</option>\n";
+              <td width="33%" align="right">
+                <form action = "<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+                  Passa a:  <select name="serial" onchange="this.form.submit()">
+                    <?php
+                    for($i=0;$i<$serial_qty;$i++) {
+                      echo "<option value= \"$serial_array[$i]\"";
+                      if ($serial_array[$i] == $serial) { echo " selected";}
+                      echo ">$device_name_array[$i] - $position_array[$i]</option>\n";
+                    }
+                    ?>
+                  </select>
+                  <input type=hidden name=last value="<?php echo $last; ?>" >
+                  <input type=hidden name=graph value="<?php echo $graph ?>" >
+                </form>
+              </td>
+            </tr>
+          </table>
+          <div id="container1" style="width:100%; height:400px;"></div>
+          <div class="hide-print">
+            <script>
+            var data = [ <?php
+            // https://code-maven.com/create-and-download-csv-with-javascript
 
-      echo "<option value= \"30\"";
-      if ($last == 30) { echo " selected";}
-      echo "> Ultimo mese</option>\n";
+            $result = $conn->query($sql_csv);
+            while ($row = $result->fetch_array()) {
+              echo "['" . $row[0] . "','" . $row[1] . "','" . $row[2] . "'],";
+            }
+            ?> ];
 
-      echo "<input type=hidden name=serial value=" . $serial . ">";
-      echo "<input type=hidden name=graph value=" . $graph . ">";
-      echo "</form>\n";
+            function download_csv() {
+              var csv = 'Timestamp,Count,<?php echo $graph; ?>\n';
+              data.forEach(function(row) {
+                csv += row.join(',');
+                csv += "\n";
+              });
 
-      echo "</td>";
+              console.log(csv);
+              var hiddenElement = document.createElement('a');
+              hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+              hiddenElement.download = 'data.csv';
+              hiddenElement.click();
+            }
+            </script>
 
-    } else {
-      echo "<A href=\"javascript:navigator_Go('device_details.php?serial=$serial&last=$next_last&graph=battery');\">" . $string_last . "</a>";
-    }
-    echo "<td align=right>";
-    echo "<form action =\"" . $_SERVER['PHP_SELF'] . "\" method=\"POST\">";
-    echo "Passa a:  ";
-    echo "<select name=\"serial\" onchange=\"this.form.submit()\">\n";
-    for($i=0;$i<$serial_qty;$i++) {
-      echo "<option value= \"$serial_array[$i]\"";
-      if ($serial_array[$i] == $serial) { echo " selected";}
-      echo ">$device_name_array[$i] - $position_array[$i]</option>\n";
-    }
-    ?>
+            <button class=graybtn onclick="download_csv()">Download CSV</button>
+            <button class=graybtn onClick="window.print()">Print</button>
+          </div>
 
-  </select>
-  <input type=hidden name=last value="<?php echo $last; ?>" >
-  <input type=hidden name=graph value="<?php echo $graph ?>" >
-</form>
-</td>
-</tr>
-</table>
-<div id="container1" style="width:100%; height:400px;"></div>
-<div class="hide-print">
-  <script>
-  var data = [
-    <?php
-    // https://code-maven.com/create-and-download-csv-with-javascript
+          <?php
 
-    $result = $conn->query($sql_csv);
-    while ($row = $result->fetch_array()) {
-      echo "['" . $row[0] . "','" . $row[1] . "','" . $row[2] . "'],";
-    }
-    ?>
-  ];
+        } else {
+          echo "0 results";
+        }
 
-  function download_csv() {
-    var csv = 'Timestamp,Count,Data\n';
-    data.forEach(function(row) {
-      csv += row.join(',');
-      csv += "\n";
-    });
-
-    console.log(csv);
-    var hiddenElement = document.createElement('a');
-    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
-    hiddenElement.download = 'data.csv';
-    hiddenElement.click();
-  }
-  </script>
-
-  <button class=graybtn onclick="download_csv()">Download CSV</button>
-  <button class=graybtn onClick="window.print()">Print</button>
-</div>
-
-<?php
-
-} else {
-  echo "0 results";
-}
-
-$conn->close();
-?>
-</div>
-</body>
-</html>
+        $conn->close();
+        ?>
+      </div>
+    </body>
+    </html>

@@ -5,26 +5,15 @@ if(isset($_COOKIE['LOGIN']))
 ?>
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title><?php echo NOMESITO; ?></title>
+
   <link href="css/reset.css" rel="stylesheet" type="text/css" />
   <link href="css/stile.css" rel="stylesheet" type="text/css" />
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-
-  <script>
-  function checkPassword() {
-    var pass1 = document.getElementById("password").value;
-    var pass2 = document.getElementById("confirm_password").value;
-    var ok = true;
-    if (pass1 != pass2) {
-      document.getElementById("password").style.borderColor = "#E34234";
-      document.getElementById("confirm_password").style.borderColor = "#E34234";
-      ok = false;
-    }
-    return ok;
-  }
-</script>
+  <script src="scripts/utils.js"></script>
 </head>
 
 <body>
@@ -143,7 +132,7 @@ if(isset($_COOKIE['LOGIN']))
     </div>
 
 
-  <?php } else if(@$_GET["act"] == "RegistrazioneOffEmailAlreadyExists") {// --------------------------   ?>
+  <?php } else if(@$_GET["act"] == "RegistrazioneKOEmailAlreadyExists") {// --------------------------   ?>
 
 
     <div class="modal-content animate">
@@ -152,7 +141,7 @@ if(isset($_COOKIE['LOGIN']))
       L'indirizzo email risulta già presente.
       <br><br>
       Se hai difficoltà non esitare a <a href=mailto:admin@hooly.eu>contattarci</a>.
-      <button type="button" onclick="location.href='registrazione.php';" class="redbtn centeredbtn">Torna indietro</button>
+      <button type="button" onclick="location.href='index.php?act=Registrazione';" class="redbtn centeredbtn">Torna indietro</button>
     </div>
 
 
@@ -160,7 +149,7 @@ if(isset($_COOKIE['LOGIN']))
 
 
     <div class="modal-content animate">
-      <form action="provisioning_actions.php" onsubmit="return checkPassword()" method="get">
+      <form action="provisioning_actions.php" onsubmit="return checkPassword()" method="post">
         <h2>Registrazione</h2>
         <br> <br>
         Inserisci i tuoi dati per creare il nuovo account:
@@ -171,7 +160,7 @@ if(isset($_COOKIE['LOGIN']))
         <br> <br>
         <b>Password:</b>
         <br>
-        <input type="password" style="width:100%" placeholder="Enter Password" name="password" id="password" pattern="[A-Za-z0-9]{5,12}" title="La passowrd può contenere lettere e numeri, un minimo di 5 ed un massimo di 12 caratteri alfanumerici" required>
+        <input type="password" style="width:100%" placeholder="Enter Password" name="password" id="password" pattern=".{5,12}" title="La password deve contenere un minimo di 5 ed un massimo di 12 caratteri" required>
         <br> <br>
         <b>Ripeti la password:</b>
         <br>

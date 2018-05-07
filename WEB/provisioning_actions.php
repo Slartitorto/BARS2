@@ -48,34 +48,34 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
   }
 
 
-} else if(@$_GET["act"] == "registrazione") { // ---------------------------------------
+} else if(@$_POST["act"] == "registrazione") { // ---------------------------------------
 
-  $email	= $_GET["email"];
-  $password	= $_GET["password"];
+  $email	= $_POST["email"];
+  $password	= $_POST["password"];
   $codUtente	= md5($email);
   $codPassword	= md5($password);
-  $Sql		= "SELECT * from `utenti` WHERE `email`='" . $email . "';";
-  $result       = $conn->query($Sql);
+  $query	= "SELECT * from `utenti` WHERE `email`='" . $email . "';";
+  $result       = $conn->query($query);
   if(($result->num_rows) == 0)
   {
 
-    $Sql		= "INSERT INTO `utenti` SET `username`='".@$_POST["email"]."', `codUtente`='".$codUtente."', `password`='".$codPassword."', `t0`= 1, `t1`= 0, `t2`= 0, `t3`= 0, `email`='".@$_POST["email"]."';";
-    $result	= $conn->query($Sql);
+    $query		= "INSERT INTO `utenti` SET `username`='$email', `codUtente`='$codUtente', `password`='$codPassword', `t0`= 1, `t1`= 0, `t2`= 0, `t3`= 0, `email`='$email';";
+    $result	= $conn->query($query);
     $Messaggio	= "
     Ciao, questa e-mail ti giunge dall'area riservata di ".NOMESITO.".\n\n
     I tuoi dati di accesso sono:\n
-    Username: ".$_POST["email"]."\n
-    Password: ".$_POST["password"]."\n\n\n
+    Username: ".$email."\n
+    Password: ".$password."\n\n\n
     Questa è la url per confermare l'attivazione del tuo account:\n\n
     ".URLSITO."/provisioning_actions.php?act=conferma&cod=".$codUtente."\n\n
     In caso di problemi ti invitiamo a contattarci direttamente.
     ";
 
-    mail($_POST["email"], "Home Sensors - Conferma registrazione", $Messaggio, "From: admin@hooly.eu");
+    mail($email, "Home Sensors - Conferma registrazione", $Messaggio, "From: admin@hooly.eu");
     header('Location: index.php?act=RegistrazioneOn');
 
   } else {
-    header('Location: index.php?act=RegistrazioneOffEmailAlreadyExists');
+    header('Location: index.php?act=RegistrazioneKOEmailAlreadyExists');
   }
 
 } else if(@$_GET["act"] == "attiva_nuova_pwd") { // ---------------------------------------

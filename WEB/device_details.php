@@ -201,7 +201,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     }
     echo " <TR><TD>Periodo di rilevazione (min.)<B>" . $min_period . "</B><TD>Ultimo aggiornamento: <B>" . $min_delay . "</B></TD></TR>";
     echo " <TR><TD colspan=2>Link quality: <B>" . $link_qlt . "%</B>  (RSSI = <B>" . $rssi . ")</B></TD></TR>";
-    echo "</table><br><br>";
+    echo "</table><br><br>\n";
     echo "<table width=100%>";
     echo "<tr>";
     echo "<td align=left>";
@@ -227,7 +227,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
       echo "<input type=hidden name=serial value=" . $serial . ">";
       echo "<input type=hidden name=graph value=" . $graph . ">";
-      echo "</form>";
+      echo "</form>\n";
 
       echo "</td>";
 
@@ -243,55 +243,56 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
       if ($serial_array[$i] == $serial) { echo " selected";}
       echo ">$device_name_array[$i] - $position_array[$i]</option>\n";
     }
-    echo "</select>";
-    echo "<input type=hidden name=last value=" . $last . ">";
-    echo "<input type=hidden name=graph value=" . $graph . ">";
-    echo "</form>";
-    echo "</td>";
-    echo "</tr>";
-    echo "</table>";
-
-    print "<div id=\"container1\" style=\"width:100%; height:400px;\"></div>";
     ?>
 
-    <script>
-    var data = [
-      <?php
-      // https://code-maven.com/create-and-download-csv-with-javascript
-
-      $result = $conn->query($sql_csv);
-      while ($row = $result->fetch_array()) {
-        echo "['" . $row[0] . "','" . $row[1] . "','" . $row[2] . "'],";
-      }
-      ?>
-    ];
-
-    function download_csv() {
-      var csv = 'Timestamp,Count,Data\n';
-      data.forEach(function(row) {
-        csv += row.join(',');
-        csv += "\n";
-      });
-
-      console.log(csv);
-      var hiddenElement = document.createElement('a');
-      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
-      hiddenElement.download = 'data.csv';
-      hiddenElement.click();
-    }
-    </script>
-
-    <button class=graybtn onclick="download_csv()">Download CSV</button>
-    <button class=graybtn onClick="window.print()">Print</button>
-
+  </select>
+  <input type=hidden name=last value="<?php echo $last; ?>" >
+  <input type=hidden name=graph value="<?php echo $graph ?>" >
+</form>
+</td>
+</tr>
+</table>
+<div id="container1" style="width:100%; height:400px;"></div>
+<div class="hide-print">
+  <script>
+  var data = [
     <?php
+    // https://code-maven.com/create-and-download-csv-with-javascript
 
-  } else {
-    echo "0 results";
+    $result = $conn->query($sql_csv);
+    while ($row = $result->fetch_array()) {
+      echo "['" . $row[0] . "','" . $row[1] . "','" . $row[2] . "'],";
+    }
+    ?>
+  ];
+
+  function download_csv() {
+    var csv = 'Timestamp,Count,Data\n';
+    data.forEach(function(row) {
+      csv += row.join(',');
+      csv += "\n";
+    });
+
+    console.log(csv);
+    var hiddenElement = document.createElement('a');
+    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+    hiddenElement.download = 'data.csv';
+    hiddenElement.click();
   }
+  </script>
 
-  $conn->close();
-  ?>
+  <button class=graybtn onclick="download_csv()">Download CSV</button>
+  <button class=graybtn onClick="window.print()">Print</button>
+</div>
+
+<?php
+
+} else {
+  echo "0 results";
+}
+
+$conn->close();
+?>
 </div>
 </body>
 </html>

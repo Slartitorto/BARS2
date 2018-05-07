@@ -1,4 +1,4 @@
-<TABLE class="top-menu"> <TR> <TD align="left">
+<TABLE class="top-menu hide-print"> <TR> <TD align="left">
   <div class="dropdown">
     <button class="dropbtn"><img src="icone/menu.png" width="40"></button>
     <div class="dropdown-content">

@@ -60,15 +60,23 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
   if ($graph == "temp") {
     $query = "SELECT unix_timestamp(timestamp) as timestamp, temp as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
     $sql_csv = "SELECT timestamp, counter, temp FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+    $header_csv = "temperatura";
+    $Yaxis_name = "Temperature (C)";
   } else if ($graph == "batt") {
     $query = "SELECT unix_timestamp(timestamp) as timestamp, battery as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
     $sql_csv = "SELECT timestamp, counter, battery FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+    $header_csv = "batteria";
+    $Yaxis_name = "Livello batteria";
   } else if ($graph == "hum") {
     $query = "SELECT unix_timestamp(timestamp) as timestamp, hum as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
     $sql_csv = "SELECT timestamp, counter, hum FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+    $header_csv = "umidita";
+    $Yaxis_name = "Umidita (%)";
   } else if ($graph == "rssi") {
     $query = "SELECT unix_timestamp(timestamp) as timestamp, rssi as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
     $sql_csv = "SELECT timestamp, counter, rssi FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+    $header_csv = "segnale";
+    $Yaxis_name = "Forza del segnale";
   }
 
   $result = $conn->query($query);
@@ -106,7 +114,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
       },
       yAxis: {
         title: {
-          text: 'Temperature (C)'
+          text: '<?php echo $Yaxis_name; ?>'
         },
       },
       series: [{
@@ -243,7 +251,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
             ?> ];
 
             function download_csv() {
-              var csv = 'Timestamp,Count,<?php echo $graph; ?>\n';
+              var csv = 'Timestamp,Count,<?php echo $header_csv; ?>\n';
               data.forEach(function(row) {
                 csv += row.join(',');
                 csv += "\n";

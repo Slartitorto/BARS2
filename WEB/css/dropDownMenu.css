@@ -11,6 +11,7 @@
 }
 .dropdown-content {
   display: none;
+  padding: 15px 16px;
   position: absolute;
   background-color: #f1f1f1;
   min-width: 300px;
@@ -18,14 +19,16 @@
   z-index: 1;
 }
 .dropdown-content a {
+  padding: 5px 0px;
   color: black;
-  padding: 5px 16px;
   text-decoration: none;
   display: block;
 }
+
 .dropdown-content a:hover {
   background-color: #ddd;
 }
+
 .dropdown:hover .dropdown-content {
   display: block;
 }

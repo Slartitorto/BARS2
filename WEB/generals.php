@@ -330,28 +330,28 @@ include "db_connection.php";
 
               <?php } else if(@$_GET["act"] == "monthly_report") { // ---------- Report mensili -  ?>
 
-<?php
-$query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
-        $result = $conn->query($query);
-        while($row = $result->fetch_assoc()) {
-          $idUtente = $row["idUtente"];
-          $tenant0 = $row["t0"];
-          $tenant1 = $row["t1"];
-          $tenant2 = $row["t2"];
-          $tenant3 = $row["t3"];
-        }
+                <?php
+                $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
+                $result = $conn->query($query);
+                while($row = $result->fetch_assoc()) {
+                  $idUtente = $row["idUtente"];
+                  $tenant0 = $row["t0"];
+                  $tenant1 = $row["t1"];
+                  $tenant2 = $row["t2"];
+                  $tenant3 = $row["t3"];
+                }
 
-        $query = "SELECT serial, device_name, position FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
-        $result = $conn->query($query);
-        $x=0;
-        while($row = $result->fetch_assoc()) {
-          $serial[$x]=$row["serial"];
-          $device_name[$x]=$row["device_name"];
-          $position[$x]=$row["position"];
-          ++$x;
-        }
-        $count=count($serial);
-?>
+                $query = "SELECT serial, device_name, position FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
+                $result = $conn->query($query);
+                $x=0;
+                while($row = $result->fetch_assoc()) {
+                  $serial[$x]=$row["serial"];
+                  $device_name[$x]=$row["device_name"];
+                  $position[$x]=$row["position"];
+                  ++$x;
+                }
+                $count=count($serial);
+                ?>
 
 
                 <div class="modal-content"> <br> <center>
@@ -359,18 +359,18 @@ $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'"
                     <h3> Genera report mensile </h3>
                     <br>
                     <form action="hooly_report.php" method="post">
-  <select name="serial">
-              <?php for ($i=0;$i<$count;$i++) {
-                echo "<option value= \"$serial[$i]\"";
-                echo "> $device_name[$i]  $position[$i] </option>\n";
-              } ?>
-            </select>
+                      <select name="serial">
+                        <?php for ($i=0;$i<$count;$i++) {
+                          echo "<option value= \"$serial[$i]\"";
+                          echo "> $device_name[$i]  $position[$i] </option>\n";
+                        } ?>
+                      </select>
 
                       <?php include 'includes/select_mese_anno.php'; ?>
 
                       <br> <br> <br>
-Seleziona i tre orari giornalieri:
-<br> <br>
+                      Seleziona i tre orari giornalieri:
+                      <br> <br>
                       <select name="ora1">
                         <option value="00">00:00</option>
                         <option value="02">02:00</option>
@@ -413,7 +413,7 @@ Seleziona i tre orari giornalieri:
                         <option value="20">20:00</option>
                         <option value="22">22:00</option>
                       </select>
-<br><br>
+                      <br><br>
 
                       <button type="submit" class="greenbtn">Report SA-04</button>
                     </form>
@@ -423,20 +423,24 @@ Seleziona i tre orari giornalieri:
                 <?php } else if(@$_GET["act"] == "alarm_pause") { // ---------- Sospendi notifiche -  ?>
 
                   <?php
-                  $query = "SELECT alarm_pause_from_1,alarm_pause_to_1,alarm_pause_from_2,alarm_pause_to_2 FROM alarm_pause WHERE codUtente='$COD_UTENTE'";
+                  $query = "SELECT alarm_pause_flag_1,alarm_pause_from_1,alarm_pause_to_1,alarm_pause_flag_2,alarm_pause_from_2,alarm_pause_to_2 FROM alarm_pause WHERE codUtente='$COD_UTENTE'";
                   $result = $conn->query($query);
                   if(($result->num_rows) == 1)
                   {
                     while($row = $result->fetch_assoc()) {
+                      $alarm_pause_flag_1_result = $row["alarm_pause_flag_1"];
                       $alarm_pause_from_1_result = $row["alarm_pause_from_1"];
                       $alarm_pause_to_1_result = $row["alarm_pause_to_1"];
+                      $alarm_pause_flag_2_result = $row["alarm_pause_flag_2"];
                       $alarm_pause_from_2_result = $row["alarm_pause_from_2"];
                       $alarm_pause_to_2_result = $row["alarm_pause_to_2"];
                     }
                   } else {
 
+                    $alarm_pause_flag_1 = 0;
                     $alarm_pause_from_1_result = "01";
                     $alarm_pause_to_1_result = "01";
+                    $alarm_pause_flag_2 = 0;
                     $alarm_pause_from_2_result = "01";
                     $alarm_pause_to_2_result = "01";
                   }
@@ -449,6 +453,7 @@ Seleziona i tre orari giornalieri:
                       <h3>Non inviare allarmi</h3>
                       <br>
                       <form action="hooly_db_actions.php" onsubmit="return checkOrari()" method="post">
+                        <input type="checkbox" name="alarm_pause_flag_1" value="1" <?php if($alarm_pause_flag_1_result) echo "checked"; ?>>
 
                         dalle ore:
                         <select name="alarm_pause_from_1" id="from1">
@@ -468,6 +473,7 @@ Seleziona i tre orari giornalieri:
                         </select>
                         <br>
 
+                        <input type="checkbox" name="alarm_pause_flag_2" value="1" <?php if($alarm_pause_flag_2_result) echo "checked"; ?>>
                         dalle ore:
                         <select name="alarm_pause_from_2" id="from2">
                           <?php for($i=1;$i<23;$i++){
@@ -523,7 +529,7 @@ Seleziona i tre orari giornalieri:
 
                 <?php } else if(@$_GET["act"] == "changePwd_result") { // ---------- effettua il cambio password  ?>
 
-
+                  
                   <?php
                   $password	= $_POST["password"];
                   $codPassword	= md5($password);

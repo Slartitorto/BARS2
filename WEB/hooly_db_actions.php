@@ -4,7 +4,6 @@ if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE =    $_COOKIE['LOGIN'];}
 else { $COD_UTENTE =    0; header("Location: index.php");}
 
 include "db_connection.php";
-session_start();
 
 if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
 
@@ -66,14 +65,16 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
 
 } else if(@$_POST["act"] == "alarm_pause_record") { // ----------------- Registra pausa allarme
 
+  $alarm_pause_flag_1 = $_POST["alarm_pause_flag_1"];
   $alarm_pause_from_1 = $_POST["alarm_pause_from_1"];
   $alarm_pause_to_1 = $_POST["alarm_pause_to_1"];
+  $alarm_pause_flag_2 = $_POST["alarm_pause_flag_2"];
   $alarm_pause_from_2 = $_POST["alarm_pause_from_2"];
   $alarm_pause_to_2 = $_POST["alarm_pause_to_2"];
 
   $query = "DELETE FROM alarm_pause WHERE codUtente = '$COD_UTENTE'";
   $result = $conn->query($query);
-  $query = "INSERT INTO alarm_pause (codUtente, alarm_pause_from_1, alarm_pause_to_1, alarm_pause_from_2, alarm_pause_to_2) VALUES ('$COD_UTENTE','$alarm_pause_from_1','$alarm_pause_to_1','$alarm_pause_from_2','$alarm_pause_to_2')";
+  $query = "INSERT INTO alarm_pause (codUtente, alarm_pause_flag_1,alarm_pause_from_1, alarm_pause_to_1, alarm_pause_flag_2, alarm_pause_from_2, alarm_pause_to_2) VALUES ('$COD_UTENTE','$alarm_pause_flag_1','$alarm_pause_from_1','$alarm_pause_to_1','$alarm_pause_flag_2','$alarm_pause_from_2','$alarm_pause_to_2')";
   $result = $conn->query($query);
 
   header('Location: status.php');

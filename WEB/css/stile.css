@@ -154,5 +154,12 @@ span.psw {
 .NC_manage {
   width: 500px;
 }
+}
 
+
+/* Hides objects during printing */
+@media print {
+.hide-print {
+    display: none;
+}
 }

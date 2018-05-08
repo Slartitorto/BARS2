@@ -179,8 +179,10 @@ DROP TABLE IF EXISTS `alarm_pause`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `alarm_pause` (
   `codUtente` varchar(32) NOT NULL,
+  `alarm_pause_flag_1` bool DEFAULT 0,
   `alarm_pause_from_1` varchar(8) DEFAULT NULL,
   `alarm_pause_to_1` varchar(8) DEFAULT NULL,
+  `alarm_pause_flag_2` bool DEFAULT 0,
   `alarm_pause_from_2` varchar(8) DEFAULT NULL,
   `alarm_pause_to_2` varchar(8) DEFAULT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP

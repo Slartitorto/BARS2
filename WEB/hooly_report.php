@@ -179,7 +179,7 @@ while($row = $result->fetch_assoc()) {
                     <table class="hooly_report hide-print">
                       <tr>
                         <td width="33%"></td>
-                        <td width="34%" align="center"><button class="graybtn" onClick="window.print()">Print</button> </td>
+                        <td width="34%" align="center"><button class="graybtn" onClick="window.print()">Stampa</button> </td>
 
                         <td width="33%" align="right">
                           <form action=hooly_report.php method="POST">

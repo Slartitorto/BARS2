@@ -51,9 +51,3 @@
 #hooly_reportNC th {
   background-color: #efefef;
 }
-
-@media print {
-  .hide-print {
-    display: none;
-  }
-}

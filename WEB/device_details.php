@@ -101,6 +101,10 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     });
     $('#container1').highcharts({
       chart: {
+        margingLeft: 50,
+        margingRight: 50,
+        margingTop: 50,
+        marginBottom: 50,
         type: 'line'
       },
       title: {
@@ -266,7 +270,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
             </script>
 
             <button class=graybtn onclick="download_csv()">Download CSV</button>
-            <button class=graybtn onClick="window.print()">Print</button>
+            <button class=graybtn onClick="window.print()">Stampa</button>
           </div>
 
           <?php

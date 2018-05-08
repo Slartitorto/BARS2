@@ -37,6 +37,11 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     $tenant3 = $row["t3"];
   }
 
+  function format_time($t,$f=':') // t = seconds, f = separator
+  {
+    return sprintf("%3d%s%02d", ($t/60) , $f, $t%60);
+  }
+
   $query = "SELECT serial, device_name, position FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
   $result = $conn->query($query);
   $serial_qty=0;
@@ -47,153 +52,145 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     ++$serial_qty;
   }
 
-  $min_ok=0;
-  $max_ok=100;
-  if ($graph == "temp") {
-    $query = "SELECT min_ok, max_ok FROM devices where serial = '$serial'";
-    $result = $conn->query($query);
+  $sql = "SELECT device_name, position, min_ok, max_ok, batt_type FROM devices where serial = '$serial'" ;
+  $result = $conn->query($sql);
+  if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
+      $device_name = $row["device_name"];
+      $position = $row["position"];
+      $batt_type = $row["batt_type"];
       $min_ok=$row["min_ok"];
       $max_ok=$row["max_ok"];
     }
   }
-  if ($graph == "temp") {
-    $query = "SELECT unix_timestamp(timestamp) as timestamp, temp as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-    $sql_csv = "SELECT timestamp, counter, temp FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-    $header_csv = "temperatura";
-    $Yaxis_name = "Temperature (C)";
-  } else if ($graph == "batt") {
-    $query = "SELECT unix_timestamp(timestamp) as timestamp, battery as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-    $sql_csv = "SELECT timestamp, counter, battery FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-    $header_csv = "batteria";
-    $Yaxis_name = "Livello batteria";
-  } else if ($graph == "hum") {
-    $query = "SELECT unix_timestamp(timestamp) as timestamp, hum as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-    $sql_csv = "SELECT timestamp, counter, hum FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-    $header_csv = "umidita";
-    $Yaxis_name = "Umidita (%)";
-  } else if ($graph == "rssi") {
-    $query = "SELECT unix_timestamp(timestamp) as timestamp, rssi as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-    $sql_csv = "SELECT timestamp, counter, rssi FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
-    $header_csv = "segnale";
-    $Yaxis_name = "Forza del segnale";
-  }
 
-  $result = $conn->query($query);
-  while ($row = $result->fetch_array()) {
-    $timestamp = $row['timestamp'];
-    $timestamp *=1000;
-    $data = $row['data'];
+  // SELECT last record
+  $sql = "SELECT timestamp, temp, hum, battery, period, rssi, timestampdiff(second,timestamp,now()) as sec_delay FROM last_rec_data where serial = '$serial' order by timestamp desc limit 1";
+  $result = $conn->query($sql);
+  if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+      $last_temp = $row["temp"];
+      $last_hum = $row["hum"];  //not yet used
+      $last_bat = $row["battery"];
+      $last_period = $row["period"];
+      $last_rssi = $row["rssi"];
+      $min_period = format_time($last_period);
+      $sec_delay=$row["sec_delay"];
+      $min_delay=format_time($sec_delay);
+    }
 
-    $data1[] = "[$timestamp, $data]";
-    $data2[] = "[$timestamp, $min_ok]";
-    $data3[] = "[$timestamp, $max_ok]";
-  }
-  ?>
-  <script src="scripts/jquery.min.js"></script>
-  <script src="scripts/highcharts.js"></script>
-  <script>
-  $(function () {
-    Highcharts.setOptions({
-      global: {
-        useUTC: false
-      }
-    });
-    $('#container1').highcharts({
-      chart: {
-        margingLeft: 50,
-        margingRight: 50,
-        margingTop: 50,
-        marginBottom: 50,
-        type: 'line'
-      },
-      title: {
-        text: ''
-      },
-      legend: {
-        enabled: false
-      },
-      xAxis: {
-        type: 'datetime',
-      },
-      yAxis: {
-        title: {
-          text: '<?php echo $Yaxis_name; ?>'
+    // SELECT last counter
+    $query = "select counter from last_rec_data where serial = '$serial' order by timestamp desc limit 1";
+    $result = $conn->query($query);
+    while($row = $result->fetch_assoc()) {
+      $link_qlt0=$row["counter"];
+    }
+    // SELECT last counter -10
+    $query = "select counter from rec_data where serial = '$serial' order by timestamp desc limit 10,1";
+    $result = $conn->query($query);
+    while($row = $result->fetch_assoc()) {
+      $link_qlt1=$row["counter"];
+    }
+    $link_qlt = intval(1000/($link_qlt0 - $link_qlt1));
+
+
+
+    if ($graph == "temp") {
+      $query = "SELECT unix_timestamp(timestamp) as timestamp, temp as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+      $sql_csv = "SELECT timestamp, counter, temp FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+      $header_csv = "temperatura";
+      $Yaxis_name = "Temperature (C)";
+    } else if ($graph == "batt") {
+      $query = "SELECT unix_timestamp(timestamp) as timestamp, battery as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+      $sql_csv = "SELECT timestamp, counter, battery FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+      $header_csv = "batteria";
+      $Yaxis_name = "Livello batteria %";
+      $min_ok = $last_bat -5; if ($min_ok < 0) $min_ok = 0.2;
+      $max_ok = $last_bat +5; if ($max_ok > 100) $max_ok = 100.2;
+    } else if ($graph == "hum") {
+      $query = "SELECT unix_timestamp(timestamp) as timestamp, hum as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+      $sql_csv = "SELECT timestamp, counter, hum FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+      $header_csv = "umidita";
+      $Yaxis_name = "Umidita (%)";
+      $min_ok=0;
+      $max_ok=100;
+    } else if ($graph == "rssi") {
+      $query = "SELECT unix_timestamp(timestamp) as timestamp, rssi as data FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+      $sql_csv = "SELECT timestamp, counter, rssi FROM rec_data where serial = '$serial' and timestamp > now()- interval '$last'  day order by timestamp";
+      $header_csv = "segnale";
+      $Yaxis_name = "Forza del segnale";
+      $min_ok=0;
+      $max_ok=100;
+    }
+
+    $result = $conn->query($query);
+    while ($row = $result->fetch_array()) {
+      $timestamp = $row['timestamp'];
+      $timestamp *=1000;
+      $data = $row['data'];
+
+      $data1[] = "[$timestamp, $data]";
+      $data2[] = "[$timestamp, $min_ok]";
+      $data3[] = "[$timestamp, $max_ok]";
+    }
+    ?>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/highcharts.js"></script>
+    <script>
+    $(function () {
+      Highcharts.setOptions({
+        global: {
+          useUTC: false
+        }
+      });
+      $('#container1').highcharts({
+        chart: {
+          margingLeft: 50,
+          margingRight: 50,
+          margingTop: 50,
+          marginBottom: 50,
+          type: 'line'
         },
-      },
-      series: [{
-        data: [<?php echo join($data1, ',') ;?>]
-      },{
-        color:'#ff0000',
-        enableMouseTracking: false,
-        data: [<?php echo join($data2, ',') ;?>]
-      },{
-        color:'#ff0000',
-        enableMouseTracking: false,
-        data: [<?php echo join($data3, ',') ;?>]
-      }]
+        title: {
+          text: ''
+        },
+        legend: {
+          enabled: false
+        },
+        xAxis: {
+          type: 'datetime',
+        },
+        yAxis: {
+          title: {
+            text: '<?php echo $Yaxis_name; ?>'
+          },
+        },
+        series: [{
+          data: [<?php echo join($data1, ',') ;?>]
+        },{
+          color:'#<?php if ($graph == "batt") echo "ffffff"; else echo "ff0000" ;?>',
+          enableMouseTracking: false,
+          data: [<?php echo join($data2, ',') ;?>]
+        },{
+          color:'#<?php if ($graph == "batt") echo "ffffff"; else echo "ff0000" ;?>',
+          enableMouseTracking: false,
+          data: [<?php echo join($data3, ',') ;?>]
+        }]
+      });
     });
-  });
-  </script>
-</head>
-<body>
+    </script>
+  </head>
+  <body>
 
-  <BR>
-    <center>
-      <?php
-
-      function format_time($t,$f=':') // t = seconds, f = separator
-      {
-        return sprintf("%3d%s%02d", ($t/60) , $f, $t%60);
-      }
-      $sql = "SELECT device_name, position, batt_type FROM devices where serial = '$serial'" ;
-      $result = $conn->query($sql);
-      if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-          $device_name = $row["device_name"];
-          $position = $row["position"];
-          $batt_type = $row["batt_type"];
-        }
-      }
-
-      // SELECT last record
-      $sql = "SELECT timestamp, temp, hum, battery, period, rssi, timestampdiff(second,timestamp,now()) as sec_delay FROM last_rec_data where serial = '$serial' order by timestamp desc limit 1";
-      $result = $conn->query($sql);
-      if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-          $time_stamp = $row["timestamp"];
-          $temp = $row["temp"];
-          $hum = $row["hum"];
-          $batt = $row["battery"];
-          $period = $row["period"];
-          $rssi = $row["rssi"];
-          $min_period = format_time($period);
-          $sec_delay=$row["sec_delay"];
-          $min_delay=format_time($sec_delay);
-        }
-
-        // SELECT last counter
-        $query = "select counter from last_rec_data where serial = '$serial' order by timestamp desc limit 1";
-        $result = $conn->query($query);
-        while($row = $result->fetch_assoc()) {
-          $link_qlt0=$row["counter"];
-        }
-        // SELECT last counter -10
-        $query = "select counter from rec_data where serial = '$serial' order by timestamp desc limit 10,1";
-        $result = $conn->query($query);
-        while($row = $result->fetch_assoc()) {
-          $link_qlt1=$row["counter"];
-        }
-        $link_qlt = intval(1000/($link_qlt0 - $link_qlt1));
-        ?>
-
+    <BR>
+      <center>
         <div class="modal-content" style="width:90%;">
           <table class="padded centered device_details">
             <tr><th><?php echo $device_name?></th><th><?php echo $position ?></th></tr>
-            <tr> <th colspan = 2>Temp: <?php echo round($temp,2)?> &deg C</th></tr>
-            <TR><TD>Serial: <B><?php echo $serial ?></B></TD><TD>Batteria: <B><?php echo $batt ?>%</B></TD></TR>
+            <tr> <th colspan = 2>Temp: <?php echo round($last_temp,2)?> &deg C</th></tr>
+            <TR><TD>Serial: <B><?php echo $serial ?></B></TD><TD>Batteria: <B><?php echo $last_bat ?>%</B></TD></TR>
             <TR><TD>Periodo di rilevazione (min.)<B><?php echo $min_period ?></B><TD>Ultimo aggiornamento: <B><?php echo $min_delay ?></B></TD></TR>
-            <TR><TD colspan=2>Link quality: <B><?php echo $link_qlt ?>%</B> (RSSI = <B><?php echo $rssi ?>)</B></TD></TR>
+            <TR><TD colspan=2>Link quality: <B><?php echo $link_qlt ?>%</B> (RSSI = <B><?php echo $last_rssi ?>)</B></TD></TR>
           </table>
           <br><br>
 
@@ -214,7 +211,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
               <td width="34%" align="center">
                 <form action = "<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-                  Periodo: <select name="last" onchange="this.form.submit()">
+                  <select name="last" onchange="this.form.submit()">
                     <option value= "1" <?php if ($last == 1) { echo " selected";} ?>> Ultime 24 ore</option>
                     <option value= "2" <?php if ($last == 2) { echo " selected";} ?>> Ultime 48 ore</option>
                     <option value= "7" <?php if ($last == 7) { echo " selected";} ?>> Ultima settimana</option>
@@ -227,7 +224,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
               <td width="33%" align="right">
                 <form action = "<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-                  Passa a:  <select name="serial" onchange="this.form.submit()">
+                  <select name="serial" onchange="this.form.submit()">
                     <?php
                     for($i=0;$i<$serial_qty;$i++) {
                       echo "<option value= \"$serial_array[$i]\"";

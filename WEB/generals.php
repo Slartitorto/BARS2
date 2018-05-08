@@ -19,6 +19,7 @@ include "db_connection.php";
   <script src="scripts/datePickerLocalized.js"></script>
   <script src="scripts/utils.js"></script>
 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -529,7 +530,7 @@ include "db_connection.php";
 
                 <?php } else if(@$_GET["act"] == "changePwd_result") { // ---------- effettua il cambio password  ?>
 
-                  
+
                   <?php
                   $password	= $_POST["password"];
                   $codPassword	= md5($password);

@@ -6,23 +6,19 @@ include "db_connection.php";
 
 <head>
   <title>Hooly settings</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
   <link href="css/reset.css" rel="stylesheet" type="text/css" />
   <link href="css/stile.css" rel="stylesheet" type="text/css" />
   <link href="css/dropDownMenu.css" rel="stylesheet" type="text/css" />
+
   <link rel="apple-touch-icon" href="/icone/app_icon128.png">
   <link rel="icon" href="/icone/temp_icon.png">
 
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/checkMatchPasswords.js"></script>
-
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <script>
-  $(document).ready(function(){
-    $("#btn1").click(function(){ $("#advanced_preferences").toggle(1000); });
-  });
-  </script>
 
 </head>
 

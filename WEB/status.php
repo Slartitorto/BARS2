@@ -18,14 +18,9 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
   <script src="scripts/datePickerLocalized.js"></script>
 
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-
-  <script>
-  $(document).ready(function(){
-    $("#btn1").click(function(){ $("#advanced_preferences").toggle(1000); });
-  });
-</script>
 </head>
 
 <body>
@@ -65,28 +60,37 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
 
           $count=count($serial);
           for($i=0;$i<$count;$i++) {
-            $query = "select temp,hum,counter,battery,period,timestampdiff(second,timestamp,now()) as sec_delay from last_rec_data where serial = '$serial[$i]' order by timestamp desc limit 1";
+            $query = "select temp,hum,counter,battery,period,rssi,timestampdiff(second,timestamp,now()) as sec_delay from last_rec_data where serial = '$serial[$i]' order by timestamp desc limit 1";
             $result = $conn->query($query);
             while($row = $result->fetch_assoc()) {
               $last_temp[$i]=$row["temp"];
               $last_hum[$i]=$row["hum"];
+              $last_rssi[$i]=$row["rssi"];
               $sec_delay[$i]=$row["sec_delay"];
-              $battery[$i]=$row["battery"];
+              $last_battery[$i]=$row["battery"];
               $period[$i]=$row["period"];
               $link_qlt0[$i]=$row["counter"];
             }
 
-            if (($batt_type[$i] == "litio" and $battery[$i] < 3.5) or ($batt_type[$i] == "nimh" and $battery[$i] < 3.2)) {
+            if ($last_battery[$i] < 10) {
               $warn[$i] = "battery_low";
+              $tooltipText[$i] = "Attenzione! Batteria scarica";
             }
             else if ($sec_delay[$i] > 5 * $period[$i]) {
               $warn[$i] = "link";
+              $tooltipText[$i] = "Attenzione! Problemi di collegamento: segnale non rilevato da più di " . 5 * $period[$i] . " secondi";
+            }
+            else if ($last_rssi[$i] < 10) {
+              $warn[$i] = "link";
+              $tooltipText[$i] = "Attenzione! Segnale radio basso";
             }
             else if ($last_temp[$i] < $min_ok[$i] or $last_temp[$i] > $max_ok[$i]) {
               $warn[$i] = "red";
+              $tooltipText[$i] = "Allarme: temperatura fuori range";
             }
             else {
               $warn[$i] = "green";
+              $tooltipText[$i] = "Sensore e temperatura OK";
             }
 
             echo "<TR>";
@@ -102,14 +106,14 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
             echo "</TD><TD>" . $device_name[$i] . "</TD>";
             echo "</TD><TD>" . $position[$i] . "</TD>";
             echo "<TD>" . round($last_temp[$i],1) . "</TD>";
-            echo "<TD><img src=\"icone/" . $warn[$i] . "_signal.png\" width=\"25\"></TD>";
+            echo "<TD><div class=\"tooltip\"><img src=\"icone/" . $warn[$i] . "_signal.png\" width=\"25\"> <span class=\"tooltiptext\">" . $tooltipText[$i] . "</span></TD>";
             echo "</TR>\n";
           }
-          echo "</TABLE> ";
 
           $conn->close();
           ?>
 
+          </table>
           <br><br>
         </div>
       </body>

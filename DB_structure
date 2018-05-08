@@ -25,6 +25,22 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+
+--
+-- Table structure for table `battery_types`
+--
+
+DROP TABLE IF EXISTS `battery_types`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `battery_types` (
+  `cod_batt_type` int(11) DEFAULT NULL,
+  `batt_type` varchar(16) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+
 --
 -- Table structure for table `devices`
 --
@@ -41,7 +57,7 @@ CREATE TABLE `devices` (
   `alarmed` tinyint(1) DEFAULT NULL,
   `min_ok` float DEFAULT NULL,
   `max_ok` float DEFAULT NULL,
-  `batt_type` varchar(16) DEFAULT NULL,
+  `batt_type` int DEFAULT NULL,
   `tenant` int(11) DEFAULT NULL,
   `code_period` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

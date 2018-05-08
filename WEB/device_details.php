@@ -10,11 +10,13 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
   <title>Sensor details</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <link rel="apple-touch-icon" href="/icone/app_icon128.png">
+
   <link href="css/reset.css" rel="stylesheet" type="text/css" />
   <link href="css/stile.css" rel="stylesheet" type="text/css" />
   <link href="css/dropDownMenu.css" rel="stylesheet" type="text/css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <?php include 'includes/headerTableMenu.php'; ?>
 

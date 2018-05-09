@@ -535,8 +535,7 @@ include "db_connection.php";
                   $password	= $_POST["password"];
                   $codPassword	= md5($password);
                   $query	= "UPDATE `utenti` SET `password` =  '$codPassword' WHERE `codUtente` = '$COD_UTENTE' ";
-                  echo $query;
-                  //  $result	= $conn->query($Sql);
+                  $result	= $conn->query($Sql);
                   $Messaggio	= "
                   Ciao, questa e-mail ti giunge dall'area riservata di ".NOMESITO.".\n\n
                   Ti informiamo che la tua password è stata cambiata.\n

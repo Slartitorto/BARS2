@@ -47,7 +47,6 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
   }
 
   $query = "UPDATE `non_conformita` SET `nc_date` = '$nc_date', `nc_type` = '$nc_type', `nc_ac` = '$nc_ac', `serial` = '$serial', `device_name` = '$device_name' ,`position` = '$position' WHERE `nc_id` = '$nc_id'";
-  echo $query;
   $result = $conn->query($query);
   header("Location: generals.php?act=NC_manage&mese=$mese&anno=$anno");
 

@@ -126,16 +126,17 @@ span.psw {
 }
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 120px;
+  width: 250px;
   background-color: #555;
   color: #fff;
   text-align: center;
+  font-size: 12px;
   border-radius: 6px;
   padding: 5px 0;
   position: absolute;
   z-index: 1;
   bottom: 125%;
-  left: 50%
+  left: 50%;
   margin-left: -60px;
   opacity: 0;
   transition: opacity 0.3s;
@@ -177,30 +178,30 @@ span.psw {
 /* Change styles for span and cancel button on extra small screens */
 @media screen and (max-device-width: 640px) {
 
-.modal-content {
-  width: 80%;
-}
-* {
-  font-size: 95%;
-}
-.device_settings {
-  width: 600px;
-}
-.device_details {
-  width: 400px;
-}
-.status {
-  width: 400px;
-}
-.NC_manage {
-  width: 500px;
-}
+  .modal-content {
+    width: 80%;
+  }
+  * {
+    font-size: 95%;
+  }
+  .device_settings {
+    width: 600px;
+  }
+  .device_details {
+    width: 400px;
+  }
+  .status {
+    width: 400px;
+  }
+  .NC_manage {
+    width: 500px;
+  }
 }
 
 
 /* Hides objects during printing */
 @media print {
-.hide-print {
+  .hide-print {
     display: none;
-}
+  }
 }

@@ -191,7 +191,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
     <BR>
       <center>
-        <div class="modal-content" style="width:90%;">
+        <div class="modal-content" style="width:900px;">
           <table class="padded centered device_details">
             <tr><th><?php echo $device_name?></th><th><?php echo $position ?></th></tr>
             <tr> <th colspan = 2>Temp: <?php echo round($last_temp,2)?> &deg C</th></tr>
@@ -202,7 +202,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
                 </TR><TR>
                   <TD><div class="tooltip">Qualità del collegamento: <span class="tooltiptext"><?php echo $QDC_tooltip_txt ?></span></div><B><?php echo $link_qlt ?>%</B></td>
-                    <TD><div class="tooltip">Segnale radio: <span class="tooltiptext"><?php echo $ULA_tooltip_txt ?></span></div><B><?php echo $last_rssi ?>%</B></td>
+                    <TD><div class="tooltip">Segnale radio: <span class="tooltiptext"><?php echo $SER_tooltip_txt ?></span></div><B><?php echo $last_rssi ?>%</B></td>
                     </TR>
                   </table>
                   <br><br>
@@ -252,7 +252,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
                       </td>
                     </tr>
                   </table>
-                  <div id="container1" style="width:100%; height:400px;"></div>
+                  <div id="container1" style="width:100%; height:380px;"></div>
                   <div class="hide-print">
                     <script>
                     var data = [ <?php

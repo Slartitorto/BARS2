@@ -97,13 +97,13 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
 
 } else if(@$_POST["act"] == "set_notifyMethod") { // ------------------ Registra metodi di notifica
 
-  $telegram_flag = $_POST["telegram_flag"];
+  if (isset($_POST["telegram_flag"]))  $telegram_flag = $_POST["telegram_flag"]; else $telegram_flag = 0;
   $telegram_chatid = $_POST["telegram_chatid"];
-  $pushbullett_flag = $_POST["pushbullett_flag"];
+  if (isset($_POST["pushbullett_flag"])) $pushbullett_flag = $_POST["pushbullett_flag"]; else $pushbullett_flag = 0;
   $pushbullett_addr = $_POST["pushbullett_addr"];
-  $email_flag = $_POST["email_flag"];
+  if (isset($_POST["email_flag"])) $email_flag = $_POST["email_flag"]; else $email_flag = 0;
   $email_addr = $_POST["email_addr"];
-  $whatsapp_flag = $_POST["whatsapp_flag"];
+  if (isset($_POST["whatsapp_flag"])) $whatsapp_flag = $_POST["whatsapp_flag"]; else $whatsapp_flag = 0;
   $whatsapp_tel = $_POST["whatsapp_tel"];
 
   $query = "DELETE FROM notify_method WHERE codUtente = '$COD_UTENTE'";

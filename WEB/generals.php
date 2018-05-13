@@ -1,6 +1,6 @@
 <?php
-if(isset($_COOKIE['LOGIN']))
-{ $COD_UTENTE =	$_COOKIE['LOGIN'];}
+if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE =	$_COOKIE['LOGIN'];}
+else { $COD_UTENTE = 0; header("Location: index.php"); }
 include "db_connection.php";
 ?>
 
@@ -530,24 +530,30 @@ include "db_connection.php";
 
                 <?php } else if(@$_GET["act"] == "changePwd_result") { // ---------- effettua il cambio password  ?>
 
-
                   <?php
                   $password	= $_POST["password"];
                   $codPassword	= md5($password);
                   $query	= "UPDATE `utenti` SET `password` =  '$codPassword' WHERE `codUtente` = '$COD_UTENTE' ";
-                  $result	= $conn->query($Sql);
+                  $result	= $conn->query($query);
                   $Messaggio	= "
                   Ciao, questa e-mail ti giunge dall'area riservata di ".NOMESITO.".\n\n
                   Ti informiamo che la tua password è stata cambiata.\n
                   Se non hai effettuato tu il cambio password ti invitiamo a contattarci direttamente.
                   ";
+                  $query = "SELECT username FROM utenti WHERE codUtente='$COD_UTENTE'";
+                  $result = $conn->query($query);
+                  while($row = $result->fetch_assoc()) {
+                    $To = $row["username"];
+                  }
+                  mail($To, "Hooly Sensors - Conferma registrazione", $Messaggio, "From: admin@hooly.eu");
 
-                  mail($_POST["email"], "Hooly Sensors - Conferma registrazione", $Messaggio, "From: admin@hooly.eu");
+                  setcookie('LOGIN', null);
                   ?>
                   <div class=modal-content>
                     <br>
-                    Il cambio passowrd è avvenuto correttamente.<br><br><br>
-                    <button type="button" onclick="location.href='status.php';" class="greenbtn">Torna indietro</button>
+                    Il cambio password è avvenuto correttamente.<br>
+                    Adesso dovrai nuovamente autenticarti passando dalla pagina di Login<br><br><br>
+                    <button type="button" onclick="location.href='index.php';" class="greenbtn">Login</button>
 
 
                   <?php } else if(@$_GET["act"] == "set_notifyMethod") { // ---------- Imposta metodo di notifica  ?>

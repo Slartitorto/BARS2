@@ -514,15 +514,15 @@ include "db_connection.php";
                   <div class=modal-content>
                     <form action="generals.php?act=changePwd_result" onsubmit="return checkPassword()" method="post">
                       <br>
-                      Password:
+                      Inserisci la nuova password:
                       <br>
                       <input type="password" style="width:100%" placeholder="Enter Password" name="password" id="password" maxlength="14" pattern="[A-Za-z0-9]{5,12}" title="La passowrd può contenere lettere e numeri, un minimo di 5 ed un massimo di 12 caratteri alfanumerici" required>
                       <br> <br>
-                      Ripeti la Password:
+                      Ripeti la password:
                       <br>
                       <input type="password" style="width:100%" placeholder="Repeat Password" name="psw-repeat" id="confirm_password"  maxlenght="14" required>
                       <input name="act" type="hidden" value="registrazione">
-                      <br>
+                      <br><br>
                       <button type="submit" class=greenbtn>Cambia la tua password</button>
                     </form>
                   </div>

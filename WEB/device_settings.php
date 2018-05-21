@@ -24,7 +24,6 @@ include "db_connection.php";
 
 <body>
   <BR>
-    <center>
       <?php include 'includes/headerTableMenu.php';
 
       if(isset($_POST['serial']))

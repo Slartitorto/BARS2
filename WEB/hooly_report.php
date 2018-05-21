@@ -57,9 +57,10 @@ while($row = $result->fetch_assoc()) {
 <head>
   <title>Hooly sensors</title>
   <link href="css/reset.css" rel="stylesheet" type="text/css" />
+  <link href="css/dropDownMenu.css" rel="stylesheet" type="text/css" />
   <link href="css/stile.css" rel="stylesheet" type="text/css" />
   <link href="css/report.css" rel="stylesheet" type="text/css" />
-  <link href="css/dropDownMenu.css" rel="stylesheet" type="text/css" />
+
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="apple-touch-icon" href="/icone/temp_icon.png">
@@ -72,7 +73,6 @@ while($row = $result->fetch_assoc()) {
 
 <body>
   <BR>
-    <center>
       <?php include 'includes/headerTableMenu.php'; ?>
       <BR> <BR>
         <div id="report">

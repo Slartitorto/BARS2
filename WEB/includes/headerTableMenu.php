@@ -1,8 +1,6 @@
-<TABLE class="top-menu hide-print"> <TR> <TD align="left">
-  <div class="dropdown">
+  <div class="dropdown hide-print">
     <button class="dropbtn"><img src="icone/menu.png" width="40"></button>
     <div class="dropdown-content">
-
       <a href="status.php"><b>Stato dei sensori</b></a>
       <br>
       <b>Gestione</b>
@@ -18,7 +16,6 @@
       <a href="generals.php?act=set_personalInfo">Info personali</a>
       <a href="generals.php?act=changePwd">Cambio password</a>
       <br>
-      <a href="generals.php?act=logout"><b>Logout</a>
+      <a href="generals.php?act=logout"><b>Logout</b></a>
       </div>
     </div>
-  </td> </TR> </table>

@@ -25,7 +25,6 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
 
 <body>
   <BR>
-    <center>
       <?php include 'includes/headerTableMenu.php'; ?>
       <div class="modal-content animate status">
         <br><br>

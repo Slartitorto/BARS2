@@ -28,7 +28,6 @@ include "db_connection.php";
 
 <body>
   <BR>
-    <center>
       <?php include 'includes/headerTableMenu.php';
 
       if(@$_GET["act"] == "NC_insert") {// ----------- Inserimento non conformità   ?>

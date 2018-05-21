@@ -28,8 +28,7 @@ include "db_connection.php";
 
 <body>
   <BR>
-      <?php include 'includes/headerTableMenu.php';
-
+  <?php
       if(@$_GET["act"] == "NC_insert") {// ----------- Inserimento non conformità   ?>
         <?php
         $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
@@ -653,7 +652,10 @@ include "db_connection.php";
                     </div>
 
 
-                  <?php } ?>
+                  <?php }
+
+                include 'includes/headerTableMenu.php';
+?>
                 </body>
                 </html>
               </body>

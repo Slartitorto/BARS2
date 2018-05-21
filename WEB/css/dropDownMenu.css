@@ -6,7 +6,7 @@
   border: none;
 }
 .dropdown {
-  position: absolute;
+  position: fixed;
   top: 0px;
   left: 0px;
   display: inline-block;
@@ -36,4 +36,10 @@
 }
 .dropdown:hover .dropbtn {
   background-color: #ddd;
+}
+
+@media screen and (max-height: 500px) {
+  .dropdown {
+    position: absolute;
+  }
 }

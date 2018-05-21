@@ -73,7 +73,6 @@ while($row = $result->fetch_assoc()) {
 
 <body>
   <BR>
-      <?php include 'includes/headerTableMenu.php'; ?>
       <BR> <BR>
         <div id="report">
           <table class="hooly_report" id="header_table" border=1>
@@ -201,4 +200,6 @@ while($row = $result->fetch_assoc()) {
                         </tr>
                       </table>
                     </div>
+                    <?php include 'includes/headerTableMenu.php'; ?>
+
                   </body>

@@ -25,7 +25,6 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
 
 <body>
   <BR>
-      <?php include 'includes/headerTableMenu.php'; ?>
       <div class="modal-content animate status">
         <br><br>
         <table class="centered status">
@@ -115,4 +114,6 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
           </table>
           <br><br>
         </div>
+        <?php include 'includes/headerTableMenu.php'; ?>
+
       </body>

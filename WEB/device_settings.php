@@ -87,6 +87,7 @@ include "db_connection.php";
         echo "<table class=\"centered device_settings\">\n";
         echo "<tr><th>Seriale</th><th>Nome hooly</th><th>Posizione</th><th>Rilevamento</th>";
         echo "<th>Min</th><th>Max</th><th>Notifica</th></tr>\n";
+        echo "<tr><td><br><br></td></tr>";
 
         for($x=0;$x<$result->num_rows;$x++) {
           echo "<form action =\"" . $_SERVER['PHP_SELF'] . "\" method=\"POST\">";

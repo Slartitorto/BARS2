@@ -179,19 +179,19 @@ span.psw {
 @media screen and (max-device-width: 640px) {
 
   .modal-content {
-    width: 80%;
+    width: 100%;
   }
   * {
-    font-size: 95%;
+    font-size: 10px;
   }
   .device_settings {
-    width: 600px;
+    width: 550px;
   }
   .device_details {
     width: 400px;
   }
   .status {
-    width: 400px;
+    width: 500px;
   }
   .NC_manage {
     width: 500px;

@@ -511,6 +511,7 @@ include "db_connection.php";
 
 
                   <div class=modal-content>
+                  <center>
                     <form action="generals.php?act=changePwd_result" onsubmit="return checkPassword()" method="post">
                       <br>
                       Inserisci la nuova password:
@@ -524,6 +525,7 @@ include "db_connection.php";
                       <br><br>
                       <button type="submit" class=greenbtn>Cambia la tua password</button>
                     </form>
+                  </center>
                   </div>
 
 
@@ -585,6 +587,7 @@ include "db_connection.php";
                     ?>
 
                     <div class=modal-content>
+                      <center>
                       <form action="hooly_db_actions.php" method="post">
                         <br><br>Desidero ricevere le notifiche tramite:<br><br>
                         <table>
@@ -605,6 +608,7 @@ include "db_connection.php";
                         <input type="hidden" name="act" value="set_notifyMethod">
                         <button type="submit" class=greenbtn>Conferma</button>
                       </form>
+                    </center>
                     </div>
 
 
@@ -636,6 +640,7 @@ include "db_connection.php";
 
 
                     <div class=modal-content>
+                      <center>
                       <form action="hooly_db_actions.php" method="post">
                         <br>
                         <table>
@@ -650,6 +655,7 @@ include "db_connection.php";
                         <input type="hidden" name="act" value="set_personalInfo">
                         <button type="submit" class=greenbtn>Conferma</button>
                       </form>
+                    </center>
                     </div>
 
 

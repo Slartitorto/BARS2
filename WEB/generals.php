@@ -27,6 +27,7 @@ include "db_connection.php";
 </head>
 
 <body>
+  <?php include 'includes/headerTableMenu.php'; ?>
   <BR>
   <?php
       if(@$_GET["act"] == "NC_insert") {// ----------- Inserimento non conformità   ?>
@@ -652,10 +653,7 @@ include "db_connection.php";
                     </div>
 
 
-                  <?php }
-
-                include 'includes/headerTableMenu.php';
-?>
+                  <?php } ?>
                 </body>
                 </html>
               </body>

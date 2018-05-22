@@ -187,7 +187,7 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
     </script>
   </head>
   <body>
-
+    <?php include 'includes/headerTableMenu.php'; ?>
     <BR>
       <center>
         <div class="modal-content" style="width:900px;">
@@ -294,7 +294,6 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
 
                 <?php }  $conn->close();  ?>
               </div>
-              <?php include 'includes/headerTableMenu.php'; ?>
-
+              </center>
             </body>
             </html>

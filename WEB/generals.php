@@ -29,35 +29,37 @@ include "db_connection.php";
 <body>
   <?php include 'includes/headerTableMenu.php'; ?>
   <BR>
-  <?php
-      if(@$_GET["act"] == "NC_insert") {// ----------- Inserimento non conformità   ?>
-        <?php
-        $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
-        $result = $conn->query($query);
-        while($row = $result->fetch_assoc()) {
-          $idUtente = $row["idUtente"];
-          $tenant0 = $row["t0"];
-          $tenant1 = $row["t1"];
-          $tenant2 = $row["t2"];
-          $tenant3 = $row["t3"];
-        }
+    <?php
+    if(@$_GET["act"] == "NC_insert") {// ----------- Inserimento non conformità   ?>
+      <?php
+      $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
+      $result = $conn->query($query);
+      while($row = $result->fetch_assoc()) {
+        $idUtente = $row["idUtente"];
+        $tenant0 = $row["t0"];
+        $tenant1 = $row["t1"];
+        $tenant2 = $row["t2"];
+        $tenant3 = $row["t3"];
+      }
 
-        $query = "SELECT serial, device_name, position, batt_type, min_ok, max_ok FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
-        $result = $conn->query($query);
-        $x=0;
-        while($row = $result->fetch_assoc()) {
-          $serial[$x]=$row["serial"];
-          $device_name[$x]=$row["device_name"];
-          $position[$x]=$row["position"];
-          $batt_type[$x]=$row["batt_type"];
-          $min_ok[$x]=$row["min_ok"];
-          $max_ok[$x]=$row["max_ok"];
-          ++$x;
-        }
-        $count=count($serial);
-        ?>
+      $query = "SELECT serial, device_name, position, batt_type, min_ok, max_ok FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
+      $result = $conn->query($query);
+      $x=0;
+      while($row = $result->fetch_assoc()) {
+        $serial[$x]=$row["serial"];
+        $device_name[$x]=$row["device_name"];
+        $position[$x]=$row["position"];
+        $batt_type[$x]=$row["batt_type"];
+        $min_ok[$x]=$row["min_ok"];
+        $max_ok[$x]=$row["max_ok"];
+        ++$x;
+      }
+      $count=count($serial);
+      ?>
 
-        <div class="modal-content"> <br> <center>
+      <div class="modal-content">
+        <br><br>
+        <center>
           <h3> Inserisci non conformità</h3>
           <br>
           <form onsubmit="preventMultiSubmit()" action="hooly_db_actions.php" method="post">
@@ -511,21 +513,21 @@ include "db_connection.php";
 
 
                   <div class=modal-content>
-                  <center>
-                    <form action="generals.php?act=changePwd_result" onsubmit="return checkPassword()" method="post">
-                      <br>
-                      Inserisci la nuova password:
-                      <br>
-                      <input type="password" style="width:100%" placeholder="Enter Password" name="password" id="password" maxlength="14" pattern="[A-Za-z0-9]{5,12}" title="La passowrd può contenere lettere e numeri, un minimo di 5 ed un massimo di 12 caratteri alfanumerici" required>
-                      <br> <br>
-                      Ripeti la password:
-                      <br>
-                      <input type="password" style="width:100%" placeholder="Repeat Password" name="psw-repeat" id="confirm_password"  maxlenght="14" required>
-                      <input name="act" type="hidden" value="registrazione">
-                      <br><br>
-                      <button type="submit" class=greenbtn>Cambia la tua password</button>
-                    </form>
-                  </center>
+                    <center>
+                      <form action="generals.php?act=changePwd_result" onsubmit="return checkPassword()" method="post">
+                        <br>
+                        Inserisci la nuova password:
+                        <br>
+                        <input type="password" style="width:100%" placeholder="Enter Password" name="password" id="password" maxlength="14" pattern="[A-Za-z0-9]{5,12}" title="La passowrd può contenere lettere e numeri, un minimo di 5 ed un massimo di 12 caratteri alfanumerici" required>
+                        <br> <br>
+                        Ripeti la password:
+                        <br>
+                        <input type="password" style="width:100%" placeholder="Repeat Password" name="psw-repeat" id="confirm_password"  maxlenght="14" required>
+                        <input name="act" type="hidden" value="registrazione">
+                        <br><br>
+                        <button type="submit" class=greenbtn>Cambia la tua password</button>
+                      </form>
+                    </center>
                   </div>
 
 
@@ -588,27 +590,30 @@ include "db_connection.php";
 
                     <div class=modal-content>
                       <center>
-                      <form action="hooly_db_actions.php" method="post">
-                        <br><br>Desidero ricevere le notifiche tramite:<br><br>
-                        <table>
-                          <tr><td><input type="checkbox" name="telegram_flag" value="1" <?php if($telegram_flag) echo "checked"; ?> >Telegram </td><td></td><td>
-                            ChatId:</td><td> <input type="text" class=slim name="telegram_chatid" maxlength="20" value=<?php echo $telegram_chatid ?> ></td>
-                          </tr>
-                          <tr><td><input type="checkbox" name="pushbullett_flag" value="1" <?php if($pushbullett_flag) echo "checked"; ?> >Pushbullett</td><td>&nbsp&nbsp&nbsp</td><td>
-                            Addr:</td><td> <input type="email" class=slim name="pushbullett_addr" maxlength="50" value=<?php echo $pushbullett_addr ?> ></td>
-                          </tr>
-                          <tr><td><input type="checkbox" name="email_flag" value="1" <?php if($email_flag) echo "checked"; ?> >Email</td><td></td><td>
-                            Addr:</td><td> <input type="email" class=slim name="email_addr" maxlength="50" value=<?php echo $email_addr ?> ></td>
-                          </tr>
-                          <tr><td><input type="checkbox" name="whatsapp_flag" value="1" <?php if($whatsapp_flag) echo "checked"; ?> >WhatsApp</td><td>&nbsp</td><td>
-                            #Tel:</td><td> <input type="text" class=slim name="whatsapp_tel" maxlength="20" value=<?php echo $whatsapp_tel ?> ></td>
-                          </tr>
-                        </table>
-                        <br>
-                        <input type="hidden" name="act" value="set_notifyMethod">
-                        <button type="submit" class=greenbtn>Conferma</button>
-                      </form>
-                    </center>
+                        <br><br>
+                        <h3>Desidero ricevere le notifiche tramite:</h3>
+                        <br><br>
+
+                        <form action="hooly_db_actions.php" method="post">
+                          <table>
+                            <tr><td><input type="checkbox" name="telegram_flag" value="1" <?php if($telegram_flag) echo "checked"; ?> >Telegram </td><td></td><td>
+                              ChatId:</td><td> <input type="text" class=slim name="telegram_chatid" maxlength="20" value=<?php echo $telegram_chatid ?> ></td>
+                            </tr>
+                            <tr><td><input type="checkbox" name="pushbullett_flag" value="1" <?php if($pushbullett_flag) echo "checked"; ?> >Pushbullett</td><td>&nbsp&nbsp&nbsp</td><td>
+                              Addr:</td><td> <input type="email" class=slim name="pushbullett_addr" maxlength="50" value=<?php echo $pushbullett_addr ?> ></td>
+                            </tr>
+                            <tr><td><input type="checkbox" name="email_flag" value="1" <?php if($email_flag) echo "checked"; ?> >Email</td><td></td><td>
+                              Addr:</td><td> <input type="email" class=slim name="email_addr" maxlength="50" value=<?php echo $email_addr ?> ></td>
+                            </tr>
+                            <tr><td><input type="checkbox" name="whatsapp_flag" value="1" <?php if($whatsapp_flag) echo "checked"; ?> >WhatsApp</td><td>&nbsp</td><td>
+                              #Tel:</td><td> <input type="text" class=slim name="whatsapp_tel" maxlength="20" value=<?php echo $whatsapp_tel ?> ></td>
+                            </tr>
+                          </table>
+                          <br>
+                          <input type="hidden" name="act" value="set_notifyMethod">
+                          <button type="submit" class=greenbtn>Conferma</button>
+                        </form>
+                      </center>
                     </div>
 
 
@@ -639,23 +644,25 @@ include "db_connection.php";
                     ?>
 
 
-                    <div class=modal-content>
+                    <div class="modal-content">
+                      <br><br>
                       <center>
-                      <form action="hooly_db_actions.php" method="post">
-                        <br>
-                        <table>
-                          <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale" maxlength="50" value="<?php echo $ragione_sociale; ?>"></td></tr>
-                          <tr><td>Indirizzo 1: </td><td><input type="text" class="slim" name="indirizzo_1" maxlength="50" value="<?php echo $indirizzo_1; ?>"></td></tr>
-                          <tr><td>Indirizzo 2: </td><td><input type="text" class="slim" name="indirizzo_2" maxlength="50" value="<?php echo $indirizzo_2; ?>"></td></tr>
-                          <tr><td>CAP: </td><td><input type="text" class="slim" name="cap" maxlength="5" value="<?php echo $cap; ?>"></td></tr>
-                          <tr><td>Città: </td><td><input type="text" class="slim" name="citta" maxlength="32" value="<?php echo $citta; ?>"></td></tr>
-                          <tr><td>Telefono: </td><td><input type="text" class="slim" name="telefono" maxlength="32" value="<?php echo $telefono; ?>"></td></tr>
-                        </table>
-                        <br>
-                        <input type="hidden" name="act" value="set_personalInfo">
-                        <button type="submit" class=greenbtn>Conferma</button>
-                      </form>
-                    </center>
+                        <h3> Gestisci le informazioni personali </h3>
+                        <form action="hooly_db_actions.php" method="post">
+                          <br>
+                          <table>
+                            <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale" maxlength="50" value="<?php echo $ragione_sociale; ?>"></td></tr>
+                            <tr><td>Indirizzo 1: </td><td><input type="text" class="slim" name="indirizzo_1" maxlength="50" value="<?php echo $indirizzo_1; ?>"></td></tr>
+                            <tr><td>Indirizzo 2: </td><td><input type="text" class="slim" name="indirizzo_2" maxlength="50" value="<?php echo $indirizzo_2; ?>"></td></tr>
+                            <tr><td>CAP: </td><td><input type="text" class="slim" name="cap" maxlength="5" value="<?php echo $cap; ?>"></td></tr>
+                            <tr><td>Città: </td><td><input type="text" class="slim" name="citta" maxlength="32" value="<?php echo $citta; ?>"></td></tr>
+                            <tr><td>Telefono: </td><td><input type="text" class="slim" name="telefono" maxlength="32" value="<?php echo $telefono; ?>"></td></tr>
+                          </table>
+                          <br>
+                          <input type="hidden" name="act" value="set_personalInfo">
+                          <button type="submit" class=greenbtn>Conferma</button>
+                        </form>
+                      </center>
                     </div>
 
 

@@ -6,6 +6,7 @@
       <b>Gestione</b>
       <a href="generals.php?act=NC_insert">Inserisci non conformità</a>
       <a href="generals.php?act=NC_manage_select">Gestisci le non conformità</a>
+      <a href="generals.php?act=RM_insert">Inserisci una rilevazione manuale</a>
       <a href="generals.php?act=monthly_report">Genera report mensili</a>
       <br>
       <b>Personalizza</b>

@@ -27,6 +27,36 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
   header('Location: status.php');
 
 
+} else if(@$_POST["act"] == "rm_record") { // ----------- Inserisci Registrazione Manuale
+
+
+    $serial = $_POST["serial"];
+    $codUtente = $_POST["cod_utente"];
+    $date = $_POST["date"];
+    $item = $_POST["item"];
+    $ora = $_POST["ora"];
+    $minuto = $_POST["minuto"];
+    $temp_gradi = $_POST["temp_gradi"];
+    $temp_centesimi = $_POST["temp_centesimi"];
+
+
+    $splitted_date = preg_split('/\//',$date);
+    $giorno = $splitted_date[0];
+    $mese = $splitted_date[1];
+    $anno = $splitted_date[2];
+
+    $temp = $temp_gradi . "." . $temp_centesimi;
+
+    $query = "DELETE FROM `rilevazioni_manuali` WHERE `codUtente` = '$codUtente' AND `serial` = '$serial' AND `giorno` = '$giorno' AND `mese` = '$mese' AND `anno` = '$anno' AND `item` = '$item'";
+    $result = $conn->query($query);
+
+    $query = "INSERT INTO `rilevazioni_manuali` (`codUtente`,`serial`,`giorno`,`mese`,`anno`,`ora`,`minuto`,`item`,`temp`) VALUES ('$codUtente','$serial','$giorno','$mese','$anno','$ora','$minuto','$item','$temp')";
+    $result = $conn->query($query);
+
+    header('Location: status.php');
+
+
+
 } else if(@$_POST["act"] == "nc_modify") { // ----------- Modifica non conformita
 
 
@@ -61,6 +91,19 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
   $result = $conn->query($query);
 
   header("Location: generals.php?act=NC_manage&mese=$mese&anno=$anno");
+
+
+} else if(@$_POST["act"] == "rm_delete") { // ----------- Cancella rilevazioni manuali
+
+
+  $nc_id = $_POST["id"];
+  $mese = $_POST["mese"];
+  $anno = $_POST["anno"];
+  $query = "DELETE FROM `rilevazioni_manuali` WHERE id = '$nc_id' ";
+  $result = $conn->query($query);
+
+  header("Location: generals.php?act=RM_manage&mese=$mese&anno=$anno");
+
 
 } else if(@$_POST["act"] == "alarm_pause_record") { // ----------------- Registra pausa allarme
 

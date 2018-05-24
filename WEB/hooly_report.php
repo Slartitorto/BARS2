@@ -56,7 +56,7 @@ while($row = $result->fetch_assoc()) {
 $rm_exists=0;
 $query = "SELECT * from rilevazioni_manuali where codUtente='$COD_UTENTE' and mese = '$mese' and anno = '$anno' and serial = '$serial'";
 $result = $conn->query($query);
-if(($result->num_rows) == 1)
+if(($result->num_rows) > 0)
 {
   $rm_exists=1;
   $rm_qty = 0;

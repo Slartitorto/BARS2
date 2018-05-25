@@ -1,7 +1,7 @@
 <?php
 if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE =	$_COOKIE['LOGIN'];
 } else { $COD_UTENTE =	0; header("Location: index.php"); }
-include "db_connection.php";
+include "dbactions/db_connection.php";
 ?>
 
 <head>

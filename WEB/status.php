@@ -33,7 +33,7 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
         <tr><th>Dettagli</th><th>Termometro</th><th>Posizione</th><th>Temp</th><th>Stato</th></tr>
 
         <?php
-        include "db_connection.php";
+        include "dbactions/db_connection.php";
 
         $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
         $result = $conn->query($query);

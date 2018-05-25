@@ -1,7 +1,7 @@
 <?php
 if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE =	$_COOKIE['LOGIN'];}
 else { $COD_UTENTE = 0; header("Location: index.php"); }
-include "db_connection.php";
+include "dbactions/db_connection.php";
 ?>
 
 <head>
@@ -29,8 +29,11 @@ include "db_connection.php";
 <body>
   <?php include 'includes/headerTableMenu.php'; ?>
   <BR>
-    <?php
-    if(@$_GET["act"] == "NC_insert") {// ----------- Inserimento non conformità   ?>
+
+
+
+    <?php if(@$_GET["act"] == "NC_insert") {// ----------- Inserimento non conformità   ?>
+      
       <?php
       $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
       $result = $conn->query($query);
@@ -62,7 +65,7 @@ include "db_connection.php";
         <center>
           <h3> Inserisci non conformità</h3>
           <br>
-          <form onsubmit="preventMultiSubmit()" action="hooly_db_actions.php" method="post">
+          <form onsubmit="preventMultiSubmit()" action="dbactions/hooly_db_actions.php" method="post">
             <input type="hidden" name="act" value="nc_record">
             <input type="hidden" name="cod_utente" value="<?php echo $COD_UTENTE; ?>">
             Data: <input type="text" class="slim" id="datepicker" name="nc_date" maxlength="10" value="<?php echo date("d/m/Y"); ?>" required>
@@ -95,9 +98,9 @@ include "db_connection.php";
         </div>
 
 
-      <?php } else if(@$_GET["act"] == "RM_insert") { // ---------- Inserisci Registrazone Manuale
+      <?php } else if(@$_GET["act"] == "RM_insert") { // ---------- Inserisci Registrazone Manuale   ?>
 
-
+        <?php
         $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
         $result = $conn->query($query);
         while($row = $result->fetch_assoc()) {
@@ -128,7 +131,7 @@ include "db_connection.php";
           <center>
             <h3> Inserisci una registrazione manuale</h3>
             <br>
-            <form onsubmit="preventMultiSubmit()" action="hooly_db_actions.php" method="post">
+            <form onsubmit="preventMultiSubmit()" action="dbactions/hooly_db_actions.php" method="post">
               <input type="hidden" name="act" value="rm_record">
               <input type="hidden" name="cod_utente" value="<?php echo $COD_UTENTE; ?>">
 
@@ -206,7 +209,7 @@ include "db_connection.php";
           <div class="modal-content"> <br> <center>
             <h3> Modifica non conformità</h3>
             <br>
-            <form action="hooly_db_actions.php" method="post">
+            <form action="dbactions/hooly_db_actions.php" method="post">
               <input type="hidden" name="mese" value="<?php echo $mese; ?>">
               <input type="hidden" name="anno" value="<?php echo $anno; ?>">
               <input type="hidden" name="act" value="nc_modify">
@@ -387,7 +390,7 @@ include "db_connection.php";
                     ?>
                     <TR>
                       <TD>
-                        <form action="hooly_db_actions.php" onsubmit="return checkConfirm()" method="post">
+                        <form action="dbactions/hooly_db_actions.php" onsubmit="return checkConfirm()" method="post">
                           <input type="hidden" name="act" value="nc_delete">
                           <input type="hidden" name="nc_id" value=<?php echo $nc_id[$i] ?> >
                           <input type="hidden" name="mese" value=<?php echo $mese ?> >
@@ -435,7 +438,7 @@ include "db_connection.php";
                         <tr><th>Elimina</th><th>Modifica</th><th>Data e ora</th><th>Impianto</th><th>Posizione</th><th>Fascia</th><th>Temperatura</th></tr>
 
                         <?php
-                        $query = "SELECT * FROM rilevazioni_manuali where codUtente = '$COD_UTENTE' and mese = '$mese' and anno = '$anno' order by giorno asc";
+                        $query = "SELECT * FROM rilevazioni_manuali where codUtente = '$COD_UTENTE' and mese = '$mese' and anno = '$anno' order by giorno,ora,minuto,item asc";
                         $result = $conn->query($query);
                         if(($result->num_rows) == 0) { ?> </table> nessun record trovato <?php }
                         else {
@@ -456,7 +459,7 @@ include "db_connection.php";
                             ?>
                             <TR>
                               <TD>
-                                <form action="hooly_db_actions.php" onsubmit="return checkConfirm()" method="post">
+                                <form action="dbactions/hooly_db_actions.php" onsubmit="return checkConfirm()" method="post">
                                   <input type="hidden" name="act" value="rm_delete">
                                   <input type="hidden" name="id" value=<?php echo $id[$i] ?> >
                                   <input type="hidden" name="mese" value=<?php echo $mese ?> >
@@ -609,7 +612,7 @@ include "db_connection.php";
                               <center>
                                 <h3>Non inviare allarmi</h3>
                                 <br>
-                                <form action="hooly_db_actions.php" onsubmit="return checkOrari()" method="post">
+                                <form action="dbactions/hooly_db_actions.php" onsubmit="return checkOrari()" method="post">
                                   <input type="checkbox" name="alarm_pause_flag_1" value="1" <?php if($alarm_pause_flag_1_result) echo "checked"; ?>>
 
                                   dalle ore:
@@ -749,7 +752,7 @@ include "db_connection.php";
                                   <h3>Desidero ricevere le notifiche tramite:</h3>
                                   <br><br>
 
-                                  <form action="hooly_db_actions.php" method="post">
+                                  <form action="dbactions/hooly_db_actions.php" method="post">
                                     <table>
                                       <tr><td><input type="checkbox" name="telegram_flag" value="1" <?php if($telegram_flag) echo "checked"; ?> >Telegram </td><td></td><td>
                                         ChatId:</td><td> <input type="text" class=slim name="telegram_chatid" maxlength="20" value=<?php echo $telegram_chatid ?> ></td>
@@ -803,7 +806,7 @@ include "db_connection.php";
                                 <br><br>
                                 <center>
                                   <h3> Gestisci le informazioni personali </h3>
-                                  <form action="hooly_db_actions.php" method="post">
+                                  <form action="dbactions/hooly_db_actions.php" method="post">
                                     <br>
                                     <table>
                                       <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale" maxlength="50" value="<?php echo $ragione_sociale; ?>"></td></tr>

@@ -1,5 +1,5 @@
 <?php
-include "db_connection.php";
+include "dbactions/db_connection.php";
 if(isset($_COOKIE['LOGIN']))
 { $COD_UTENTE =	$_COOKIE['LOGIN']; header("Location: status.php"); }
 ?>
@@ -24,7 +24,7 @@ if(isset($_COOKIE['LOGIN']))
 
 
     <div class="modal-content animate">
-      <form method="post" action="provisioning_actions.php">
+      <form method="post" action="dbactions/provisioning_actions.php">
         <h2>Recupero password</h2>
         <br> <br>
         <b>Inserisci il tuo indirizzo email</b>
@@ -149,7 +149,7 @@ if(isset($_COOKIE['LOGIN']))
 
 
     <div class="modal-content animate">
-      <form action="provisioning_actions.php" onsubmit="return checkPassword()" method="post">
+      <form action="dbactions/provisioning_actions.php" onsubmit="return checkPassword()" method="post">
         <h2>Registrazione</h2>
         <br> <br>
         Inserisci i tuoi dati per creare il nuovo account:
@@ -177,7 +177,7 @@ if(isset($_COOKIE['LOGIN']))
 
 
     <div class="modal-content animate">
-      <form action="provisioning_actions.php" method="post">
+      <form action="dbactions/provisioning_actions.php" method="post">
         <h2>Login</h2>
         <br> <br> <br>
         <b>Email</b>

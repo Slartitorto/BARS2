@@ -24,7 +24,7 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
   $query = "INSERT INTO `non_conformita` (`nc_date`,`nc_type`,`nc_ac`,`serial`,`codUtente`,`device_name`,`position`) VALUES ('$nc_date','$nc_type','$nc_ac','$serial','$codUtente','$device_name','$position')";
   $result = $conn->query($query);
 
-  header('Location: status.php');
+  header('Location: ../status.php');
 
 
 } else if(@$_POST["act"] == "rm_record") { // ----------- Inserisci Registrazione Manuale
@@ -53,7 +53,7 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
     $query = "INSERT INTO `rilevazioni_manuali` (`codUtente`,`serial`,`giorno`,`mese`,`anno`,`ora`,`minuto`,`item`,`temp`) VALUES ('$codUtente','$serial','$giorno','$mese','$anno','$ora','$minuto','$item','$temp')";
     $result = $conn->query($query);
 
-    header('Location: status.php');
+    header('Location: ../status.php');
 
 
 
@@ -78,7 +78,7 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
 
   $query = "UPDATE `non_conformita` SET `nc_date` = '$nc_date', `nc_type` = '$nc_type', `nc_ac` = '$nc_ac', `serial` = '$serial', `device_name` = '$device_name' ,`position` = '$position' WHERE `nc_id` = '$nc_id'";
   $result = $conn->query($query);
-  header("Location: generals.php?act=NC_manage&mese=$mese&anno=$anno");
+  header("Location: ../generals.php?act=NC_manage&mese=$mese&anno=$anno");
 
 
 } else if(@$_POST["act"] == "nc_delete") { // ----------- Cancella non conformità
@@ -90,7 +90,7 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
   $query = "DELETE FROM `non_conformita` WHERE nc_id = '$nc_id' ";
   $result = $conn->query($query);
 
-  header("Location: generals.php?act=NC_manage&mese=$mese&anno=$anno");
+  header("Location: ../generals.php?act=NC_manage&mese=$mese&anno=$anno");
 
 
 } else if(@$_POST["act"] == "rm_delete") { // ----------- Cancella rilevazioni manuali
@@ -102,7 +102,7 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
   $query = "DELETE FROM `rilevazioni_manuali` WHERE id = '$nc_id' ";
   $result = $conn->query($query);
 
-  header("Location: generals.php?act=RM_manage&mese=$mese&anno=$anno");
+  header("Location: ../generals.php?act=RM_manage&mese=$mese&anno=$anno");
 
 
 } else if(@$_POST["act"] == "alarm_pause_record") { // ----------------- Registra pausa allarme
@@ -119,7 +119,7 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
   $query = "INSERT INTO alarm_pause (codUtente, alarm_pause_flag_1,alarm_pause_from_1, alarm_pause_to_1, alarm_pause_flag_2, alarm_pause_from_2, alarm_pause_to_2) VALUES ('$COD_UTENTE','$alarm_pause_flag_1','$alarm_pause_from_1','$alarm_pause_to_1','$alarm_pause_flag_2','$alarm_pause_from_2','$alarm_pause_to_2')";
   $result = $conn->query($query);
 
-  header('Location: status.php');
+  header('Location: ../status.php');
 
 
 } else if(@$_POST["act"] == "set_personalInfo") { // ------------------- Registra informazioni personali
@@ -136,7 +136,7 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
   $query = "INSERT INTO personal_info (codUtente, ragione_sociale, indirizzo_1, indirizzo_2, cap, citta, telefono) VALUES ('$COD_UTENTE','$ragione_sociale','$indirizzo_1','$indirizzo_2','$cap','$citta','$telefono')";
   $result = $conn->query($query);
 
-  header('Location: status.php');
+  header('Location: ../status.php');
 
 } else if(@$_POST["act"] == "set_notifyMethod") { // ------------------ Registra metodi di notifica
 
@@ -155,7 +155,7 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
   $query = "INSERT INTO notify_method (codUtente,telegram_flag,telegram_chatid,pushbullett_flag,pushbullett_addr,email_flag,email_addr,whatsapp_flag,whatsapp_tel) VALUES ('$COD_UTENTE','$telegram_flag','$telegram_chatid','$pushbullett_flag','$pushbullett_addr','$email_flag','$email_addr','$whatsapp_flag','$whatsapp_tel')";
   $result = $conn->query($query);
 
-  header('Location: status.php');
+  header('Location: ../status.php');
 
 }
 ?>

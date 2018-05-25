@@ -40,11 +40,11 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
     "Reply-To: admin@hooly.eu \r\n";
     mail($to, $subject, $message, $headers);
 
-    header('Location: index.php?act=RecuperoPwdMailSent');
+    header('Location: ../index.php?act=RecuperoPwdMailSent');
   }
   else
   {
-    header('Location: index.php?act=RecuperoPwdKOUserNotExists');
+    header('Location: ../index.php?act=RecuperoPwdKOUserNotExists');
   }
 
 
@@ -72,10 +72,10 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
     ";
 
     mail($email, "Home Sensors - Conferma registrazione", $Messaggio, "From: admin@hooly.eu");
-    header('Location: index.php?act=RegistrazioneOn');
+    header('Location: ../index.php?act=RegistrazioneOn');
 
   } else {
-    header('Location: index.php?act=RegistrazioneKOEmailAlreadyExists');
+    header('Location: ../index.php?act=RegistrazioneKOEmailAlreadyExists');
   }
 
 } else if(@$_GET["act"] == "attiva_nuova_pwd") { // ---------------------------------------
@@ -93,9 +93,9 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
     $result               =       $conn->query($Sql);
     $Sql          =       "UPDATE `utenti` SET token = '' WHERE `email`='" . $email . "' AND `token`='" . $token . "';";
     $result               =       $conn->query($Sql);
-    header('Location: index.php?act=RecuperoPwdDone');
+    header('Location: ../index.php?act=RecuperoPwdDone');
   } else {
-    header('Location: index.php?act=RecuperoPwdTokenKO');
+    header('Location: ../index.php?act=RecuperoPwdTokenKO');
   }
 
 
@@ -114,7 +114,7 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
   }
   else
   {
-    header('Location: index.php?act=wrongLoginPassword');
+    header('Location: ../index.php?act=wrongLoginPassword');
   }
 
 
@@ -123,7 +123,7 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
 
   // da verificare e sistemare
   SettaCoockie(" ", -1);
-  header('Location: index.php');
+  header('Location: ../index.php');
 
 
 } else if(@$_GET["act"]	==	"conferma") { // ---------------------------------------
@@ -132,7 +132,7 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
   // da verificare e sistemare
   $Sql		=	"UPDATE `utenti` SET `stato` = '1' WHERE `codUtente`='".@$_GET["cod"]."' LIMIT 1 ;";
   $result		=	$conn->query($Sql);
-  header('Location: index.php');
+  header('Location: ../index.php');
 
 
 }

@@ -3,7 +3,7 @@
 include "db_connection.php";
 
 function SettaCoockie($ID_UTENTE, $TEMPO)
-{ setcookie('LOGIN', $ID_UTENTE, time()+$TEMPO); }
+{ setcookie('LOGIN', $ID_UTENTE, time()+$TEMPO,"/"); }
 
 function PasswordRandom()
 { $PASSWORD = ""; mt_srand(); for($i=0; $i<8; $i++) { $PASSWORD .= "".mt_rand(0, 9).""; } return $PASSWORD; }
@@ -110,7 +110,7 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
     $Dati = $result->fetch_array();
     if(@$_POST["remember"] == 1) $TempoDiValidita = 31536000; else $TempoDiValidita = 72000;
     SettaCoockie($Dati["codUtente"], $TempoDiValidita);
-    header('Location: status.php');
+    header('Location: ../status.php');
   }
   else
   {

@@ -1,1 +1,8 @@
 Options	All -Indexes
+
+#sudo a2enmod rewrite
+RewriteEngine On
+# This one works -- feel free to copy it onto your own site. http://tltech.com/info/referrer-htaccess/
+RewriteEngine On
+RewriteCond %{HTTP_HOST}@@%{HTTP_REFERER} !^([^@]*)@@https?://\1/.*
+RewriteRule .* .* [NC,F]

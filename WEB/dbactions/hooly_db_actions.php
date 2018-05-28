@@ -30,37 +30,36 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
 } else if(@$_POST["act"] == "rm_record") { // ----------- Inserisci Registrazione Manuale
 
 
-    $serial = $_POST["serial"];
-    $codUtente = $_POST["cod_utente"];
-    $date = $_POST["date"];
-    $item = $_POST["item"];
-    $ora = $_POST["ora"];
-    $minuto = $_POST["minuto"];
-    $temp_gradi = $_POST["temp_gradi"];
-    $temp_centesimi = $_POST["temp_centesimi"];
+  $serial = $_POST["serial"];
+  $codUtente = $_POST["cod_utente"];
+  $date = $_POST["date"];
+  $item = $_POST["item"];
+  $ora = $_POST["ora"];
+  $minuto = $_POST["minuto"];
+  $temp_gradi = $_POST["temp_gradi"];
+  $temp_centesimi = $_POST["temp_centesimi"];
 
-    $query = "SELECT device_name, position FROM devices WHERE serial = '$serial'";
-    $result = $conn->query($query);
-    while($row = $result->fetch_assoc()) {
-      $device_name = $row["device_name"];
-      $position = $row["position"];
-    }
+  $query = "SELECT device_name, position FROM devices WHERE serial = '$serial'";
+  $result = $conn->query($query);
+  while($row = $result->fetch_assoc()) {
+    $device_name = $row["device_name"];
+    $position = $row["position"];
+  }
 
-    $splitted_date = preg_split('/\//',$date);
-    $giorno = $splitted_date[0];
-    $mese = $splitted_date[1];
-    $anno = $splitted_date[2];
+  $splitted_date = preg_split('/\//',$date);
+  $giorno = $splitted_date[0];
+  $mese = $splitted_date[1];
+  $anno = $splitted_date[2];
 
-    $temp = $temp_gradi . "." . $temp_centesimi;
+  $temp = $temp_gradi . "." . $temp_centesimi;
 
-    $query = "DELETE FROM `rilevazioni_manuali` WHERE `codUtente` = '$codUtente' AND `serial` = '$serial' AND `giorno` = '$giorno' AND `mese` = '$mese' AND `anno` = '$anno' AND `item` = '$item'";
-    $result = $conn->query($query);
+  $query = "DELETE FROM `rilevazioni_manuali` WHERE `codUtente` = '$codUtente' AND `serial` = '$serial' AND `giorno` = '$giorno' AND `mese` = '$mese' AND `anno` = '$anno' AND `item` = '$item'";
+  $result = $conn->query($query);
 
-    $query = "INSERT INTO `rilevazioni_manuali` (`codUtente`,`serial`,`device_name`,`position`,`giorno`,`mese`,`anno`,`ora`,`minuto`,`item`,`temp`) VALUES ('$codUtente','$serial','$device_name','$position','$giorno','$mese','$anno','$ora','$minuto','$item','$temp')";
-    $result = $conn->query($query);
+  $query = "INSERT INTO `rilevazioni_manuali` (`codUtente`,`serial`,`device_name`,`position`,`giorno`,`mese`,`anno`,`ora`,`minuto`,`item`,`temp`) VALUES ('$codUtente','$serial','$device_name','$position','$giorno','$mese','$anno','$ora','$minuto','$item','$temp')";
+  $result = $conn->query($query);
 
-    header('Location: ../status.php');
-
+  header('Location: ../status.php');
 
 
 } else if(@$_POST["act"] == "nc_modify") { // ----------- Modifica non conformita
@@ -85,6 +84,41 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
   $query = "UPDATE `non_conformita` SET `nc_date` = '$nc_date', `nc_type` = '$nc_type', `nc_ac` = '$nc_ac', `serial` = '$serial', `device_name` = '$device_name' ,`position` = '$position' WHERE `nc_id` = '$nc_id'";
   $result = $conn->query($query);
   header("Location: ../generals.php?act=NC_manage&mese=$mese&anno=$anno");
+
+
+} else if(@$_POST["act"] == "rm_modify") { // ----------- Modifica rilevazione manuale
+
+
+  $id = $_POST["id"];
+  $serial = $_POST["serial"];
+  $position = $_POST["position"];
+  $device_name = $_POST["device_name"];
+  $ora = $_POST["ora"];
+  $minuto = $_POST["minuto"];
+  $item = $_POST["item"];
+  $temp_gradi = $_POST["temp_gradi"];
+
+  $temp_centesimi = $_POST["temp_centesimi"];
+  $temp = $temp_gradi . "." . $temp_centesimi;
+
+  $date = $_POST["date"];
+  $splitted_date = preg_split('/\//',$date);
+  $giorno = $splitted_date[0];
+  $mese = $splitted_date[1];
+  $anno = $splitted_date[2];
+
+
+
+  $query = "SELECT device_name, position FROM devices WHERE serial = '$serial'";
+  $result = $conn->query($query);
+  while($row = $result->fetch_assoc()) {
+    $device_name = $row["device_name"];
+    $position = $row["position"];
+  }
+
+  $query = "UPDATE `rilevazioni_manuali` SET `giorno` = $giorno, `mese` = $mese, `anno` = $anno, `ora` =$ora, `minuto` = $minuto, `item` = $item, `temp` = $temp, `serial` = '$serial', `device_name` = '$device_name' ,`position` = '$position' WHERE `id` = '$id'";
+  $result = $conn->query($query);
+  header("Location: ../generals.php?act=RM_manage&mese=$mese&anno=$anno");
 
 
 } else if(@$_POST["act"] == "nc_delete") { // ----------- Cancella non conformità

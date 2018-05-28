@@ -428,6 +428,7 @@ include "dbactions/db_connection.php";
             </center>
           </div>
 
+
         <?php } else if(@$_GET["act"] == "RM_manage_select") { // ---------- Gestione RM: seleziona periodo -  ?>
 
 

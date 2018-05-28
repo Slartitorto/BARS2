@@ -39,6 +39,12 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
     $temp_gradi = $_POST["temp_gradi"];
     $temp_centesimi = $_POST["temp_centesimi"];
 
+    $query = "SELECT device_name, position FROM devices WHERE serial = '$serial'";
+    $result = $conn->query($query);
+    while($row = $result->fetch_assoc()) {
+      $device_name = $row["device_name"];
+      $position = $row["position"];
+    }
 
     $splitted_date = preg_split('/\//',$date);
     $giorno = $splitted_date[0];
@@ -50,7 +56,7 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
     $query = "DELETE FROM `rilevazioni_manuali` WHERE `codUtente` = '$codUtente' AND `serial` = '$serial' AND `giorno` = '$giorno' AND `mese` = '$mese' AND `anno` = '$anno' AND `item` = '$item'";
     $result = $conn->query($query);
 
-    $query = "INSERT INTO `rilevazioni_manuali` (`codUtente`,`serial`,`giorno`,`mese`,`anno`,`ora`,`minuto`,`item`,`temp`) VALUES ('$codUtente','$serial','$giorno','$mese','$anno','$ora','$minuto','$item','$temp')";
+    $query = "INSERT INTO `rilevazioni_manuali` (`codUtente`,`serial`,`device_name`,`position`,`giorno`,`mese`,`anno`,`ora`,`minuto`,`item`,`temp`) VALUES ('$codUtente','$serial','$device_name','$position','$giorno','$mese','$anno','$ora','$minuto','$item','$temp')";
     $result = $conn->query($query);
 
     header('Location: ../status.php');

@@ -28,7 +28,7 @@
 
 --
 -- Table structure for table `rilevazioni_manuali`
---
+--  -------------------------------------------------------- >Ultima aggiunta
 
 DROP TABLE IF EXISTS `rilevazioni_manuali`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -38,6 +38,8 @@ CREATE TABLE `rilevazioni_manuali` (
   `codUtente` varchar(32) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `serial` varchar(5) NOT NULL,
+  `device_name` varchar(64) DEFAULT NULL,
+  `position` varchar(32) DEFAULT NULL,
   `giorno` int(11) NOT NULL,
   `mese` int(11) NOT NULL,
   `anno` int(11) NOT NULL,

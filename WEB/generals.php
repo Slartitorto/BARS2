@@ -33,7 +33,7 @@ include "dbactions/db_connection.php";
 
 
     <?php if(@$_GET["act"] == "NC_insert") {// ----------- Inserimento non conformità   ?>
-      
+
       <?php
       $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
       $result = $conn->query($query);
@@ -156,8 +156,8 @@ include "dbactions/db_connection.php";
               <input type="number" name="ora" class="slim" min="0" max="23" required>:
               <input type="number" name="minuto" class="slim" min="0" max="59" required><br><br><br>
               Inserisci la temperatura rilevata manualmente:<br>
-              <input type="number" name="temp_gradi" min="-30" max="60" name="temp_centesimi" required>,
-              <input type="number" name="temp_centesimi" class="slim" min="0" max="99" name="temp_centesimi">
+              <input type="number" name="temp_gradi" min="-30" max="60" required>,
+              <input type="number" name="temp_centesimi" class="slim" min="0" max="99">
               <br><br>
               <button id="mybutton" type="submit" class="greenbtn">Registra</button>
               <div style=font-size:12px;text-align:left;margin:1% auto 1% auto;padding:30px;>
@@ -242,6 +242,101 @@ include "dbactions/db_connection.php";
               </div>
 
               <button type="submit" class="greenbtn">Registra</button>
+            </form>
+          </div>
+
+
+        <?php } else if(@$_POST["act"] == "RM_modify") { // ---------- Modifica Rilevazione Manuale   ?>
+
+
+          <?php
+          $mese=$_POST['mese'];
+          $anno=$_POST['anno'];
+          $id = $_POST['id'];
+
+          $query = "SELECT * FROM rilevazioni_manuali where id = '$id'";
+          $result = $conn->query($query);
+          while($row = $result->fetch_assoc()) {
+            $serial_trovato=$row["serial"];
+            $device_name_trovato=$row["device_name"];
+            $position_trovato=$row["position"];
+            $giorno=$row["giorno"];
+            $mese=$row["mese"];
+            $anno=$row["anno"];
+            $ora=$row["ora"];
+            $minuto=$row["minuto"];
+            $item_trovato=$row["item"];
+            $temp=$row["temp"];
+          }
+
+          $splitted_temp = preg_split('/\./',$temp);
+          $temp_gradi = $splitted_temp[0];
+          $temp_centesimi = $splitted_temp[1];
+
+          $date_trovato= $giorno . "/" . $mese . "/" . $anno;
+
+          $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
+          $result = $conn->query($query);
+          while($row = $result->fetch_assoc()) {
+            $idUtente = $row["idUtente"];
+            $tenant0 = $row["t0"];
+            $tenant1 = $row["t1"];
+            $tenant2 = $row["t2"];
+            $tenant3 = $row["t3"];
+          }
+
+          $query = "SELECT serial, device_name, position FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
+          $result = $conn->query($query);
+          $x=0;
+          while($row = $result->fetch_assoc()) {
+            $serial[$x]=$row["serial"];
+            $device_name[$x]=$row["device_name"];
+            $position[$x]=$row["position"];
+            ++$x;
+          }
+          $count=count($serial);
+
+          ?>
+          <div class="modal-content"> <br> <center>
+            <h3> Modifica rilevazione manuale</h3>
+            <br>
+            <form onsubmit="preventMultiSubmit()" action="dbactions/hooly_db_actions.php" method="post">
+              <input type="hidden" name="act" value="rm_modify">
+              <input type="hidden" name="mese" value="<?php echo $mese; ?>">
+              <input type="hidden" name="anno" value="<?php echo $anno; ?>">
+              <input type="hidden" name="id" value="<?php echo $id; ?>">
+              <input type="hidden" name="cod_utente" value="<?php echo $COD_UTENTE; ?>">
+
+              <br>
+              Seleziona dispositivo: <select name="serial">
+                <?php for ($i=0;$i<$count;$i++) {
+                  echo "<option value= \"$serial[$i]\" ";
+                  if ($serial[$i] == $serial_trovato) echo " selected";
+                  echo "> $device_name[$i]  $position[$i] </option>\n";
+                }
+                ?>
+              </select>
+              <br>
+              Data: <input type="text" class="slim" id="datepicker" name="date" maxlength="10" value="<?php echo $date_trovato; ?>" required>
+              <br>
+              Seleziona la fascia oraria:
+              <select name="item">
+                <option value="1" <?php if ($item_trovato == "1") echo " selected"; ?> >1</option>
+                <option value="2" <?php if ($item_trovato == "2") echo " selected"; ?> >2</option>
+                <option value="3" <?php if ($item_trovato == "3") echo " selected"; ?> >3</option>
+              </select>
+              <br>
+              Inserisci ore e minuti:
+              <input type="number" name="ora" class="slim" min="0" max="23" value=<?php echo $ora ?> required>:
+              <input type="number" name="minuto" class="slim" min="0" max="59" value=<?php echo $minuto ?> required><br><br><br>
+              Inserisci la temperatura rilevata manualmente:<br>
+              <input type="number" name="temp_gradi" min="-30" max="60" value=<?php echo $temp_gradi ?> required>,
+              <input type="number" name="temp_centesimi" class="slim" min="0" max="99" value=<?php echo $temp_centesimi ?> >
+              <br><br>
+              <button id="mybutton" type="submit" class="greenbtn">Modifica</button>
+              <div style=font-size:12px;text-align:left;margin:1% auto 1% auto;padding:30px;>
+                <b>NB: </b> Le rilevazioni manuali saranno segnalate con il carattere "M"
+              </div>
             </form>
           </div>
 
@@ -446,6 +541,8 @@ include "dbactions/db_connection.php";
                           while($row = $result->fetch_assoc()) {
                             $id[$x]=$row["id"];
                             $serial[$x]=$row["serial"];
+                            $device_name[$x]=$row["device_name"];
+                            $position[$x]=$row["position"];
                             $giorno[$x]=$row["giorno"];
                             $ora[$x]=$row["ora"];
                             $minuto[$x]=$row["minuto"];

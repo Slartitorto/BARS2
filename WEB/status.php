@@ -116,4 +116,14 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
       </table>
       <br><br>
     </div>
-  </body>
+    <script type="text/javascript" id="cookieinfo"
+    src="scripts/cookieinfo.min.js"
+    data-bg="#645862"
+    data-fg="#FFFFFF"
+    data-link="#F1D600"
+    data-cookie="CookieInfoScript"
+    data-text-align="left"
+    data-close-text="Ok !">
+  </script>
+
+</body>

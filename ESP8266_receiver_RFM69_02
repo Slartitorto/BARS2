@@ -298,10 +298,10 @@ void loop() {
     // Data Payload OK, processing and sending to datasink
     {
       Serial.println("got datagram from Hooly, sending to the server");
-      Serial.println("");
       digitalWrite(LED, HIGH);
 
       // send payload to repeater network
+      Serial.println("got datagram from Hooly, echo to repeater");
       radio.send(REPEATERADDR, receivePayload, strlen(receivePayload));
 
       int signal_strenght = (100+(((radio.RSSI)+28)*100/72));

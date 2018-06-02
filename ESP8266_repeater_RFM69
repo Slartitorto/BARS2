@@ -1,0 +1,141 @@
+// Vers.02 ---> to be test
+// Add retrasmission to Hooly Repeater. NB REPEATERADDR = 3 to be defined to repeater hardware
+
+
+
+// * nRF24L01+  ESP8266  RFM69HW
+// * VCC        VCC       VCC
+// * CE         GPIO5*    DIO0
+// * CSN/CS     GPIO15**  NSS
+// * SCK        GPIO14    SCK
+// * MISO       GPIO12    MISO
+// * MOSI       GPIO13    MOSI
+// * GND        GND       GND
+
+// * attenzione alla libreria, mettere in RFM69.h:
+// #define RF69_IRQ_PIN          5
+// #define RF69_IRQ_NUM          5
+// ** usare radio.setCS(15); nello sketch
+
+// vedi http://thebillplease.net/play/esp8266-with-rfm69-using-lowpowerlab/
+
+// usare NODE MCU (ESP-12E) come tipo di arduino
+// oppure "Generic ESP8266 Module"
+
+
+#include <RFM69.h>
+#include <SPI.h>
+
+
+// Transceiver configuration
+#define NETWORKID          0   // Must be the same for all nodes
+#define MYNODEID           3   // My node ID as repeater
+#define HOOLYID            2   // Hooly id
+#define ROUTERID           1   // Destination node ID (router)
+
+#define FREQUENCY  RF69_433MHZ // transceiver frequency
+
+#define LED 4                  // pin for led
+
+// Remote site information
+const char http_site[] = "myhooly.hooly.eu";
+const int http_port = 80;
+
+// global variables
+unsigned long timeout;
+bool retransmit = 0;
+char waiting_payload[32] = "";
+char receivePayload[32] = "";
+
+// Initialize RFM69 library
+RFM69 radio;
+
+// --------------------------------
+// setup routine, run once
+void setup() {
+
+  // Open a serial port so we can send keystrokes to the module:
+  Serial.begin(115200);
+  Serial.print("Node ");
+  Serial.print(MYNODEID,DEC);
+  Serial.println(" ready");
+
+  pinMode(LED, OUTPUT);
+
+  // transceiver library initialize
+  radio.setCS(15);
+  radio.initialize(FREQUENCY, MYNODEID, NETWORKID);
+  radio.setHighPower();
+  radio.promiscuous(1);
+}
+
+// end setup
+// --------------------------------
+// main program
+
+void loop() {
+
+  if ((millis() - timeout > 500) && (retransmit == 1)) {
+    Serial.print("Timeout and need to retransmit data: ");
+    Serial.println(receivePayload);
+    radio.send(ROUTERID, receivePayload, 32);
+    retransmit = 0;
+  }
+
+  if (radio.receiveDone()) {
+    Serial.print("received from node ");
+    byte senderID = radio.SENDERID;
+    Serial.print(senderID, DEC);
+    Serial.print(", message [");
+
+    // The actual message is contained in the DATA array and is DATALEN bytes in size:
+    int separator_count = 0;
+    int bad_datagram = 0;
+    for (byte i = 0; i < radio.DATALEN; i++) {
+      Serial.print((char)radio.DATA[i]);
+      receivePayload[i] = radio.DATA[i];
+      if (radio.DATA[i] == ':') separator_count ++;
+      if ((radio.DATA[i] < 43 && radio.DATA[i] != 0) || radio.DATA[i] > 58) {
+        bad_datagram = 1;
+        Serial.println(" bad datagram");
+        break;
+      }
+    }
+
+    Serial.println("]");
+    Serial.print("Separator count = ");
+    Serial.println(separator_count);
+    Serial.print("Bad datagram = ");
+    Serial.println(bad_datagram);
+    Serial.print("Radio data length = ");
+    Serial.println(radio.DATALEN);
+
+    if (separator_count == 6 && bad_datagram == 0 && radio.DATALEN == 32)
+    {
+      Serial.println("Data Payload OK, processing ...");
+      digitalWrite(LED, HIGH);
+
+      if (senderID == HOOLYID) // Hooly message
+      {
+        Serial.println("got datagram from Hooly, waiting for the router echo");
+        for (byte i = 0; i < radio.DATALEN; i++) {
+          waiting_payload[i] = receivePayload[i];
+        }
+        timeout = millis();
+        retransmit = 1;
+      }
+      if (senderID == ROUTERID) // Router Echo message
+      {
+        Serial.println("got datagram from router, checking ...");
+        if (waiting_payload == receivePayload) {
+          Serial.println("Datagram from router was echo, so OK, do not retransmit");
+          retransmit = 0;
+        }
+        else {
+          Serial.println("Got datagram from router not in my queue. Need to send");
+        }
+        digitalWrite(LED, LOW);
+      }
+    }
+  }
+}

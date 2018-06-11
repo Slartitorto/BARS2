@@ -1,4 +1,4 @@
-// Vers.00 ---> to be test - Sembra che abbia qualche problema
+// Vers.01 ---> to be test
 // Add retrasmission to Hooly Repeater. NB REPEATERADDR = 3 to be defined to repeater hardware
 
 
@@ -43,8 +43,10 @@ const int http_port = 80;
 // global variables
 unsigned long timeout;
 bool retransmit = 0;
-char waiting_payload[32] = "";
-char receivePayload[32] = "";
+bool waiting_router = 0;
+
+char waitingPayload[32] = "";
+char receivedPayload[32] = "";
 
 // Initialize RFM69 library
 RFM69 radio;
@@ -74,16 +76,14 @@ void setup() {
 
 void loop() {
 
-bool waiting_router = 0;
-
-
   if ((millis() - timeout > 500) && (retransmit == 1)) {
     digitalWrite(LED, HIGH);
     Serial.print("Timeout and retransmit data: ");
-    Serial.println(receivePayload);
-    radio.send(ROUTERID, waiting_payload, 32);
+    Serial.println(waitingPayload);
+    radio.send(ROUTERID, waitingPayload, 32);
     retransmit = 0;
     Serial.println();  // Done retransmit
+    for (byte i = 0; i < strlen(waitingPayload); i++) waitingPayload[i] = 0;
     digitalWrite(LED, LOW);
   }
 
@@ -92,18 +92,18 @@ bool waiting_router = 0;
     byte senderID = radio.SENDERID;
     int signal_strenght = (100+(((radio.RSSI)+28)*100/72));
     int separator_count = 0;
-    int bad_datagram = 0;
+    bool bad_datagram = 0;
 
     Serial.print("received from node ");
     Serial.print(senderID, DEC);
     Serial.print(", message [");
+
     for (byte i = 0; i < radio.DATALEN; i++) {
       Serial.print((char)radio.DATA[i]);
-      receivePayload[i] = radio.DATA[i];
+      receivedPayload[i] = radio.DATA[i];
       if (radio.DATA[i] == ':') separator_count ++;
       if ((radio.DATA[i] < 43 && radio.DATA[i] != 0) || radio.DATA[i] > 58) {
         bad_datagram = 1;
-        Serial.println(" bad datagram");
       }
     }
 
@@ -116,30 +116,33 @@ bool waiting_router = 0;
     if (separator_count == 6 && bad_datagram == 0 && radio.DATALEN == 32)
     {
       Serial.println("Data Payload OK, processing ...");
+
+      // ----------------------
+
       if (senderID == HOOLYID) // Hooly message
       {
         digitalWrite(LED, HIGH);
         Serial.println("Got datagram from Hooly, waiting for the router echo");
 
         for (byte i = 0; i < radio.DATALEN; i++) {
-          waiting_payload[i] = receivePayload[i];
+          waitingPayload[i] = receivedPayload[i];
         }
         timeout = millis();
-        retransmit = 1;
         waiting_router = 1;
+        retransmit = 1;
         digitalWrite(LED, LOW);
       }
 
+      // ----------------------
 
-      if (senderID == ROUTERID && waiting_router == 1) // Router message
+      if (senderID == ROUTERID && waiting_router == 1) // Router message I looking for
       {
         digitalWrite(LED, HIGH);
         Serial.println("Got datagram from router, checking ...");
-        waiting_router = 0;
 
         int error = 0;
         for (byte i = 0; i < 30; i++) {
-          if (waiting_payload[i] != receivePayload[i]) error = 1;
+          if (waitingPayload[i] != receivedPayload[i]) error = 1;
         }
         if (!error) {
           Serial.println("Datagram from router is the waiting echo, so do not retransmit");
@@ -150,8 +153,12 @@ bool waiting_router = 0;
           delay(3000);
           retransmit = 1;
         }
+        waiting_router = 0;
         digitalWrite(LED, LOW);
       }
+
+      // ----------------------
+
     }
   }
 }

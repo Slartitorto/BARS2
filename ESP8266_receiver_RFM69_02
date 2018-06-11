@@ -1,4 +1,4 @@
-// Vers.02 ---> to be test
+// Vers.02 ---> to be testing su router 000016
 // Add retrasmission to Hooly Repeater. NB REPEATERADDR = 3 to be defined to repeater hardware
 
 
@@ -46,8 +46,8 @@
 
 // Transceiver configuration
 #define NETWORKID          0   // Must be the same for all nodes
-#define MYNODEID           1   // My node ID
-#define TONODEID           2   // Destination node ID
+#define MYNODEID           1   // My node ID (router)
+#define TONODEID           2   // Hooly node ID
 #define REPEATERADDR       3   // Repeater address
 
 #define FREQUENCY  RF69_433MHZ // transceiver frequency
@@ -126,9 +126,9 @@ void setup() {
         Serial.println(line);
       }
       for (int i=0;i<40;i++){
-          router_name_and_key[i]=line.charAt(i);
-          Serial.print(router_name_and_key[i]);
-        }
+        router_name_and_key[i]=line.charAt(i);
+        Serial.print(router_name_and_key[i]);
+      }
       Serial.println("   ... Done");
 
       // format eeprom in router_name and router_key spaces
@@ -208,13 +208,15 @@ void loop() {
 
     // The actual message is contained in the DATA array and is DATALEN bytes in size:
     int separator_count = 0;
-    int bad_datagram = 0;
+    bool bad_datagram = 0;
     for (byte i = 0; i < radio.DATALEN; i++) {
       Serial.print((char)radio.DATA[i]);
       receivePayload[i] = radio.DATA[i];
       if (radio.DATA[i] == ':') separator_count ++;
-      if (radio.DATA[i] < 43 || radio.DATA[i] > 58) bad_datagram = 1;
-      if (radio.DATA[i] == 0) bad_datagram = 0;
+      if ((radio.DATA[i] < 43 && radio.DATA[i] != 0) || radio.DATA[i] > 58) {
+        bad_datagram = 1;
+        Serial.println(" bad datagram");
+      }
     }
     Serial.println("]");
     Serial.print("bad_datagram (0 se ok - 1 se ko) = "); Serial.println(bad_datagram);
@@ -297,16 +299,18 @@ void loop() {
     if (separator_count == 6 && bad_datagram == 0)
     // Data Payload OK, processing and sending to datasink
     {
-      Serial.println("got datagram from Hooly, sending to the server");
-      digitalWrite(LED, HIGH);
-
-      // send payload to repeater network
-      Serial.println("got datagram from Hooly, echo to repeater");
-      radio.send(REPEATERADDR, receivePayload, strlen(receivePayload));
-
       int signal_strenght = (100+(((radio.RSSI)+28)*100/72));
 
+      Serial.print("Got good datagram from Hooly - RSSI: ");
+      Serial.println(signal_strenght);
+      digitalWrite(LED, HIGH);
+
+      // Send payload to repeater network
+      Serial.println("Got datagram from Hooly, echo to repeater");
+      if (radio.SENDERID == 2) radio.send(REPEATERADDR, receivePayload, strlen(receivePayload));
+
       // Send data to sink
+      Serial.println(" Finally, sending to the server");
       WiFiClient client;
       if (!client.connect(http_site, http_port) ) {
         blink_error();

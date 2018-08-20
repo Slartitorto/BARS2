@@ -278,6 +278,7 @@ DROP TABLE IF EXISTS `router`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `router` (
   `router` varchar(16) DEFAULT NULL,
+  `codUtente` varchar(32) NOT NULL,
   `need_new_key` int(11) DEFAULT NULL,
   `current_key` varchar(36) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

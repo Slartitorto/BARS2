@@ -1,5 +1,6 @@
 // Vers.02 ---> to be testing su router 000016
 // Add retrasmission to Hooly Repeater. NB REPEATERADDR = 3 to be defined to repeater hardware
+// Add keep_alive after every data sent
 
 
 // ------ README -------
@@ -328,6 +329,7 @@ void loop() {
         client.println();
       }
       digitalWrite(LED, LOW);
+      keep_alive_timeout = millis();
     }
   }
 }

@@ -831,6 +831,9 @@ include "dbactions/db_connection.php";
                                   $email_addr = $row["email_addr"];
                                   $whatsapp_flag = $row["whatsapp_flag"];
                                   $whatsapp_tel = $row["whatsapp_tel"];
+                                  $sms_flag = $row["sms_flag"];
+                                  $sms_tel = $row["sms_tel"];
+
                                 }
                               } else {
                                 $telegram_flag = "";
@@ -841,6 +844,9 @@ include "dbactions/db_connection.php";
                                 $email_addr = "";
                                 $whatsapp_flag = "";
                                 $whatsapp_tel = "";
+                                $sms_flag = "";
+                                $sms_tel = "";
+
                               }
                               ?>
 
@@ -861,9 +867,13 @@ include "dbactions/db_connection.php";
                                       <tr><td><input type="checkbox" name="email_flag" value="1" <?php if($email_flag) echo "checked"; ?> >Email</td><td></td><td>
                                         Addr:</td><td> <input type="email" class=slim name="email_addr" maxlength="50" value=<?php echo $email_addr ?> ></td>
                                       </tr>
-                                      <tr><td><input type="checkbox" name="whatsapp_flag" value="1" <?php if($whatsapp_flag) echo "checked"; ?> >WhatsApp</td><td>&nbsp</td><td>
+                                      <tr><td><input type="checkbox" disabled name="whatsapp_flag" value="1" <?php if($whatsapp_flag) echo "checked"; ?> >WhatsApp</td><td>&nbsp</td><td>
                                         #Tel:</td><td> <input type="text" class=slim name="whatsapp_tel" maxlength="20" value=<?php echo $whatsapp_tel ?> ></td>
                                       </tr>
+                                      <tr><td><input type="checkbox" disabled name="sms_flag" value="1" <?php if($sms_flag) echo "checked"; ?> >SMS</td><td>&nbsp</td><td>
+                                        #Tel:</td><td> <input type="text" class=slim name="sms_tel" maxlength="20" value=<?php echo $sms_tel ?> ></td>
+                                      </tr>
+
                                     </table>
                                     <br>
                                     <input type="hidden" name="act" value="set_notifyMethod">

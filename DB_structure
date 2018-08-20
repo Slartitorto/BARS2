@@ -187,7 +187,10 @@ CREATE TABLE `notify_method` (
   `email_flag` bool DEFAULT 0,
   `email_addr` varchar(50) DEFAULT NULL,
   `whatsapp_flag` bool DEFAULT 0,
-  `whatsapp_tel` varchar(32) DEFAULT NULL
+  `whatsapp_tel` varchar(32) DEFAULT NULL,
+  `sms_flag` bool DEFAULT 0,
+  `sms_tel` varchar(32) DEFAULT NULL
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

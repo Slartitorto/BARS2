@@ -188,11 +188,13 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
   $email_addr = $_POST["email_addr"];
   if (isset($_POST["whatsapp_flag"])) $whatsapp_flag = $_POST["whatsapp_flag"]; else $whatsapp_flag = 0;
   $whatsapp_tel = $_POST["whatsapp_tel"];
+  if (isset($_POST["sms_flag"])) $sms_flag = $_POST["sms_flag"]; else $sms_flag = 0;
+  $sms_tel = $_POST["sms_tel"];
 
   $query = "DELETE FROM notify_method WHERE codUtente = '$COD_UTENTE'";
   $result = $conn->query($query);
 
-  $query = "INSERT INTO notify_method (codUtente,telegram_flag,telegram_chatid,pushbullett_flag,pushbullett_addr,email_flag,email_addr,whatsapp_flag,whatsapp_tel) VALUES ('$COD_UTENTE','$telegram_flag','$telegram_chatid','$pushbullett_flag','$pushbullett_addr','$email_flag','$email_addr','$whatsapp_flag','$whatsapp_tel')";
+  $query = "INSERT INTO notify_method (codUtente,telegram_flag,telegram_chatid,pushbullett_flag,pushbullett_addr,email_flag,email_addr,whatsapp_flag,whatsapp_tel,sms_flag,sms_tel) VALUES ('$COD_UTENTE','$telegram_flag','$telegram_chatid','$pushbullett_flag','$pushbullett_addr','$email_flag','$email_addr','$whatsapp_flag','$whatsapp_tel','$sms_flag','$sms_tel')";
   $result = $conn->query($query);
 
   header('Location: ../status.php');

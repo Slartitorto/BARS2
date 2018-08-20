@@ -361,7 +361,7 @@ include "dbactions/db_connection.php";
 
                 $query = "delete from new_devices WHERE serial='$serial'";
                 $result = $conn->query($query);
-                $query = "insert into devices (serial,device_name,position,armed,batt_alarmed,alarmed,min_ok,max_ok,batt_type,tenant,code_period) values ('$serial','Hooly_$serial','posizione',0,0,0,10,30,'litio','$tenant',6) ";
+                $query = "insert into devices (serial,device_name,position,armed,batt_alarmed,alarmed,min_ok,max_ok,batt_type,tenant,code_period) values ('$serial','Hooly_$serial','posizione',0,0,0,10,30,3,'$tenant',5) ";
                 $result = $conn->query($query); ?>
                 Operazione effettuata con successo !! <br><br>
                 <center>

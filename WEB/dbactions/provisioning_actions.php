@@ -59,7 +59,13 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
   if(($result->num_rows) == 0)
   {
 
-    $query		= "INSERT INTO `utenti` SET `username`='$email', `codUtente`='$codUtente', `password`='$codPassword', `t0`= 1, `t1`= 0, `t2`= 0, `t3`= 0, `email`='$email';";
+    $query = "SELECT max(t0) + 1 as next_tenant from utenti";
+    $result = $conn->query($query);
+    while($row = $result->fetch_assoc()) {
+      $next_tenant = $row["next_tenant"];
+    }
+
+    $query		= "INSERT INTO `utenti` SET `username`='$email', `codUtente`='$codUtente', `password`='$codPassword', `t0`= $next_tenant, `t1`= 0, `t2`= 0, `t3`= 0, `email`='$email';";
     $result	= $conn->query($query);
     $Messaggio	= "
     Ciao, questa e-mail ti giunge dall'area riservata di ".NOMESITO.".\n\n
@@ -67,7 +73,7 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
     Username: ".$email."\n
     Password: ".$password."\n\n\n
     Questa è la url per confermare l'attivazione del tuo account:\n\n
-    ".URLSITO."/provisioning_actions.php?act=conferma&cod=".$codUtente."\n\n
+    ".URLSITO."/dbactions/provisioning_actions.php?act=conferma&cod=".$codUtente."\n\n
     In caso di problemi ti invitiamo a contattarci direttamente.
     ";
 

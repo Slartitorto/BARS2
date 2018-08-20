@@ -96,7 +96,7 @@ include "dbactions/db_connection.php";
           echo "<input type=\"hidden\" name=\"serial\" value=\"" . $serial[$x] . "\">\n";
           echo "<TD><input type=\"text\" class=\"slim\" name=\"device_name\" value=\"" . $device_name[$x] . "\" size=15 onchange=\"this.form.submit()\"></TD>\n";
           echo "<TD><input type=\"text\" class=\"slim\" name=\"position\" value=\"" . $position[$x] . "\" size=15 onchange=\"this.form.submit()\"></TD>\n";
-          echo "<TD><select class=\"slim\" name=\"code_period\" onchange=\"this.form.submit()\">\n";
+          echo "<TD><select disabled class=\"slim\" name=\"code_period\" onchange=\"this.form.submit()\">\n";
 
           echo "<option value= \"1\"";
           if ($code_period[$x] == 1) { echo " selected";}

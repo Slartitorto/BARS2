@@ -56,11 +56,12 @@ if ($batt_type == 3) { // 3x AAA ministilo
   //  3.3 / 1024 = 0.003222 (v per digit) = 3.222 mV
   //  min = 3000/2/3.222 = 465 -> 0%
   //  max = 4500/2/3.222 = 698 -> 100%
-  //  651 - 575 = 133 (range in digit)
-  //  100/133 = 0.752 (range in % per digit)
+  //  verified 720 -> 100%
+  //  720 - 465 = 255 (range in digit)
+  //  100/255 = 0.392 (range in % per digit)
   //  so:
   $batt_0 = 465;
-  $batt_corr = 0.752;
+  $batt_corr = 0.392;
 }
 
 $battery = intval(($battery - $batt_0) * $batt_corr);

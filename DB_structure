@@ -204,9 +204,14 @@ DROP TABLE IF EXISTS `server_settings`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `server_settings` (
   `id` int(11) DEFAULT NULL,
+  `sendmessage_key` varchar(50) DEFAULT NULL,
   `pushbullett_token` varchar(50) DEFAULT NULL,
   `telegram_BOT_id` varchar(50) DEFAULT NULL,
-  `telegram_Chat_id` varchar(50) DEFAULT NULL
+  `telegram_Chat_id` varchar(50) DEFAULT NULL,
+  `sms_server` varchar(50) DEFAULT NULL,
+  `sms_sender` varchar(50) DEFAULT NULL,
+  `sms_username` varchar(50) DEFAULT NULL,
+  `sms_password` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -300,6 +305,8 @@ CREATE TABLE `utenti` (
   `username` varchar(30) NOT NULL,
   `password` varchar(32) NOT NULL,
   `token` varchar(32) DEFAULT NULL,
+  `activation_key` varchar(8) DEFAULT NULL,
+  `sms_tel` varchar(16) DEFAULT NULL,
   `new_password` varchar(32) DEFAULT NULL,
   `email` varchar(50) NOT NULL,
   `stato` int(1) NOT NULL DEFAULT '0',

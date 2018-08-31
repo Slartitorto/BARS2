@@ -52,6 +52,8 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
 
   $email	= $_POST["email"];
   $password	= $_POST["password"];
+  $sms_tel	= $_POST["sms_tel"];
+
   $codUtente	= md5($email);
   $codPassword	= md5($password);
   $query	= "SELECT * from `utenti` WHERE `email`='" . $email . "';";
@@ -65,8 +67,22 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
       $next_tenant = $row["next_tenant"];
     }
 
-    $query		= "INSERT INTO `utenti` SET `username`='$email', `codUtente`='$codUtente', `password`='$codPassword', `t0`= $next_tenant, `t1`= 0, `t2`= 0, `t3`= 0, `email`='$email';";
+    $query = "SELECT * FROM server_settings";
+    $result = $conn->query($query);
+    while($row = $result->fetch_assoc()) {
+      $sendmessage_key=$row["sendmessage_key"];
+    }
+
+    $activation_key = rand(100000,999999);
+
+    $query		= "INSERT INTO `utenti` SET `activation_key`='$activation_key', `sms_tel`='$sms_tel', `username`='$email', `codUtente`='$codUtente', `password`='$codPassword', `t0`= $next_tenant, `t1`= 0, `t2`= 0, `t3`= 0, `email`='$email';";
     $result	= $conn->query($query);
+    $subject = "PIN per l'attivazione dell'account MyHooly";
+    $message = "inserisci nella form il numero: ".$activation_key;
+    $website = "http://myhooly.hooly.eu/sendmessage.php?channel=sms&key=".$sendmessage_key."&destination=".$sms_tel."&subject=".$subject."&message=".$message;
+    $website = str_replace(" ","%20",$website);
+    $content = file_get_contents($website);
+
     $Messaggio	= "
     Ciao, questa e-mail ti giunge dall'area riservata di ".NOMESITO.".\n\n
     I tuoi dati di accesso sono:\n
@@ -74,11 +90,12 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
     Password: ".$password."\n\n\n
     Questa è la url per confermare l'attivazione del tuo account:\n\n
     ".URLSITO."/dbactions/provisioning_actions.php?act=conferma&cod=".$codUtente."\n\n
+    Se invece hai inserito il codice pin inviato via sms, puoi ignorare questo messaggio.\n\n
     In caso di problemi ti invitiamo a contattarci direttamente.
     ";
 
-    mail($email, "Home Sensors - Conferma registrazione", $Messaggio, "From: admin@hooly.eu");
-    header('Location: ../index.php?act=RegistrazioneOn');
+    mail($email, "Hooly Sensors - Conferma registrazione", $Messaggio, "From: admin@hooly.eu");
+    header('Location: ../index.php?act=RegistrazioneOn&codUtente='.$codUtente);
 
   } else {
     header('Location: ../index.php?act=RegistrazioneKOEmailAlreadyExists');
@@ -131,6 +148,34 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
   SettaCoockie(" ", -1);
   header('Location: ../index.php');
 
+
+} else if(@$_POST["act"]	==	"sms_activation") { // ---------------------------------------
+
+
+  $codUtente	= $_POST["codUtente"];
+  $pin	= $_POST["pin"];
+  $query = "SELECT activation_key, stato from utenti where codUtente = '" . $codUtente . "'";
+  $result = $conn->query($query);
+  if(($result->num_rows) == 1)
+  {
+    while($row = $result->fetch_assoc()) {
+      $registered_pin = $row["activation_key"];
+      $stato = $row["stato"];
+    }
+    if ($stato == 0) {
+      if ($pin == $registered_pin) {
+        $Sql		=	"UPDATE utenti SET stato = '1' WHERE codUtente = '" . $codUtente . "' LIMIT 1";
+        $result		=	$conn->query($Sql);
+        header('Location: ../index.php?act=AttivazioneOn');
+      } else {
+        $Sql		=	"DELETE FROM utenti WHERE stato = '0' AND codUtente = '" . $codUtente . "'";
+        $result		=	$conn->query($Sql);
+        header('Location: ../index.php?act=Attivazione_sms_KO');
+      }
+    } else {
+      header('Location: ../index.php?act=Attivazione_sms_KO_user_already_active');
+    }
+  }
 
 } else if(@$_GET["act"]	==	"conferma") { // ---------------------------------------
 

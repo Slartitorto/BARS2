@@ -41,16 +41,25 @@ if(isset($_COOKIE['LOGIN']))
 
   <?php } else if(@$_GET["act"] == "RegistrazioneOn") {// --------------------------   ?>
 
-
+    <?php
+    $codUtente	= $_GET["codUtente"];
+    ?>
     <div class="modal-content animate">
-      <h2>Registrazione avvenuta</h2>
-      <br> <br>
-      Registrazione effettutata con successo; a breve riceverai una e-mail con un link per attivare la registrazione.
+      <h2>Registrazione avvenuta con successo !</h2>
       <br><br>
-      Se non la trovi, prova a controllare nella casella della posta indesiderata, alcuni provider potrebbero scambiarla per spam.
-      <br><br>
-      Se hai difficoltà non esitare a <a href=mailto:admin@hooly.eu>contattarci</a>.
-      <button type="submit" class="greenbtn centeredbtn" onclick="location.href='index.php';">Torna alla pagina di login</button>
+      <center>
+        Ti abbiamo appena inviato una mail ed un pin via sms.<br><br>
+        Puoi seguire il link indicato nella mail <br><b>oppure</b><br>
+        inserire il pin di 6 cifre nello spazio qui sotto.<br><br><br>
+        Questa operazione è necessaria per attivare l'account.<br>
+        <br><br>
+        <form action="dbactions/provisioning_actions.php" method="post">
+          <input type="text" class="slim" name="pin" pattern="[0-9]{6}" size="6" maxlength="6" required>
+          <input type="hidden" name="act" value="sms_activation">
+          <input type="hidden" name="codUtente" value="<?php echo $codUtente ?>">
+        </center>
+        <button type="submit" class="greenbtn centeredbtn">Attiva l'account</button>
+      </form>
     </div>
 
 
@@ -105,6 +114,36 @@ if(isset($_COOKIE['LOGIN']))
       <br><br>
       Se hai difficoltà non esitare a <a href=mailto:admin@hooly.eu>contattarci</a>.
       <button type="button" onclick="location.href='index.php?act=Recovery';" class="redbtn centeredbtn">Torna indietro</button>
+    </div>
+
+
+  <?php } else if(@$_GET["act"] == "Attivazione_sms_KO_user_already_active") {// --------------------------   ?>
+
+
+    <div class="modal-content animate">
+      <h2>Attivazione sms fallita</h2>
+      <br><br>
+      C'e' stato un problema nella procedura di attivazione SMS:<br>
+      forse hai già attivato l'utente tramite email.<br>
+      Prova ad effettuare il login.
+      <br><br>
+      Se hai difficoltà non esitare a <a href=mailto:admin@hooly.eu>contattarci</a>.
+      <button type="button" onclick="location.href='index.php';" class="greenbtn centeredbtn">Login</button>
+    </div>
+
+
+  <?php } else if(@$_GET["act"] == "Attivazione_sms_KO") {// --------------------------   ?>
+
+
+    <div class="modal-content animate">
+      <h2>Attivazione fallita</h2>
+      <br><br>
+
+      C'e' stato un problema nella procedura di attivazione<br>
+      forse hai utilizzato un pin errato.
+      <br><br>
+      Se hai difficoltà non esitare a <a href=mailto:admin@hooly.eu>contattarci</a>.
+      <button type="button" onclick="location.href='index.php?act=Registrazione';" class="redbtn centeredbtn">Riprova a registrarti</button>
     </div>
 
 
@@ -165,6 +204,13 @@ if(isset($_COOKIE['LOGIN']))
         <b>Ripeti la password:</b>
         <br>
         <input type="password" style="width:100%" placeholder="Repeat Password" name="psw-repeat" id="confirm_password" required>
+
+        <br> <br>
+        <b>Cellulare</b> (il pin di attivazione verrà inviato per sms)
+        <br>
+        <b>+39</b><input type="text" placeholder="" pattern="[0-9]{8,11}" maxlength="11" size="11" name="sms_tel" required>
+
+
         <input name="act" type="hidden" value="registrazione">
         <button type="submit" class="greenbtn centeredbtn">Registrati</button>
         <br>

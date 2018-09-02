@@ -7,6 +7,8 @@ include "dbactions/db_connection.php";
 if((isset($_GET['data'])) and (isset($_GET['rssi'])) and (isset($_GET['router']))){
   $data=$_GET['data'];
   $rssi=$_GET['rssi'];
+  if ($rssi < 1)
+  {$rssi = 1;}
   $router=$_GET['router'];
 } else exit();
 
@@ -16,6 +18,11 @@ list($serial, $counter, $temp, $hum, $battery, $period) = explode(":",$data);
 
 $temp = $temp/100;
 $hum = $hum/100;
+
+// aggiorno comunque il router_keep_alive
+$result = $conn->query("DELETE FROM keep_alive_check WHERE router = '$router'");
+$result = $conn->query("INSERT INTO keep_alive_check (router) VALUES ('$router')");
+$result = $conn->query("UPDATE keep_alive_check SET alarmed = '0' WHERE router = '$router'");
 
 $query = "SELECT armed, batt_alarmed, alarmed, min_ok, max_ok, device_name, position, tenant, batt_type from devices where serial = '$serial'";
 $result = mysqli_query($conn,$query);
@@ -101,7 +108,7 @@ if (($temp < $min_ok) or ($temp > $max_ok)) {
 
     $query = "SELECT codUtente FROM utenti WHERE t0 = '$tenant' OR t1 = '$tenant' OR t2 = '$tenant' OR t3 = '$tenant'";
     $result = mysqli_query($conn,$query);
-    while (($row = mysqli_fetch_row($result))) {
+    while (($row = mysqli_fetch_array($result))) {
       $codUtente = $row[0];
 
       $query = "SELECT alarm_pause_flag_1, alarm_pause_from_1, alarm_pause_to_1, alarm_pause_flag_2, alarm_pause_from_2, alarm_pause_to_2 from alarm_pause where codUtente = '$codUtente'";
@@ -120,7 +127,7 @@ if (($temp < $min_ok) or ($temp > $max_ok)) {
       if ($alarm_pause_flag_2 == 1 && $alarm_pause_from_2 < $hour_now && $alarm_pause_to_2 > $hour_now) $suspend=1;
 
       if(!$suspend){
-        $query = "SELECT telegram_flag, telegram_chatid, pushbullett_flag, pushbullett_addr, email_flag, email_addr, whatsapp_flag, whatsapp_tel from notify_method where codUtente = '$codUtente'";
+        $query = "SELECT telegram_flag, telegram_chatid, pushbullett_flag, pushbullett_addr, email_flag, email_addr, whatsapp_flag, whatsapp_tel,sms_flag,sms_tel from notify_method where codUtente = '$codUtente'";
         $result = mysqli_query($conn,$query);
         $row = mysqli_fetch_array($result);
         $telegram_flag = $row[0];
@@ -131,12 +138,15 @@ if (($temp < $min_ok) or ($temp > $max_ok)) {
         $email_addr = $row[5];
         $whatsapp_flag = $row[6];
         $whatsapp_tel = $row[7];
+        $sms_flag = $row[8];
+        $sms_tel = $row[9];
 
-        $query = "SELECT pushbullett_token, telegram_BOT_ID from server_settings";
+        $query = "SELECT pushbullett_token,telegram_BOT_ID,sendmessage_key from server_settings";
         $result = mysqli_query($conn,$query);
         $row = mysqli_fetch_array($result);
         $pushbullett_token = $row[0];
         $telegram_BOT_id = $row[1];
+        $sendmessage_key = $row[2];
 
         if($telegram_flag) {
           $website="https://api.telegram.org/".$telegram_BOT_id;
@@ -164,6 +174,13 @@ if (($temp < $min_ok) or ($temp > $max_ok)) {
           curl_exec($curl);
           curl_close($curl);
         }
+
+        if ($sms_flag) {
+          $website="http://myhooly.hooly.eu/sendmessage.php?channel=sms&key=".$sendmessage_key."&destination=".$sms_tel."&subject=".$subject."&message=".$message;
+          $website = str_replace(" ","%20",$website);
+          $content = file_get_contents($website);
+        }
+
 
         if ($email_flag) {
           mail($email_addr, $subject, $message, $headers);

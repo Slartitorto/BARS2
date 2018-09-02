@@ -1,6 +1,6 @@
 <?php
-if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE =	$_COOKIE['LOGIN'];
-} else { $COD_UTENTE =	0; header("Location: index.php"); }
+if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE = $_COOKIE['LOGIN'];
+} else { $COD_UTENTE = 0; header("Location: index.php"); }
 include "dbactions/db_connection.php";
 ?>
 
@@ -96,6 +96,7 @@ include "dbactions/db_connection.php";
           echo "<input type=\"hidden\" name=\"serial\" value=\"" . $serial[$x] . "\">\n";
           echo "<TD><input type=\"text\" class=\"slim\" name=\"device_name\" value=\"" . $device_name[$x] . "\" size=15 onchange=\"this.form.submit()\"></TD>\n";
           echo "<TD><input type=\"text\" class=\"slim\" name=\"position\" value=\"" . $position[$x] . "\" size=15 onchange=\"this.form.submit()\"></TD>\n";
+echo "<input type=\"hidden\" name=\"code_period\" value=\"5\">\n";
           echo "<TD><select disabled class=\"slim\" name=\"code_period\" onchange=\"this.form.submit()\">\n";
 
           echo "<option value= \"1\"";

@@ -1,7 +1,7 @@
 <?php
 include "dbactions/db_connection.php";
 if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE = $_COOKIE['LOGIN']; }
-else { $COD_UTENTE =	0; header("Location: index.php"); }
+else { $COD_UTENTE = 0; header("Location: index.php"); }
 ?>
 
 <!DOCTYPE html>
@@ -194,14 +194,15 @@ else { $COD_UTENTE =	0; header("Location: index.php"); }
           <table class="padded centered device_details">
             <tr><th><?php echo $device_name?></th><th><?php echo $position ?></th></tr>
             <tr> <th colspan = 2>Temp: <?php echo round($last_temp,2)?> &deg C</th></tr>
-            <TR><TD>Serial: <B><?php echo $serial ?></B></TD><TD>Batteria: <B><?php echo $last_bat ?>%</B></TD></TR>
+            <TR><TD>Serial: <B><?php echo $serial ?></B></TD><TD>Batteria: <B><?php  if ($last_bat < 5) {echo "<font color=\"red\">";} echo $last_bat ?>%</B></TD></TR>
             <TR>
               <TD><div class="tooltip">Periodo di rilevamento (min.): <span class="tooltiptext"><?php echo $PDR_tooltip_txt ?></span></div><B><?php echo $min_period ?></B></td>
                 <TD><div class="tooltip">Ultimo aggiornamento (min.): <span class="tooltiptext"><?php echo $ULA_tooltip_txt ?></span></div><B><?php echo $min_delay ?></B></td>
 
                 </TR><TR>
                   <TD><div class="tooltip">Qualità del collegamento: <span class="tooltiptext"><?php echo $QDC_tooltip_txt ?></span></div><B><?php echo $link_qlt ?>%</B></td>
-                    <TD><div class="tooltip">Segnale radio: <span class="tooltiptext"><?php echo $SER_tooltip_txt ?></span></div><B><?php echo $last_rssi ?>%</B></td>
+                    <TD><div class="tooltip">Segnale radio: <span class="tooltiptext"><?php echo $SER_tooltip_txt ?></span></div><B>
+                      <?php if ($last_rssi < 5) {echo "<font color=\"red\">";} echo $last_rssi ?>%</B></td>
                     </TR>
                   </table>
                   <br><br>

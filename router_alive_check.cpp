@@ -18,7 +18,7 @@ int main(void)
 {
   time_t t = time(NULL);
   struct tm *tm = localtime(&t);
-  fprintf(logfile,"%s\n", asctime(tm));
+  fprintf(logfile,"\n%s  ", asctime(tm));
   fprintf(logfile,"Starting ...\n");
   fflush(logfile);
   //initialize MYSQL object for connections
@@ -59,10 +59,6 @@ int main(void)
   int MYSQL_NUM_RES;
   MYSQL_ROW row;
 
-  t = time(NULL);
-  tm = localtime(&t);
-  fprintf(logfile,"%s\n", asctime(tm));
-  fflush(logfile);
   while(1) {
     sprintf(query, "SELECT router, timestamp from keep_alive_check where alarmed = 0 and timestamp < now() - interval 150 second");
     fprintf(logfile,".");

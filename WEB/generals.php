@@ -1,5 +1,5 @@
 <?php
-if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE =	$_COOKIE['LOGIN'];}
+if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE = $_COOKIE['LOGIN'];}
 else { $COD_UTENTE = 0; header("Location: index.php"); }
 include "dbactions/db_connection.php";
 ?>
@@ -791,8 +791,8 @@ include "dbactions/db_connection.php";
 
                             <?php
                             $password	= $_POST["password"];
-                            $codPassword	= md5($password);
-                            $query	= "UPDATE `utenti` SET `password` =  '$codPassword' WHERE `codUtente` = '$COD_UTENTE' ";
+                            $codPassword = md5($password);
+                            $query = "UPDATE `utenti` SET `password` =  '$codPassword' WHERE `codUtente` = '$COD_UTENTE' ";
                             $result	= $conn->query($query);
                             $Messaggio	= "
                             Ciao, questa e-mail ti giunge dall'area riservata di ".NOMESITO.".\n\n
@@ -870,7 +870,7 @@ include "dbactions/db_connection.php";
                                       <tr><td><input type="checkbox" disabled name="whatsapp_flag" value="1" <?php if($whatsapp_flag) echo "checked"; ?> >WhatsApp</td><td>&nbsp</td><td>
                                         #Tel:</td><td> <input type="text" class=slim name="whatsapp_tel" maxlength="20" value=<?php echo $whatsapp_tel ?> ></td>
                                       </tr>
-                                      <tr><td><input type="checkbox" disabled name="sms_flag" value="1" <?php if($sms_flag) echo "checked"; ?> >SMS</td><td>&nbsp</td><td>
+                                      <tr><td><input type="checkbox" name="sms_flag" value="1" <?php if($sms_flag) echo "checked"; ?> >SMS</td><td>&nbsp</td><td>
                                         #Tel:</td><td> <input type="text" class=slim name="sms_tel" maxlength="20" value=<?php echo $sms_tel ?> ></td>
                                       </tr>
 

@@ -1,7 +1,5 @@
-// Vers.01 ---> to be test
-// Add retrasmission to Hooly Repeater. NB REPEATERADDR = 3 to be defined to repeater hardware
-
-
+// Vers.02 ---> to be test
+// Sembra che funzioni, ma devo provare bene 201809042249
 
 // * nRF24L01+  ESP8266  RFM69HW
 // * VCC        VCC       VCC
@@ -29,23 +27,16 @@
 // Transceiver configuration
 #define NETWORKID          0   // Must be the same for all nodes
 #define MYNODEID           3   // My node ID as repeater
-#define HOOLYID            2   // Hooly id
-#define ROUTERID           1   // Destination node ID (router)
-
 #define FREQUENCY  RF69_433MHZ // transceiver frequency
 
-#define LED 4                  // pin for led
-
-// Remote site information
-const char http_site[] = "myhooly.hooly.eu";
-const int http_port = 80;
+#define HOOLYID            2   // Hooly id
+#define ROUTERID           1   // Destination node ID (router)
+#define LED                4   // pin for led
 
 // global variables
 unsigned long timeout = millis();
-
 bool retransmit = 0;           // ordine di ritrasmettere
 bool waiting_router = 0;       // in attesa della risposta del router
-
 char waitingPayload[32] = "";  // messaggio in attesa
 char receivedPayload[32] = ""; // messaggio appena ricevuto
 
@@ -58,9 +49,7 @@ void setup() {
 
   // Open a serial port so we can send keystrokes to the module:
   Serial.begin(115200);
-  Serial.print("Node ");
-  Serial.print(MYNODEID,DEC);
-  Serial.println(" ready");
+  Serial.println("Repeater ready ");
 
   pinMode(LED, OUTPUT);
 
@@ -81,28 +70,41 @@ void loop() {
   int separator_count = 0;
   bool bad_datagram = 0;
 
-  if ((millis() - timeout > 300) && (retransmit == 1)) { // Timeout ed ho l'ordine di ritrasmettere - ritrasmetto il dato
+  // -------------------------------------------------------------
+  // Ritrasmissione   --------------------------------------------
+  // -------------------------------------------------------------
 
+  if ((millis() - timeout > 3000) && (retransmit == 1)) {
+
+    Serial.println("-------------------------- Ritrasmetto  -------------");
     digitalWrite(LED, HIGH);
-    Serial.print("Timeout and retransmit data: ");
+    Serial.print("Timeout "); Serial.print(millis() - timeout);
+    Serial.print(" - retransmit = 1");
+    Serial.print(" - ritrasmetto: ");
     Serial.println(waitingPayload);
-    Serial.println();
 
     // invio il datagramma in attessa waitingPayload
     radio.send(ROUTERID, waitingPayload, 32);
 
-    // non ho più necessità di ritrasmettere
+    Serial.println("Azzero retransmit");
     retransmit = 0;
 
-    // non sono più in attesa dell'eco delrouter
+    Serial.println("Azzero waiting_router");
     waiting_router = 0;
 
-    // azzero la variabile waitingPayload
+    Serial.println("Azzero la stringa waitingPayload");
     for (byte i = 0; i < strlen(waitingPayload); i++) waitingPayload[i] = 0;
     digitalWrite(LED, LOW);
+    Serial.println();
   }
 
+
+  // -------------------------------------------------------------
+  // Dato ricevuto e controllo   ---------------------------------
+  // -------------------------------------------------------------
+
   if (radio.receiveDone()) {
+    Serial.println("-------------------------- radio.receiveDone -------------");
     separator_count = 0;
     bad_datagram = 0;
     digitalWrite(LED, HIGH);
@@ -110,9 +112,11 @@ void loop() {
     byte senderID = radio.SENDERID;
     signal_strenght = (100+(((radio.RSSI)+28)*100/72));
 
-    Serial.print(" - received from ");
-    if(senderID == 1) Serial.print("router");
-    if(senderID == 2) Serial.print("hooly");
+    Serial.print("Time= "); Serial.print(millis());
+    Serial.print(" Timeout = "); Serial.print(millis() - timeout);
+    Serial.print(" received from ");
+    if(senderID == 1) Serial.print(" router");
+    if(senderID == 2) Serial.print(" hooly");
     Serial.print(", message [");
 
     for (byte i = 0; i < radio.DATALEN; i++) {
@@ -124,76 +128,84 @@ void loop() {
       }
     }
 
-    Serial.print("] - RSSI: "); Serial.println(signal_strenght);
-    Serial.print("Separator count = "); Serial.print(separator_count);
+    Serial.print("] - RSSI: "); Serial.print(signal_strenght);
+    Serial.print(" Separator count = "); Serial.print(separator_count);
     Serial.print(" - Bad datagram = "); Serial.print(bad_datagram);
-    Serial.print(" - Radio data length = "); Serial.println(radio.DATALEN);
+    Serial.print(" - Radio data length = "); Serial.print(radio.DATALEN);
+    Serial.println();
     digitalWrite(LED, LOW);
 
-    if (separator_count == 6 && bad_datagram == 0 && radio.DATALEN == 32)
+    if (separator_count == 6 && bad_datagram == 0)
     {
       Serial.println("Data Payload OK, processing ...");
+      Serial.println();
 
 
-      // ----------------------
-      // Hooly message
+
+      // -------------------------------------------------------------
+      // Messaggio dal Hooly   ---------------------------------------
+      // -------------------------------------------------------------
 
       if (senderID == HOOLYID)
       {
+        Serial.println("-------------------------- Datagramma ricevuto da Hooly  -------------");
         digitalWrite(LED, HIGH);
-        Serial.println("Got datagram from Hooly, waiting for the router echo");
+
+        Serial.print("Timeout = "); Serial.print(millis() - timeout);
+        // Serial.println(" Ricevuto datagramma da Hooly. ");
 
         for (byte i = 0; i < radio.DATALEN; i++) {
           waitingPayload[i] = receivedPayload[i];
         }
+
+        Serial.println(" Azzero il timeout");
         timeout = millis();
 
-        // Resto in attesa dell'eco del router
+        Serial.println("Resto in attesa dell'eco del router, waiting_router = 1");
         waiting_router = 1;
 
-        // Se non ricevo contrordine, devo ritrasmettere
+        Serial.println("Se non ricevo contrordine, devo ritrasmettere, retransmit = 1");
         retransmit = 1;
+
         digitalWrite(LED, LOW);
+        Serial.println();
       }
 
 
-      // ----------------------
-      // Messaggio dal router ed ero in attesa dell'eco
+      // -------------------------------------------------------------
+      // Messaggio dal router ed ero in attesa dell'eco --------------
+      // -------------------------------------------------------------
 
-      if (senderID == ROUTERID && waiting_router == 1)
+      else if (senderID == ROUTERID  && waiting_router == 1)
       {
-        digitalWrite(LED, HIGH);
-        Serial.println("Got datagram from router, checking ...");
 
-        // controlla se il messaggio ricevuto = a quelli in attesa
+        Serial.println("-------------------------- Datagramma ricevuto dal router ed ero in attesa  -------------");
+        digitalWrite(LED, HIGH);
+
+        Serial.print("Timeout = "); Serial.print(millis() - timeout);
+        // Serial.println(" Ricevuto datagramma dal router, waiting_router = 1, ero in attesa. Verifico ...");
+
         bool matchflag = 1;
         for (byte i = 0; i < 30; i++) {
           if (waitingPayload[i] != receivedPayload[i]) matchflag = 0;
         }
 
         if (matchflag) {
-
-          // Il messaggio corrisponde, il router l'ha ricevuto correttamente
-          Serial.println("Datagram from router is the waiting echo, so do not retransmit");
-          Serial.println();
-
-          // Non c'e' bisogno di ritrasmettere
+          Serial.println(" Il datagramma è quello in attesa, retransmit = 0");
           retransmit = 0;
-        } else {
 
-          // Il messaggio non corrisponde, deve essere reinviato
-          Serial.println("Datagram from router was NOT waiting echo, so await 1 sec and retransmit");
-          delay(1000);
+        } else {
+          Serial.println("Il datagramma non corrisponde, retransmit = 1");
+          delay(50);
           retransmit = 1;
         }
 
-        // Non sono più in attesa del router
+        Serial.println("Esco dal trattamento del datagramma ricevuto dal router e azzero waiting_router");
         waiting_router = 0;
+
         digitalWrite(LED, LOW);
+        Serial.println();
       }
-
-      // ----------------------
-
     }
   }
 }

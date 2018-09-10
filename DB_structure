@@ -144,6 +144,7 @@ DROP TABLE IF EXISTS `new_routers`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `new_routers` (
   `router_name` varchar(8) DEFAULT NULL,
+  `pin` varchar(4) DEFAULT NULL,
   `router_key` varchar(36) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -286,6 +287,7 @@ DROP TABLE IF EXISTS `router`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `router` (
   `router` varchar(16) DEFAULT NULL,
+  `pin` varchar(4) DEFAULT NULL,
   `codUtente` varchar(32) NOT NULL,
   `need_new_key` int(11) DEFAULT NULL,
   `current_key` varchar(36) DEFAULT NULL

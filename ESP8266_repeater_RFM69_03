@@ -1,0 +1,242 @@
+// vers.0.3 tested
+
+// Vers.02 ---> to be test
+// Sembra che funzioni, ma devo provare bene 201809042249
+// funziona se il sensore è vicino; se è lontano ritrasmette sempre - BHO ???
+// da rifare - passo alla versione 3
+
+// * nRF24L01+  ESP8266  RFM69HW
+// * VCC        VCC       VCC
+// * CE         GPIO5*    DIO0
+// * CSN/CS     GPIO15**  NSS
+// * SCK        GPIO14    SCK
+// * MISO       GPIO12    MISO
+// * MOSI       GPIO13    MOSI
+// * GND        GND       GND
+
+// * attenzione alla libreria, mettere in RFM69.h:
+// #define RF69_IRQ_PIN          5
+// #define RF69_IRQ_NUM          5
+// ** usare radio.setCS(15); nello sketch
+
+// vedi http://thebillplease.net/play/esp8266-with-rfm69-using-lowpowerlab/
+
+// usare NODE MCU (ESP-12E) come tipo di arduino
+// oppure "Generic ESP8266 Module"
+
+
+#include <RFM69.h>
+#include <SPI.h>
+
+// Transceiver configuration
+#define NETWORKID          0   // Must be the same for all nodes
+#define MYNODEID           3   // My node ID as repeater
+#define FREQUENCY  RF69_433MHZ // transceiver frequency
+
+#define HOOLYID            2   // Hooly id
+#define ROUTERID           1   // Destination node ID (router)
+#define LED                4   // pin for led
+
+// global variables
+unsigned long timeout = millis();
+bool retransmit = 0;           // ordine di ritrasmettere
+bool waiting_router = 0;       // in attesa della risposta del router
+char waitingPayload[32] = "";  // messaggio in attesa
+char receivedPayload[32] = ""; // messaggio appena ricevuto
+
+// Initialize RFM69 library
+RFM69 radio;
+
+// --------------------------------
+// setup routine, run once
+void setup() {
+
+  // Open a serial port so we can send keystrokes to the module:
+  Serial.begin(115200);
+  Serial.println("Repeater ready ");
+
+  pinMode(LED, OUTPUT);
+
+  // transceiver library initialize
+  radio.setCS(15);
+  radio.initialize(FREQUENCY, MYNODEID, NETWORKID);
+  radio.setHighPower();
+  radio.promiscuous(1);
+}
+
+// end setup
+// --------------------------------
+// main program
+
+void loop() {
+
+  int signal_strenght;
+  int separator_count = 0;
+  bool bad_datagram = 0;
+
+
+
+
+  // -------------------------------------------------------------
+  // Dato ricevuto e controllo   ---------------------------------
+  // -------------------------------------------------------------
+
+  if (radio.receiveDone()) {
+    Serial.println("-------------------------- radio.receiveDone -------------");
+    separator_count = 0;
+    bad_datagram = 0;
+    digitalWrite(LED, HIGH);
+
+    byte senderID = radio.SENDERID;
+    signal_strenght = (100+(((radio.RSSI)+28)*100/72));
+
+    Serial.print("Time= "); Serial.print(millis());
+    Serial.print(" Timeout = "); Serial.print(millis() - timeout);
+    Serial.print(" received from ");
+    if(senderID == 1) Serial.print(" router");
+    if(senderID == 2) Serial.print(" hooly");
+    Serial.print(", message [");
+
+    for (byte i = 0; i < radio.DATALEN; i++) {
+      Serial.print((char)radio.DATA[i]);
+      receivedPayload[i] = radio.DATA[i];
+      if (radio.DATA[i] == ':') separator_count ++;
+      if ((radio.DATA[i] < 43 && radio.DATA[i] != 0) || radio.DATA[i] > 58) {
+        bad_datagram = 1;
+      }
+    }
+
+    Serial.print("] - RSSI: "); Serial.print(signal_strenght);
+    Serial.print(" Separator count = "); Serial.print(separator_count);
+    Serial.print(" - Bad datagram = "); Serial.print(bad_datagram);
+    Serial.print(" - Radio data length = "); Serial.print(radio.DATALEN);
+    Serial.println();
+    digitalWrite(LED, LOW);
+
+    if (separator_count == 6 && bad_datagram == 0)
+    {
+      Serial.println("Data Payload OK, processing ...");
+      Serial.println();
+
+
+
+      // -------------------------------------------------------------
+      // Messaggio dal Hooly   ---------------------------------------
+      // -------------------------------------------------------------
+
+      if (senderID == HOOLYID)
+      {
+        Serial.println("-------------------------- Datagramma ricevuto da Hooly  -------------");
+        digitalWrite(LED, HIGH);
+
+        Serial.print("Timeout = "); Serial.print(millis() - timeout);
+        // Serial.println(" Ricevuto datagramma da Hooly. ");
+
+        for (byte i = 0; i < radio.DATALEN; i++) {
+          waitingPayload[i] = receivedPayload[i];
+        }
+
+        Serial.println(" Azzero il timeout");
+        timeout = millis();
+
+        Serial.println("Se non ricevo contrordine, devo ritrasmettere, retransmit = 1");
+        retransmit = 1;
+
+        digitalWrite(LED, LOW);
+        Serial.println();
+
+        while (millis() - timeout < 2000) {
+          delay(5);
+          if (radio.receiveDone()) {
+
+            byte senderID = radio.SENDERID;
+            signal_strenght = (100+(((radio.RSSI)+28)*100/72));
+
+            Serial.print("Time= "); Serial.print(millis());
+            Serial.print(" Timeout = "); Serial.print(millis() - timeout);
+            Serial.print(" received from ");
+            if(senderID == 1) Serial.print(" router");
+            if(senderID == 2) Serial.print(" hooly");
+            Serial.print(", message [");
+            for (byte i = 0; i < radio.DATALEN; i++) {
+              Serial.print((char)radio.DATA[i]);
+              receivedPayload[i] = radio.DATA[i];
+              if (radio.DATA[i] == ':') separator_count ++;
+              if ((radio.DATA[i] < 43 && radio.DATA[i] != 0) || radio.DATA[i] > 58) {
+                bad_datagram = 1;
+              }
+            }
+            Serial.print("] - RSSI: "); Serial.print(signal_strenght);
+            Serial.print(" Separator count = "); Serial.print(separator_count);
+            Serial.print(" - Bad datagram = "); Serial.print(bad_datagram);
+            Serial.print(" - Radio data length = "); Serial.print(radio.DATALEN);
+            Serial.println();
+
+            if (senderID == ROUTERID)
+            {
+              Serial.println("-------------------------- Datagramma ricevuto dal router ed ero in attesa  -------------");
+              digitalWrite(LED, HIGH);
+
+              Serial.print("Timeout = "); Serial.print(millis() - timeout);
+              // Serial.println(" Ricevuto datagramma dal router, waiting_router = 1, ero in attesa. Verifico ...");
+
+              bool matchflag = 1;
+              for (byte i = 0; i < 30; i++) {
+                if (waitingPayload[i] != receivedPayload[i]) matchflag = 0;
+              }
+
+              if (matchflag) {
+                Serial.println(" Il datagramma è quello in attesa, retransmit = 0");
+                retransmit = 0;
+
+              } else {
+                Serial.println("Il datagramma non corrisponde, retransmit = 1");
+                delay(50);
+                retransmit = 1;
+              }
+
+              Serial.println("Esco dal trattamento del datagramma ricevuto dal router e azzero waiting_router");
+              waiting_router = 0;
+
+              digitalWrite(LED, LOW);
+              Serial.println();
+              break;
+            }
+
+          } //end second radio.receiveDone
+        } // end timeout
+
+        Serial.println();
+        if(retransmit) {
+          Serial.println ("Ritrasmetto ------------");
+          ritrasmissione(waitingPayload);
+        }
+
+      } // end senderID == HOOLYID
+    } //end hooly datagram ok
+  } // end first radio.receiveDone (hooly)
+} // end loop
+
+
+
+// -------------------------
+// Start function ritrasmissione
+// translate code period from 1 to 9 into period in seconds between transmissions
+
+int ritrasmissione(char waitingPayload[32]) {
+
+  Serial.println("-------------------------- Ritrasmetto  -------------");
+  digitalWrite(LED, HIGH);
+  Serial.print("Timeout "); Serial.print(millis() - timeout);
+  Serial.print(" - retransmit = 1");
+  Serial.print(" - ritrasmetto: ");
+  Serial.println(waitingPayload);
+
+  // invio il datagramma in attessa waitingPayload
+  radio.send(ROUTERID, waitingPayload, 32);
+
+  Serial.println("Azzero la stringa waitingPayload");
+  for (byte i = 0; i < strlen(waitingPayload); i++) waitingPayload[i] = 0;
+  digitalWrite(LED, LOW);
+  Serial.println();
+}

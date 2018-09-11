@@ -43,6 +43,19 @@ while($row = $result->fetch_assoc()) {
   $tenant3 = $row["t3"];
 }
 
+$query = "SELECT * FROM personal_info WHERE codUtente='$COD_UTENTE'";
+$result = $conn->query($query);
+while($row = $result->fetch_assoc()) {
+  $ragione_sociale = $row["ragione_sociale"];
+  $indirizzo_1 = $row["indirizzo_1"];
+  $indirizzo_2 = $row["indirizzo_2"];
+  $cap = $row["cap"];
+  $citta = $row["citta"];
+  $telefono = $row["telefono"];
+}
+
+
+
 $query = "SELECT serial, device_name, position FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
 $result = $conn->query($query);
 $serial_qty=0;
@@ -95,11 +108,20 @@ if(($result->num_rows) > 0)
       <div id="report">
         <table class="hooly_report" id="header_table" border=1>
           <tr>
-            <td width="40%" rowspan=2>Mese di <b><?php echo $mese_lit ?></b><br>Anno <b><?php echo $anno ?></b>
-              <br>Impianto: <b><?php echo $device_name . "  " . $position . " (seriale " . $serial . ")" ?></b></td>
+            <td colspan="2">
+              <br>
+              <center>
+                <?php echo "<b>" . $ragione_sociale . "</b> - " . $indirizzo_1 . " " . $indirizzo_2 . " - " . $cap . " " . $citta . " - Tel. " . $telefono ?>
+              </center>
+              <br>
+            </td>
+          </tr>
+          <tr>
+            <td width="40%" rowspan=2>&nbsp Mese di <b><?php echo $mese_lit ?></b><br>&nbsp Anno <b><?php echo $anno ?></b>
+              <br>&nbsp Impianto: <b><?php echo $device_name . "  " . $position . " (seriale " . $serial . ")" ?></b></td>
               <td><center><b>Allegato Modello SA-04</b></center></td></tr>
               <tr>
-                <td>MODULO DI REGISTRAZIONE DELLE TEMPERATURE NEGATIVE<br>(MANTENIMENTO A TEMPERATURA CONTROLLATA)</td></tr>
+                <td>&nbsp MODULO DI REGISTRAZIONE DELLE TEMPERATURE NEGATIVE<br>&nbsp (MANTENIMENTO A TEMPERATURA CONTROLLATA)</td></tr>
               </table>
               <br><br>
               <table class="hooly_report" id="hooly_reportTemp" border=1>

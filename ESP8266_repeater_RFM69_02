@@ -1,5 +1,7 @@
 // Vers.02 ---> to be test
 // Sembra che funzioni, ma devo provare bene 201809042249
+// funziona se il sensore è vicino; se è lontano ritrasmette sempre - BHO ???
+// da rifare - passo alla versione 3
 
 // * nRF24L01+  ESP8266  RFM69HW
 // * VCC        VCC       VCC

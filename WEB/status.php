@@ -45,6 +45,12 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
           $tenant3 = $row["t3"];
         }
 
+        $query = "SELECT router FROM router WHERE codUtente='$COD_UTENTE'";
+        $result = $conn->query($query);
+        if ($result->num_rows == 0) {
+          header('Location: generals.php?act=add_router');
+        }
+
         $query = "SELECT serial, device_name, position, batt_type, min_ok, max_ok FROM devices where tenant in ($tenant0,$tenant1,$tenant2,$tenant3)";
         $result = $conn->query($query);
         $x=0;
@@ -72,26 +78,11 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
             $link_qlt0[$i]=$row["counter"];
           }
 
-          if ($last_battery[$i] < 10) {
-            $warn[$i] = "battery_low";
-            $tooltipText[$i] = "Attenzione! Batteria scarica";
-          }
-          else if ($sec_delay[$i] > 5 * $period[$i]) {
-            $warn[$i] = "link";
-            $tooltipText[$i] = "Attenzione! Problemi di collegamento: segnale non rilevato da più di " . 5 * $period[$i] . " secondi";
-          }
-          else if ($last_rssi[$i] < 10) {
-            $warn[$i] = "link";
-            $tooltipText[$i] = "Attenzione! Segnale radio basso";
-          }
-          else if ($last_temp[$i] < $min_ok[$i] or $last_temp[$i] > $max_ok[$i]) {
-            $warn[$i] = "red";
-            $tooltipText[$i] = "Allarme: temperatura fuori range";
-          }
-          else {
-            $warn[$i] = "green";
-            $tooltipText[$i] = "Sensore e temperatura OK";
-          }
+          $warn[$i] = "green"; $tooltipText[$i] = "Sensore e temperatura OK";
+          if ($last_battery[$i] < 10) { $warn[$i] = "battery_low"; $tooltipText[$i] = "Attenzione! Batteria scarica"; }
+          if ($last_rssi[$i] < 5) { $warn[$i] = "green_with_attention"; $tooltipText[$i] = "Attenzione! Segnale radio basso"; }
+          if ($last_temp[$i] < $min_ok[$i] or $last_temp[$i] > $max_ok[$i]) { $warn[$i] = "red"; $tooltipText[$i] = "Allarme: temperatura fuori range"; }
+          if ($sec_delay[$i] > 5 * $period[$i]) { $warn[$i] = "link"; $tooltipText[$i] = "Attenzione! Problemi di collegamento: segnale non rilevato da più di " . 5 * $period[$i] . " secondi"; }
 
           echo "<TR>";
           echo "<form action=device_details.php method=post>";
@@ -124,6 +115,6 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
     data-cookie="CookieInfoScript"
     data-text-align="left"
     data-close-text="Ok !">
-  </script>
+    </script>
 
-</body>
+  </body>

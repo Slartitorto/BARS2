@@ -10,6 +10,7 @@ if((isset($_GET['data'])) and (isset($_GET['rssi'])) and (isset($_GET['router'])
   if ($rssi < 1)
   {$rssi = 1;}
   $router=$_GET['router'];
+  if(isset($_GET['repeater'])) $repeater=$_GET['repeater']; else $repeater=0;
 } else exit();
 
 date_default_timezone_set('Europe/Rome');

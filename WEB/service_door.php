@@ -34,24 +34,24 @@ if(isset($_GET['service']) && ($_GET['service'] == "keep_alive") && isset($_GET[
 
 if(isset($_GET['service']) && ($_GET['service'] == "get_new_router") )
 {
-$query = "SELECT router_name,router_key,router_pin FROM new_routers ORDER BY router_name LIMIT 1";
-$result = $conn->query($query);
+  $query = "SELECT router_name,router_key,router_pin FROM new_routers ORDER BY router_name LIMIT 1";
+  $result = $conn->query($query);
 
-while($row = $result->fetch_assoc()) {
-  $router_name = $row["router_name"];
-  $current_key = $row["router_key"];
-  $current_pin = $row["router_pin"];
+  while($row = $result->fetch_assoc()) {
+    $router_name = $row["router_name"];
+    $current_key = $row["router_key"];
+    $current_pin = $row["router_pin"];
 
-}
+  }
 
-echo $router_name . ":" . $current_key;
+  echo $router_name . ":" . $current_key;
 
-$query = "DELETE FROM new_routers WHERE router_name = '$router_name'";
-$result = $conn->query($query);
+  $query = "DELETE FROM new_routers WHERE router_name = '$router_name'";
+  $result = $conn->query($query);
 
-$query = "INSERT INTO router (router,current_key,pin) VALUES ('$router_name','$current_key','$current_pin')";
-$result = $conn->query($query);
-$conn->close();
+  $query = "INSERT INTO router (router,current_key,pin) VALUES ('$router_name','$current_key','$current_pin')";
+  $result = $conn->query($query);
+  $conn->close();
 }
 
 // -----------

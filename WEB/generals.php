@@ -398,7 +398,11 @@ include "dbactions/db_connection.php";
           }
           ?>
 
-          <div class="modal-content"> <br> <center>
+          <div class="modal-content">
+            <br><br>
+            <center>
+              <h3>Aggiungi un sensore</h3>
+              <br>
             <form action="generals.php?act=add_hooly_response" method="post">
               <br>
               Seriale: <input type="text" class="slim" name="serial" size="6" maxlength="4" pattern="[A-Z0-9]{4,4}" title= "Il codice seriale consiste di 4 caratteri (numeri o lettere maiuscole) ed è indicato sulla confezione del tuo Hooly" required>
@@ -406,7 +410,7 @@ include "dbactions/db_connection.php";
               <input type="hidden" name="idUtente" value="<?php echo $idUtente; ?>">
               <input type="hidden" name="tenant" value="<?php echo $tenant0; ?>">
               <br>
-              <button type="submit" class=greenbtn>Aggiungi un sensore</button>
+              <button type="submit" class=greenbtn>Aggiungi</button>
             </form>
           </div>
 

@@ -34,13 +34,13 @@ if(isset($_GET['service']) && ($_GET['service'] == "keep_alive") && isset($_GET[
 
 if(isset($_GET['service']) && ($_GET['service'] == "get_new_router") )
 {
-  $query = "SELECT router_name,router_key,router_pin FROM new_routers ORDER BY router_name LIMIT 1";
+  $query = "SELECT router_name,router_key,pin FROM new_routers ORDER BY router_name LIMIT 1";
   $result = $conn->query($query);
 
   while($row = $result->fetch_assoc()) {
     $router_name = $row["router_name"];
     $current_key = $row["router_key"];
-    $current_pin = $row["router_pin"];
+    $current_pin = $row["pin"];
 
   }
 

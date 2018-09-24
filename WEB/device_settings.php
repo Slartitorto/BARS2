@@ -136,7 +136,7 @@ echo "<input type=\"hidden\" name=\"code_period\" value=\"5\">\n";
           echo "> 60 min. </option>\n";
           echo "</select>";
           echo "<TD><select class=\"slim\" name=\"min_ok\" onchange=\"this.form.submit()\">\n";
-          for ($i = -40; $i <= 80; $i++) {
+          for ($i = -40; $i <= $max_ok[$x] -1; $i++) {
             echo "<option value= \"$i\"";
             if ($min_ok[$x] == $i) { echo " selected";}
             echo ">$i °C</option>\n";
@@ -145,7 +145,7 @@ echo "<input type=\"hidden\" name=\"code_period\" value=\"5\">\n";
           echo "</select>";
 
           echo "<TD><select class=\"slim\" name=\"max_ok\" onchange=\"this.form.submit()\">\n";
-          for ($i = -40; $i <= 80; $i++) {
+          for ($i = $min_ok[$x] +1; $i <= 80; $i++) {
             echo "<option value= \"$i\"";
             if ($max_ok[$x] == $i) { echo " selected";}
             echo ">$i °C</option>\n";

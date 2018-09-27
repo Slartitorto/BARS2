@@ -13,7 +13,7 @@
       <b>Personalizza</b>
       <a href="device_settings.php">Sensori</a>
       <a href="generals.php?act=alarm_pause">Sospendi allarmi</a>
-      <a href="generals.php?act=add_hooly">Aggiungi un sensore</a>
+      <a href="generals.php?act=add_hooly">Aggiungi o elimina un sensore</a>
       <a href="generals.php?act=set_notifyMethod">Imposta notifiche</a>
       <a href="generals.php?act=set_personalInfo">Info personali</a>
       <a href="generals.php?act=changePwd">Cambio password</a>

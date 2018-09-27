@@ -131,7 +131,8 @@ DROP TABLE IF EXISTS `new_devices`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `new_devices` (
   `serial` varchar(4) DEFAULT NULL,
-  `pin` varchar(4) DEFAULT NULL
+  `pin` varchar(4) DEFAULT NULL,
+  `assigned` tinyint(1) DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

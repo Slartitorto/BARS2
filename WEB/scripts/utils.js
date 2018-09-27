@@ -45,7 +45,13 @@ $(function() {
 });
 
 function checkConfirm() {
-  var r = confirm("confermi la cancellazione ?");
+  var r = confirm("Confermi la cancellazione ?");
+  if (r == true) {return true;}
+  else {return false;}
+}
+
+function checkConfirm_with_attention_1() {
+  var r = confirm("Confermi la cancellazione ?\nAttenzione questa operazione è irreversibile !");
   if (r == true) {return true;}
   else {return false;}
 }

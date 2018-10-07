@@ -1,0 +1,362 @@
+// vers. 2.05: eliminato un delay(1000) inutile che sprecava energia
+// eliminato  radioRFM.setPowerLevel(31); che sembra annullare setHighPower();
+// verificato consumo di 140 mA per 75ms in trasmissione
+// migliorata la durata delle batterie e la portata
+
+// vers. 2.04: aggiunto settaggio di massima postenza
+// sotto     radioRFM.setHighPower();   inserito radio.setPowerLevel(31);
+// modificare il sorgente della libreria RFM69/RFM69.cpp
+// /* 0x03 */ { REG_BITRATEMSB, RF_BITRATEMSB_4800}, // default: 4.8 KBPS
+// /* 0x04 */ { REG_BITRATELSB, RF_BITRATELSB_4800},
+// dove RF_BITRATE?SB_ deve essere 4800 mentre il default della libreria è 55555 !!! Dovrebbe andare più lontano
+// rimosso SWITCH1 non implementato
+
+// vers. 2.03: prende il seriale da EEPROM
+// installare il seriale con il comando:
+// avrdude -v -patmega328p -cstk500v1 -P/dev/cu.usbmodem1421 -b19200 -Ueeprom:w:./0012_serial_eeprom.hex:i
+// dove il file 0012_serial_eeprom.hex contiene:
+// :040003003030313236
+// :00000001FF
+// (vedi specifiche Intel Hex file format)
+// period=180 variabile globale
+
+// vers. 2.02: trasmette ogni 5 secondi per il primo minuto, poi ogni 3 minuti
+// periodo fisso e non modificabile
+
+// vers. 2.01: trasmette ogni 5 secondi per il primo minuto, poi normale "period"
+//           modifcato il default period a 5 corrispondente a 3 minuti
+
+// Firmware per Hooly vers. 2: gestisce RFM69HW e sensore SHT31 con ATmega328
+// Testato con RFM69HW
+// Da verificare con NRF24L01 e controllare il consumo con SW1 chiuso
+
+
+#include <LowPower.h>
+#include "Adafruit_SHT31.h"
+#include <EEPROM.h>
+#include <RFM69.h>
+#include <RF24.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+#define LED_PIN       3   // Digital pin for led connection
+#define TEMP_PIN     A3   // Digital pin for ds18b20 sensor
+// #define SWITCH1       8   // Digital pin for sw1(SJ1) - transceiver definition close=0=RFM69 open=1=NFR24L01
+#define BATTERY_PIN  A2   // Analog pin for battery voltage measure
+#define ECP 1             // EEPROM register where store info for pause between trasmission
+#define ESERIALADDR   3   // EEPROM start register where store serial
+
+#define NETWORKID     0   // Must be the same for all nodes - DO NOT CHANGE
+#define MYNODEID      2   // Trasmitter node ID - DO NOT CHANGE
+#define TONODEID      1   // Destination node ID - DO NOT CHANGE
+#define FREQUENCY     RF69_433MHZ //  - DO NOT CHANGE
+
+Adafruit_SHT31 sht31 = Adafruit_SHT31();
+
+OneWire oneWire(TEMP_PIN);
+DallasTemperature ds18b20(&oneWire);
+
+RFM69 radioRFM;
+RF24 radioNRF(2,10);
+
+// Global variables
+char nodeID[5] = "0000";
+int counter = 0;
+int starter_counter = 1;
+int sensor_type;
+int min_vcc = 575;
+int period = 180;
+int code_period;
+bool IS_RFM69HW;
+bool IS_NRF24L01;
+
+// -------------------------
+// Start setup
+
+void setup() {
+
+  // inizializzazioni
+  Serial.begin(115200);
+  pinMode(LED_PIN, OUTPUT);
+  // pinMode(SWITCH1, INPUT_PULLUP);
+  bool radiotype;
+
+  // serial number setup
+  nodeID[0] = EEPROM.read(ESERIALADDR);
+  nodeID[1] = EEPROM.read(ESERIALADDR + 1);
+  nodeID[2] = EEPROM.read(ESERIALADDR + 2);
+  nodeID[3] = EEPROM.read(ESERIALADDR + 3);
+
+  // definisce il tipo di transceiver
+  // radiotype=digitalRead(SWITCH1);
+  radiotype=0;
+
+
+  if (radiotype) {
+    IS_NRF24L01 = 1; IS_RFM69HW = 0;
+  }
+  else {
+    IS_NRF24L01 = 0; IS_RFM69HW = 1;
+  }
+
+  // Definisce il tipo di sensore
+  sht31.begin(0x44);
+  if(sht31.readStatus() == 32784) {
+    sensor_type = 1;
+  }
+  ds18b20.begin();
+  if(ds18b20.getDeviceCount()) {
+    sensor_type = 2 ;
+  }
+
+  // Inizializza il transceiver
+  if (IS_RFM69HW) {
+    radioRFM.initialize(FREQUENCY, MYNODEID, NETWORKID);
+    radioRFM.setHighPower();
+  }
+  if (IS_NRF24L01) {
+    radioNRF.begin();
+    radioNRF.setPALevel(RF24_PA_MAX);
+    radioNRF.setChannel(0x4c);
+    radioNRF.setDataRate(RF24_250KBPS);
+    radioNRF.setAutoAck(0);
+    radioNRF.setRetries(1,10);
+    radioNRF.openWritingPipe(0xF0F0F0F0E1LL);
+    radioNRF.enableDynamicPayloads();
+    radioNRF.powerUp();
+  }
+  // get_code_period();
+  // code_period_setup();
+  // period = get_period(code_period);
+
+}
+
+// End setup
+// ------------------------------------------------------------------
+// Start loop
+
+void loop() {
+
+  int temp;
+  int hum;
+  int vcc;
+  char outBuffer[32] = "";
+
+  // legge la temperatura
+  if (sensor_type == 1 ) {
+    temp = sht31.readTemperature() * 100;
+    hum = sht31.readHumidity() * 100;
+  }
+  if (sensor_type == 2 ) {
+    ds18b20.requestTemperatures();
+    delay(1000);
+    temp = (ds18b20.getTempCByIndex(0)*100);
+    hum = 0;
+  }
+
+  // legge il livello di batteria
+  vcc = analogRead(BATTERY_PIN);
+
+  // Prepare OutBuffer
+  int c;
+  int x;
+  int i;
+
+  outBuffer[0] = nodeID[0];
+  outBuffer[1] = nodeID[1];
+  outBuffer[2] = nodeID[2];
+  outBuffer[3] = nodeID[3];
+  outBuffer[4] = ':';
+  c = counter;
+  for (i = 8; i >= 5; --i) {x = c %10; outBuffer[i] = '0' + x ; c = (c - x) / 10;}
+  outBuffer[9] = ':';
+  c = temp;
+  if (temp < 0) { outBuffer[10] = '-'; c = c * -1;} else { outBuffer[10] = '+';}
+  for (i = 14; i >= 11; --i) {x = c %10; outBuffer[i] = '0' + x ; c = (c - x) / 10;}
+  outBuffer[15] = ':';
+  c = hum;
+  for (i = 19; i >= 16; --i) {x = c %10; outBuffer[i] = '0' + x ; c = (c - x) / 10;}
+  outBuffer[20] = ':';
+  c = vcc;
+  for (i = 24; i >= 21; --i) {x = c %10; outBuffer[i] = '0' + x ; c = (c - x) / 10;}
+  outBuffer[25] = ':';
+  c = period;
+  for (i = 29; i >= 26; --i) {x = c %10; outBuffer[i] = '0' + x ; c = (c - x) / 10;}
+  outBuffer[30] = ':';
+  outBuffer[31] = 0;
+
+  digitalWrite(LED_PIN, HIGH);
+
+  if (IS_RFM69HW) {
+    radioRFM.send(TONODEID, outBuffer, 32);
+  }
+  if (IS_NRF24L01) {
+    radioNRF.write(outBuffer, 32);
+  }
+
+  digitalWrite(LED_PIN, LOW);
+
+  if(counter == 9999) counter = 0; else counter ++;
+
+  delay(10);
+
+  if (IS_RFM69HW) radioRFM.sleep();
+  if (IS_NRF24L01) radioNRF.powerDown();
+
+  if (counter == 13) starter_counter = 0;
+  if (starter_counter == 1 && counter < 13) { gotosleep(5); }
+  else gotosleep(period);
+}
+
+// End loop
+// ------------------------------------------------------------------
+// Start function gotosleep
+//
+// sleep for low consumption (6uA) between transmissions
+
+void gotosleep(int period) {
+  int timer = period;
+  while (timer > 0) {
+    if (timer > 8) { LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF); timer = timer -8; }
+    else { LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF); timer = timer -1; }
+  }
+}
+
+// End function gotosleep
+// -------------------------
+// Start function led_blink
+//
+// led blinks n times for speed:
+// 50 = very fast - 250 = readable - 500 = slow
+
+void led_blink(int times, int speed) {
+  for (int i = 0; i < times; i++) {
+    digitalWrite(LED_PIN, HIGH);      // turn LED on
+    delay(speed);
+    digitalWrite(LED_PIN, LOW);       // turn LED off
+    delay(speed);
+  }
+}
+
+// End function led_blink
+// -------------------------
+// Start function get_code_period
+
+void get_code_period(void) {
+  code_period = EEPROM.read(ECP);
+  if (code_period < 1 || code_period > 9) {
+    code_period = 5;                 // set 5 as default value = 3 m.
+    EEPROM.write(ECP,code_period);   // registra il valore di default
+    delay (5);
+    code_period = EEPROM.read(ECP);  // back read for complete storage
+  }
+  led_blink(code_period,250);      // lampeggia il valore storato
+}
+
+// End function get_code_period
+// -------------------------
+// Start function code_period_setup getting code_period number from server
+
+void code_period_setup() {
+  unsigned long started_waiting_at;
+  int timeout;
+  char receivePayload[32] = "";
+  char outBuffer[32] = "";
+  int code_period_received;
+  int i;
+  int len;
+
+  // Send request for code_period to hooly router
+  outBuffer[0] = nodeID[0];
+  outBuffer[1] = nodeID[1];
+  outBuffer[2] = nodeID[2];
+  outBuffer[3] = nodeID[3];
+  outBuffer[4] = ':';
+  outBuffer[5] = 'g';
+  outBuffer[6] = 'n';
+  outBuffer[7] = ':';
+
+  len = 8;
+
+  started_waiting_at = millis();
+  timeout = 0;
+
+  if (IS_RFM69HW) {
+    radioRFM.send(TONODEID, outBuffer, len);
+    while ( ! radioRFM.receiveDone()) {
+      if (millis() - started_waiting_at > 10000 ){            // If waited longer than 10s, indicate timeout and exit while loop
+        timeout = 1;
+        break;
+      }
+    }
+  }
+
+  if (IS_NRF24L01) {
+    radioNRF.write(outBuffer, len);
+    radioNRF.openReadingPipe(1,0xF00FF0F0E1LL);
+    radioNRF.startListening();
+    while ( ! radioNRF.available()) {
+      if (millis() - started_waiting_at > 10000 ){            // If waited longer than 10s, indicate timeout and exit while loop
+        timeout = 1;
+        break;
+      }
+    }
+  }
+
+  if ( timeout ) {
+    delay (5);
+  } else {
+
+
+    if (IS_NRF24L01) {len = radioNRF.getDynamicPayloadSize();
+      radioNRF.read(receivePayload, len);
+    }
+
+    char nodeID_received[5] = "";
+    for (i = 0; i < 4; i++) {
+      if (IS_RFM69HW)  nodeID_received[i] = radioRFM.DATA[i];
+      if (IS_NRF24L01) nodeID_received[i] = receivePayload[i];
+    }
+
+    if (IS_RFM69HW) {code_period_received = radioRFM.DATA[5] - 48;}
+    if (IS_NRF24L01) {code_period_received = (receivePayload[5] -48) ; radioNRF.stopListening();}
+
+    if ((nodeID_received[0] == nodeID[0]) && (nodeID_received[1] == nodeID[1]) && (nodeID_received[2] == nodeID[2]) && (nodeID_received[3] == nodeID[3]) && (code_period_received > 0) && (code_period_received < 10)) {
+      EEPROM.write(ECP,code_period_received);
+      delay (5);
+    }
+  }
+  code_period = EEPROM.read(ECP);
+  led_blink(code_period,500);        // slowly blink code_period times
+}
+
+// End function code_period_setup
+// -------------------------
+// Start function get_period
+// translate code period from 1 to 9 into period in seconds between transmissions
+
+int get_period(int code_period) {
+  int period;
+  if (code_period == 1)
+  period = 5;
+  else if (code_period == 2)
+  period = 15;
+  else if (code_period == 3)
+  period = 30;
+  else if (code_period == 4)
+  period = 60;
+  else if (code_period == 5)
+  period = 180;
+  else if (code_period == 6)
+  period = 300;
+  else if (code_period == 7)
+  period = 900;
+  else if (code_period == 8)
+  period = 1800;
+  else if (code_period == 9)
+  period = 3600;
+  return period;
+}
+
+// End function get_period
+// -------------------------

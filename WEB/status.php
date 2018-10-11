@@ -66,7 +66,7 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
 
         $count=count($serial);
         for($i=0;$i<$count;$i++) {
-          $query = "select temp,hum,counter,battery,period,rssi,timestampdiff(second,timestamp,now()) as sec_delay from last_rec_data where serial = '$serial[$i]' order by timestamp desc limit 1";
+          $query = "SELECT temp,hum,counter,battery,period,rssi,timestampdiff(second,timestamp,now()) AS sec_delay FROM last_rec_data WHERE serial = '$serial[$i]' ORDER BY timestamp DESC LIMIT 1";
           $result = $conn->query($query);
           while($row = $result->fetch_assoc()) {
             $last_temp[$i]=$row["temp"];

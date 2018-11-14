@@ -26,6 +26,18 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
+CREATE TABLE `rec_data_trash` (
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `serial` varchar(5) DEFAULT NULL,
+  `counter` int(11) DEFAULT NULL,
+  `temp` float DEFAULT NULL,
+  `hum` float DEFAULT NULL,
+  `battery` float DEFAULT NULL,
+  `period` int(11) DEFAULT NULL,
+  `rssi` int(11) DEFAULT NULL,
+  `router` varchar(16) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 --
 -- Table structure for table `rilevazioni_manuali`
 --  -------------------------------------------------------- >Ultima aggiunta

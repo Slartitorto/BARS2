@@ -18,6 +18,11 @@ include "dbactions/db_connection.php";
   <script src="scripts/jquery-ui.js"></script>
   <script src="scripts/datePickerLocalized.js"></script>
   <script src="scripts/utils.js"></script>
+  <script>
+  $(function() {
+    $( ".datepicker" ).datepicker();
+  });
+  </script>
 
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -99,6 +104,7 @@ include "dbactions/db_connection.php";
 
 
       <?php } else if(@$_GET["act"] == "RM_insert") { // ---------- Inserisci Registrazone Manuale   ?>
+
 
         <?php
         $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
@@ -349,14 +355,16 @@ include "dbactions/db_connection.php";
             $serial = $_POST['serial'];
             if (isset($_POST['delete_all']))  $delete_all = $_POST['delete_all']; else $delete_all = 0;
 
-            $query = "update new_devices set assigned = 0 WHERE serial = '$serial'";
+            $query = "UPDATE new_devices SET assigned = 0 WHERE serial = '$serial'";
             $result = $conn->query($query);
-            $query = "delete from devices WHERE serial = '$serial'";
+            $query = "DELETE FROM devices WHERE serial = '$serial'";
             $result = $conn->query($query);
-            $query = "delete from last_rec_data WHERE serial = '$serial'";
+            $query = "DELETE FROM last_rec_data WHERE serial = '$serial'";
             $result = $conn->query($query);
             if ($delete_all == 1) {
-              $query = "delete from rec_data WHERE serial = '$serial'";
+              $query = "INSERT INTO rec_data_trash SELECT * FROM rec_data WHERE serial = '$serial'";
+              $result = $conn->query($query);
+              $query = "DELETE FROM rec_data WHERE serial = '$serial'";
               $result = $conn->query($query);
             }
             ?>
@@ -410,7 +418,6 @@ include "dbactions/db_connection.php";
                 <button type="button" onclick="location.href='generals.php?act=add_hooly';" class="greenbtn">Torna indietro</button>
               <?php } ?>
             </center>
-
           </div>
 
 
@@ -475,6 +482,174 @@ include "dbactions/db_connection.php";
               </div>
 
 
+            <?php } else if(@$_GET["act"] == "delete_records_check") { // ---------- delete records  ?>
+
+
+              <div class="modal-content">
+                <br><br>
+                <center>
+                  <h3>Elimina rilevazioni</h3>
+                  <br>
+                  <?php
+                  $serial = $_POST['serial'];
+                  $date_from = $_POST['date_from'];
+                  $ora_from = $_POST['ora_from'];
+                  if ($ora_from < 9) $ora_from = sprintf("%02d",$ora_from);
+                  $minuto_from = $_POST['minuto_from'];
+                  if ($minuto_from < 9) $minuto_from = sprintf("%02d",$minuto_from);
+                  $date_to = $_POST['date_to'];
+                  $ora_to = $_POST['ora_to'];
+                  if ($ora_to < 9) $ora_to = sprintf("%02d",$ora_to);
+                  $minuto_to = $_POST['minuto_to'];
+                  if ($minuto_to < 9) $minuto_to = sprintf("%02d",$minuto_to);
+
+                  $splitted_date_from = preg_split('/\//',$date_from);
+                  $giorno = $splitted_date_from[0];
+                  $mese = $splitted_date_from[1];
+                  $anno = $splitted_date_from[2];
+                  $timestamp_from = "'" . $anno . "-" . $mese . "-" . $giorno . " " . $ora_from . ":" . $minuto_from . "'";
+
+                  $splitted_date_to = preg_split('/\//',$date_to);
+                  $giorno = $splitted_date_to[0];
+                  $mese = $splitted_date_to[1];
+                  $anno = $splitted_date_to[2];
+                  $timestamp_to = "'" . $anno . "-" . $mese . "-" . $giorno . " " . $ora_to . ":" . $minuto_to . "'";
+
+                  $query = "SELECT count(*) as count FROM rec_data WHERE serial = '$serial' and timestamp > $timestamp_from and timestamp < $timestamp_to";
+                  $result = $conn->query($query);
+                  $row = $result->fetch_assoc();
+                  $count = $row["count"];
+                  if ($count > 0)
+                  { ?>
+                    Per il sensore con seriale <?php echo $serial; ?> sono state trovate <?php echo $count; ?> rilevazioni nell'intervallo di tempo
+                    tra le ore <br> <?php echo $ora_from . ":" . $minuto_from ?> del giorno <?php echo $date_from ?>
+                    <br> e le ore  <br> <?php echo $ora_to . ":" . $minuto_to ?> del giorno <?php echo $date_to ?>.
+                    <br><br>
+                    Sei sicuro di volerle elminare ?
+                    <br><br>
+                    <form action="generals.php?act=delete_records_response" method="post" onsubmit="return checkConfirm_with_attention_1()">
+
+                      <input type="hidden" name="serial" value="<?php echo $serial; ?>">
+                      <input type="hidden" name="date_from" value="<?php echo $date_from; ?>">
+                      <input type="hidden" name="ora_from" value="<?php echo $ora_from; ?>">
+                      <input type="hidden" name="minuto_from" value="<?php echo $minuto_from; ?>">
+                      <input type="hidden" name="date_to" value="<?php echo $date_to; ?>">
+                      <input type="hidden" name="ora_to" value="<?php echo $ora_to; ?>">
+                      <input type="hidden" name="minuto_to" value="<?php echo $minuto_to; ?>">
+                      <button type="submit" class=greenbtn>Conferma</button>
+                      <button type="button" onclick="location.href='generals.php?act=delete_records';" class="greenbtn">Torna indietro</button>
+                    </form>
+                  <?php  }   else   { ?>
+                    Non ci sono rilevazioni nell'intervallo specificato.<br><br>
+                    <br><br><br>
+                    <button type="button" onclick="location.href='generals.php?act=delete_records';" class="greenbtn">Torna indietro</button>
+                  <?php } ?>
+                </center>
+              </div>
+
+
+            <?php } else if(@$_GET["act"] == "delete_records_response") { // ---------- delete Hooly ?>
+
+
+              <?php
+              $serial = $_POST['serial'];
+              $date_from = $_POST['date_from'];
+              $ora_from = $_POST['ora_from'];
+              $minuto_from = $_POST['minuto_from'];
+              if ($minuto_from < 9) $minuto_from = sprintf("%02d",$minuto_from);
+              $date_to = $_POST['date_to'];
+              $ora_to = $_POST['ora_to'];
+              $minuto_to = $_POST['minuto_to'];
+              if ($minuto_to < 9) $minuto_from = sprintf("%02d",$minuto_to);
+
+              $splitted_date_from = preg_split('/\//',$date_from);
+              $giorno = $splitted_date_from[0];
+              $mese = $splitted_date_from[1];
+              $anno = $splitted_date_from[2];
+              $timestamp_from = "'" . $anno . "-" . $mese . "-" . $giorno . " " . $ora_from . ":" . $minuto_from . "'";
+
+              $splitted_date_to = preg_split('/\//',$date_to);
+              $giorno = $splitted_date_to[0];
+              $mese = $splitted_date_to[1];
+              $anno = $splitted_date_to[2];
+              $timestamp_to = "'" . $anno . "-" . $mese . "-" . $giorno . " " . $ora_to . ":" . $minuto_to . "'";
+              $query = "SELECT count(*) AS count FROM rec_data WHERE serial = '$serial' AND timestamp > $timestamp_from AND timestamp < $timestamp_to";
+              $result = $conn->query($query);
+              $row = $result->fetch_assoc();
+              $count = $row["count"];
+
+              $query = "INSERT INTO rec_data_trash SELECT * FROM rec_data WHERE serial = '$serial' AND timestamp > $timestamp_from AND timestamp < $timestamp_to";
+              $result = $conn->query($query);
+              $query = "DELETE FROM rec_data WHERE serial = '$serial' AND timestamp > $timestamp_from AND timestamp < $timestamp_to";
+              $result = $conn->query($query);
+              ?>
+              <div class="modal-content">
+                <br><br>
+                <center>
+                  <h3>Elimina rilevazioni</h3>
+                  <br><br>
+
+                  Operazione effettuata con successo !! <br><br>
+                  Sono state eliminate <?php echo $count ?> rilevazioni.
+                  <br><br>
+
+                  <button type="button" onclick="location.href='status.php';" class="greenbtn">Torna alla pagina principale</button>
+                  <br>
+                </center>
+              </div>
+
+
+            <?php } else if(@$_GET["act"] == "delete_records") { // ---------- Cancella dati da rec-data  ?>
+
+
+              <?php
+              $query = "SELECT idUtente,t0 FROM utenti WHERE codUtente='$COD_UTENTE'";
+              $result = $conn->query($query);
+              while($row = $result->fetch_assoc()) {
+                $idUtente = $row["idUtente"];
+                $tenant0 = $row["t0"];
+              }
+
+              $x = 0;
+              $query = "SELECT serial, device_name, position FROM devices WHERE tenant = '$tenant0'";
+              $result = $conn->query($query);
+              while($row = $result->fetch_assoc()) {
+                $serial_array[$x] = $row["serial"];
+                $device_name_array[$x] = $row["device_name"];
+                $position_array[$x] = $row["position"];
+                $x++;
+              }
+              ?>
+
+              <div class="modal-content">
+                <br><br>
+                <center>
+                  <h3>Elimina rilevazioni</h3>
+                  <br>
+                  <form action="generals.php?act=delete_records_check" method="post">
+                    <br>
+                    Sensore:
+                    <select name="serial" class="slim">
+                      <?php  for($i=0;$i<$x;$i++) {echo "<option value= \"$serial_array[$i]\""; echo ">$device_name_array[$i] - $position_array[$i]</option>\n";}  ?>
+                    </select>
+                    <br><br><br>
+                    Seleziona l'intervallo:
+                    <br><br>
+                    Da: <input type="text" class="slim datepicker" name="date_from" size='10' maxlength="10" value="<?php echo date("d/m/Y"); ?>" required>
+                    ore e minuti:
+                    <input type="number" name="ora_from" class="slim" min="0" max="23" required>:
+                    <input type="number" name="minuto_from" class="slim" min="0" max="59" required><br><br>
+                    A: <input type="text" class="slim datepicker" name="date_to" size='10' maxlength="10" value="<?php echo date("d/m/Y"); ?>" required>
+                    ore e minuti:
+                    <input type="number" name="ora_to" class="slim" min="0" max="23" required>:
+                    <input type="number" name="minuto_to" class="slim" min="0" max="59" required><br><br><br>
+                    <br><br>
+                    <button type="submit" class=greenbtn>Elimina</button>
+                  </form>
+                </center>
+              </div>
+
+
             <?php } else if(@$_GET["act"] == "add_router_response") { // ---------- add router: verify and record  ?>
 
 
@@ -483,14 +658,14 @@ include "dbactions/db_connection.php";
                 $serial = $_POST['serial'];
                 $pin = $_POST['pin'];
 
-                $query = "SELECT pin FROM router WHERE router = '$serial' and codUtente = '' ";
+                $query = "SELECT pin FROM router WHERE router = '$serial' AND codUtente = '' ";
                 $result = $conn->query($query);
                 if ($result->num_rows > 0) {
                   while($row = $result->fetch_assoc()) {
                     $pin_trovato = $row["pin"];
                   }
                   if ($pin == $pin_trovato) {
-                    $query = "update router set codUtente = '$COD_UTENTE' where router = '$serial' ";
+                    $query = "UPDATE router SET codUtente = '$COD_UTENTE' WHERE router = '$serial' ";
                     $result = $conn->query($query); ?>
                     Operazione effettuata con successo !! <br><br>
                     <center>

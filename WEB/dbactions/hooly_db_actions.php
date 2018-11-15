@@ -178,6 +178,29 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
 
   header('Location: ../status.php');
 
+
+} else if(@$_POST["act"] == "set_billingInfo") { // ------------------- Registra informazioni di fatturazione
+
+  $PIVA = $_POST["PIVA"];
+  $ragione_sociale = $_POST["ragione_sociale"];
+  $indirizzo_1 = $_POST["indirizzo_1"];
+  $indirizzo_2 = $_POST["indirizzo_2"];
+  $cap = $_POST["cap"];
+  $citta = $_POST["citta"];
+  $codice_destinatario = $_POST["codice_destinatario"];
+  $richiesta_invio_pec = $_POST["richiesta_invio_pec"];
+  $indirizzo_pec = $_POST["indirizzo_pec"];
+
+
+  $query = "DELETE FROM billing_info WHERE codUtente = '$COD_UTENTE'";
+  $result = $conn->query($query);
+  $query = "INSERT INTO billing_info (codUtente, PIVA, ragione_sociale, indirizzo_1, indirizzo_2, cap, citta, codice_destinatario,richiesta_invio_pec,indirizzo_pec) VALUES
+  ('$COD_UTENTE','$PIVA','$ragione_sociale','$indirizzo_1','$indirizzo_2','$cap','$citta','$codice_destinatario','$richiesta_invio_pec','$indirizzo_pec')";
+  $result = $conn->query($query);
+
+  header('Location: ../status.php');
+
+
 } else if(@$_POST["act"] == "set_notifyMethod") { // ------------------ Registra metodi di notifica
 
   if (isset($_POST["telegram_flag"]))  $telegram_flag = $_POST["telegram_flag"]; else $telegram_flag = 0;

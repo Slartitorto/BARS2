@@ -17,6 +17,7 @@
       <a href="generals.php?act=delete_records">Elimina dati di rilevazione</a>
       <a href="generals.php?act=set_notifyMethod">Imposta notifiche</a>
       <a href="generals.php?act=set_personalInfo">Info personali</a>
+      <a href="generals.php?act=set_billingInfo">Informazioni di fatturazione</a>
       <a href="generals.php?act=changePwd">Cambio password</a>
       <br>
       <a href="generals.php?act=logout"><b>Logout</b></a>

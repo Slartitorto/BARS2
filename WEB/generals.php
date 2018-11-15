@@ -1186,6 +1186,65 @@ include "dbactions/db_connection.php";
                                     </div>
 
 
+                                  <?php } else if(@$_GET["act"] == "set_billingInfo") { // ---------- Imposta info di fatturazione  ?>
+
+
+                                    <?php
+                                    $query = "SELECT * FROM billing_info WHERE codUtente='$COD_UTENTE' LIMIT 1";
+                                    $result = $conn->query($query);
+                                    if(($result->num_rows) == 1)
+                                    {
+                                      while($row = $result->fetch_assoc()) {
+                                        $PIVA = $row["PIVA"];
+                                        $ragione_sociale = $row["ragione_sociale"];
+                                        $indirizzo_1 = $row["indirizzo_1"];
+                                        $indirizzo_2 = $row["indirizzo_2"];
+                                        $cap = $row["cap"];
+                                        $citta = $row["citta"];
+                                        $codice_destinatario = $row["codice_destinatario"];
+                                        $richiesta_invio_pec = $row["richiesta_invio_pec"];
+                                        $indirizzo_pec = $row["indirizzo_pec"];
+
+                                      }
+                                    } else {
+                                      $PIVA = "";
+                                      $ragione_sociale = "";
+                                      $indirizzo_1 = "";
+                                      $indirizzo_2 = "";
+                                      $cap = "";
+                                      $citta = "";
+                                      $codice_destinatario = "";
+                                      $richiesta_invio_pec = "";
+                                      $indirizzo_pec = "";
+                                    }
+                                    ?>
+
+                                    <div class="modal-content">
+                                      <br><br>
+                                      <center>
+                                        <?php if ($result->num_rows) echo "<h3> Gestisci le informazioni di fatturazione </h3>"; else echo "<h3> Inserisci le informazioni di fatturazione </h3>";?>
+
+                                        <form action="dbactions/hooly_db_actions.php" method="post">
+                                          <br>
+                                          <table>
+                                            <tr><td>Partita IVA: </td><td><input type="text" class="slim" name="PIVA" maxlength="50" value="<?php echo $PIVA; ?>"></td></tr>
+                                            <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale" maxlength="50" value="<?php echo $ragione_sociale; ?>"></td></tr>
+                                            <tr><td>Indirizzo 1: </td><td><input type="text" class="slim" name="indirizzo_1" maxlength="50" value="<?php echo $indirizzo_1; ?>"></td></tr>
+                                            <tr><td>Indirizzo 2: </td><td><input type="text" class="slim" name="indirizzo_2" maxlength="50" value="<?php echo $indirizzo_2; ?>"></td></tr>
+                                            <tr><td>CAP: </td><td><input type="text" class="slim" name="cap" maxlength="5" value="<?php echo $cap; ?>"></td></tr>
+                                            <tr><td>Città: </td><td><input type="text" class="slim" name="citta" maxlength="32" value="<?php echo $citta; ?>"></td></tr>
+                                            <tr><td>Codice Destinatario: </td><td><input type="text" class="slim" name="codice_destinatario" maxlength="32" value="<?php echo $codice_destinatario; ?>"></td></tr>
+                                            <tr><td>Richiesta invio PEC: </td><td><input type="checkbox" name="richiesta_invio_pec" maxlength="32" value="1" <?php if ($richiesta_invio_pec) echo "checked"; ?>></td></tr>
+                                            <tr><td>Indirizzo PEC Destinatario: </td><td><input type="text" class="slim" name="indirizzo_pec" maxlength="32" value="<?php echo $indirizzo_pec; ?>"></td></tr>
+                                          </table>
+                                          <br>
+                                          <input type="hidden" name="act" value="set_billingInfo">
+                                          <button type="submit" class=greenbtn>Conferma</button>
+                                        </form>
+                                      </center>
+                                    </div>
+
+
                                   <?php } else if(@$_GET["act"] == "set_personalInfo") { // ---------- Imposta info utente  ?>
 
 
@@ -1212,11 +1271,10 @@ include "dbactions/db_connection.php";
                                     }
                                     ?>
 
-
                                     <div class="modal-content">
                                       <br><br>
                                       <center>
-                                        <h3> Gestisci le informazioni personali </h3>
+                                        <?php if ($result->num_rows) echo "<h3> Gestisci le informazioni personali </h3>"; else echo "<h3> Inserisci le informazioni personali </h3>";?>
                                         <form action="dbactions/hooly_db_actions.php" method="post">
                                           <br>
                                           <table>
@@ -1233,6 +1291,7 @@ include "dbactions/db_connection.php";
                                         </form>
                                       </center>
                                     </div>
+
 
 
                                   <?php } ?>

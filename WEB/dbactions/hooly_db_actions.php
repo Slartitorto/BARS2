@@ -164,11 +164,11 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
 
 } else if(@$_POST["act"] == "set_personalInfo") { // ------------------- Registra informazioni personali
 
-  $ragione_sociale = $_POST["ragione_sociale"];
-  $indirizzo_1 = $_POST["indirizzo_1"];
-  $indirizzo_2 = $_POST["indirizzo_2"];
+  $ragione_sociale = addslashes($_POST["ragione_sociale"]);
+  $indirizzo_1 = addslashes($_POST["indirizzo_1"]);
+  $indirizzo_2 = addslashes($_POST["indirizzo_2"]);
   $cap = $_POST["cap"];
-  $citta = $_POST["citta"];
+  $citta = addslashes($_POST["citta"]);
   $telefono = $_POST["telefono"];
 
   $query = "DELETE FROM personal_info WHERE codUtente = '$COD_UTENTE'";
@@ -182,12 +182,12 @@ if(@$_POST["act"] == "nc_record") { // -----------Regisrazione non conformita
 } else if(@$_POST["act"] == "set_billingInfo") { // ------------------- Registra informazioni di fatturazione
 
   $PIVA = $_POST["PIVA"];
-  $ragione_sociale = $_POST["ragione_sociale"];
-  $indirizzo_1 = $_POST["indirizzo_1"];
-  $indirizzo_2 = $_POST["indirizzo_2"];
+  $ragione_sociale = addslashes($_POST["ragione_sociale"]);
+  $indirizzo_1 = addslashes($_POST["indirizzo_1"]);
+  $indirizzo_2 = addslashes($_POST["indirizzo_2"]);
   $cap = $_POST["cap"];
-  $citta = $_POST["citta"];
-  $codice_destinatario = $_POST["codice_destinatario"];
+  $citta = addslashes($_POST["citta"]);
+  $codice_destinatario = addslashes($_POST["codice_destinatario"]);
   $richiesta_invio_pec = $_POST["richiesta_invio_pec"];
   $indirizzo_pec = $_POST["indirizzo_pec"];
 

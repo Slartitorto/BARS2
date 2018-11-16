@@ -1228,12 +1228,12 @@ include "dbactions/db_connection.php";
                                           <br>
                                           <table>
                                             <tr><td>Partita IVA: </td><td><input type="text" class="slim" name="PIVA" maxlength="50" value="<?php echo $PIVA; ?>"></td></tr>
-                                            <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale" maxlength="50" value="<?php echo $ragione_sociale; ?>"></td></tr>
-                                            <tr><td>Indirizzo 1: </td><td><input type="text" class="slim" name="indirizzo_1" maxlength="50" value="<?php echo $indirizzo_1; ?>"></td></tr>
-                                            <tr><td>Indirizzo 2: </td><td><input type="text" class="slim" name="indirizzo_2" maxlength="50" value="<?php echo $indirizzo_2; ?>"></td></tr>
+                                            <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale" maxlength="50" value="<?php echo htmlentities($ragione_sociale, ENT_QUOTES); ?>"></td></tr>
+                                            <tr><td>Indirizzo 1: </td><td><input type="text" class="slim" name="indirizzo_1" maxlength="50" value="<?php echo htmlentities($indirizzo_1, ENT_QUOTES); ?>"></td></tr>
+                                            <tr><td>Indirizzo 2: </td><td><input type="text" class="slim" name="indirizzo_2" maxlength="50" value="<?php echo htmlentities($indirizzo_2, ENT_QUOTES); ?>"></td></tr>
                                             <tr><td>CAP: </td><td><input type="text" class="slim" name="cap" maxlength="5" value="<?php echo $cap; ?>"></td></tr>
-                                            <tr><td>Città: </td><td><input type="text" class="slim" name="citta" maxlength="32" value="<?php echo $citta; ?>"></td></tr>
-                                            <tr><td>Codice Destinatario: </td><td><input type="text" class="slim" name="codice_destinatario" maxlength="32" value="<?php echo $codice_destinatario; ?>"></td></tr>
+                                            <tr><td>Città: </td><td><input type="text" class="slim" name="citta" maxlength="32" value="<?php echo htmlentities($citta, ENT_QUOTES); ?>"></td></tr>
+                                            <tr><td>Codice Destinatario: </td><td><input type="text" class="slim" name="codice_destinatario" maxlength="32" value="<?php echo htmlentities($codice_destinatario, ENT_QUOTES); ?>"></td></tr>
                                             <tr><td>Richiesta invio PEC: </td><td><input type="checkbox" name="richiesta_invio_pec" maxlength="32" value="1" <?php if ($richiesta_invio_pec) echo "checked"; ?>></td></tr>
                                             <tr><td>Indirizzo PEC Destinatario: </td><td><input type="text" class="slim" name="indirizzo_pec" maxlength="32" value="<?php echo $indirizzo_pec; ?>"></td></tr>
                                           </table>
@@ -1278,11 +1278,11 @@ include "dbactions/db_connection.php";
                                         <form action="dbactions/hooly_db_actions.php" method="post">
                                           <br>
                                           <table>
-                                            <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale" maxlength="50" value="<?php echo $ragione_sociale; ?>"></td></tr>
-                                            <tr><td>Indirizzo 1: </td><td><input type="text" class="slim" name="indirizzo_1" maxlength="50" value="<?php echo $indirizzo_1; ?>"></td></tr>
-                                            <tr><td>Indirizzo 2: </td><td><input type="text" class="slim" name="indirizzo_2" maxlength="50" value="<?php echo $indirizzo_2; ?>"></td></tr>
+                                            <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale" maxlength="50" value="<?php echo htmlentities($ragione_sociale, ENT_QUOTES); ?>"></td></tr>
+                                            <tr><td>Indirizzo 1: </td><td><input type="text" class="slim" name="indirizzo_1" maxlength="50" value="<?php echo htmlentities($indirizzo_1, ENT_QUOTES); ?>"></td></tr>
+                                            <tr><td>Indirizzo 2: </td><td><input type="text" class="slim" name="indirizzo_2" maxlength="50" value="<?php echo htmlentities($indirizzo_2, ENT_QUOTES); ?>"></td></tr>
                                             <tr><td>CAP: </td><td><input type="text" class="slim" name="cap" maxlength="5" value="<?php echo $cap; ?>"></td></tr>
-                                            <tr><td>Città: </td><td><input type="text" class="slim" name="citta" maxlength="32" value="<?php echo $citta; ?>"></td></tr>
+                                            <tr><td>Città: </td><td><input type="text" class="slim" name="citta" maxlength="32" value="<?php echo htmlentities($citta, ENT_QUOTES); ?>"></td></tr>
                                             <tr><td>Telefono: </td><td><input type="text" class="slim" name="telefono" maxlength="32" value="<?php echo $telefono; ?>"></td></tr>
                                           </table>
                                           <br>

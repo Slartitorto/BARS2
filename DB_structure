@@ -10,7 +10,7 @@
 
 -- MySQL dump 10.13  Distrib 5.5.53, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: sensors
+-- Host: localhost    Database: hooly
 -- ------------------------------------------------------
 -- Server version	5.5.53-0+deb7u1
 
@@ -25,7 +25,13 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+--
+-- Table structure for table `rec_data_trash`
+--
 
+DROP TABLE IF EXISTS `rec_data_trash`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rec_data_trash` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `serial` varchar(5) DEFAULT NULL,
@@ -37,10 +43,11 @@ CREATE TABLE `rec_data_trash` (
   `rssi` int(11) DEFAULT NULL,
   `router` varchar(16) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `rilevazioni_manuali`
---  -------------------------------------------------------- >Ultima aggiunta
+--
 
 DROP TABLE IF EXISTS `rilevazioni_manuali`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -94,7 +101,7 @@ CREATE TABLE `devices` (
   `alarmed` tinyint(1) DEFAULT NULL,
   `min_ok` float DEFAULT NULL,
   `max_ok` float DEFAULT NULL,
-  `batt_type` int DEFAULT NULL,
+  `batt_type` int(11) DEFAULT NULL,
   `tenant` int(11) DEFAULT NULL,
   `code_period` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -180,7 +187,7 @@ CREATE TABLE `non_conformita` (
   `position` varchar(32) DEFAULT NULL,
   `codUtente` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`nc_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
@@ -194,15 +201,15 @@ DROP TABLE IF EXISTS `notify_method`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `notify_method` (
   `codUtente` varchar(32) NOT NULL,
-  `telegram_flag` bool DEFAULT 0,
+  `telegram_flag` tinyint(1) DEFAULT '0',
   `telegram_chatid` varchar(32) DEFAULT NULL,
-  `pushbullett_flag` bool DEFAULT 0,
+  `pushbullett_flag` tinyint(1) DEFAULT '0',
   `pushbullett_addr` varchar(50) DEFAULT NULL,
-  `email_flag` bool DEFAULT 0,
+  `email_flag` tinyint(1) DEFAULT '0',
   `email_addr` varchar(50) DEFAULT NULL,
-  `whatsapp_flag` bool DEFAULT 0,
+  `whatsapp_flag` tinyint(1) DEFAULT '0',
   `whatsapp_tel` varchar(32) DEFAULT NULL,
-  `sms_flag` bool DEFAULT 0,
+  `sms_flag` tinyint(1) DEFAULT '0',
   `sms_tel` varchar(32) DEFAULT NULL
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -211,7 +218,7 @@ CREATE TABLE `notify_method` (
 
 --
 -- Table structure for table `server_settings`
--- Ultima aggiunta  ---------------------->
+--
 
 DROP TABLE IF EXISTS `server_settings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -258,10 +265,10 @@ DROP TABLE IF EXISTS `alarm_pause`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `alarm_pause` (
   `codUtente` varchar(32) NOT NULL,
-  `alarm_pause_flag_1` bool DEFAULT 0,
+  `alarm_pause_flag_1` tinyint(1) DEFAULT '0',
   `alarm_pause_from_1` varchar(8) DEFAULT NULL,
   `alarm_pause_to_1` varchar(8) DEFAULT NULL,
-  `alarm_pause_flag_2` bool DEFAULT 0,
+  `alarm_pause_flag_2` tinyint(1) DEFAULT '0',
   `alarm_pause_from_2` varchar(8) DEFAULT NULL,
   `alarm_pause_to_2` varchar(8) DEFAULT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -277,7 +284,7 @@ DROP TABLE IF EXISTS `rec_data`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rec_data` (
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `serial` varchar(5) DEFAULT NULL,
   `counter` int(11) DEFAULT NULL,
   `temp` float DEFAULT NULL,

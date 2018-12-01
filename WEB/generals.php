@@ -1318,19 +1318,36 @@ include "dbactions/db_connection.php";
                                   <table width=100%>
                                     <tr>
                                       <td align="left">
-                                        <form action="dbactions/hooly_db_actions.php" method="post">
-                                          <?php if ($credit > 0) echo "Il tuo credito residuo è di <b>" . $credit . "</b> SMS"; else echo "Attenzione! Il tuo credito SMS è esaurito."; ?>
-                                        </td>
-                                        <td align="right" >
-                                          Ricarica ora
-                                          <select>
-                                            <option value="50">50</option>
-                                            <option value="100">100</option>
-                                            <option value="500">500</option>
-                                          </select>
-                                          SMS
-                                          <button type="submit"><img src="icone/green_signal.png" width="30"></button>
+                                        <?php if ($credit > 0) echo "Il tuo credito residuo è di <b>" . $credit . "</b> SMS"; else echo "Attenzione! Il tuo credito SMS è esaurito."; ?>
+                                      </td>
+                                      <td align="right" >
+
+
+                                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                                          <input type="hidden" name="cmd" value="_s-xclick">
+                                          <input type="hidden" name="hosted_button_id" value="M8WD3G8HY34T6">
+                                          <table>
+                                            <tr>
+                                              <td>
+                                                <input type="hidden" name="on0" value="Quanità">Ricarica ora
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td>
+                                                <select name="os0">
+                                                  <option value="50 sms">50 sms €10,00 EUR</option>
+                                                  <option value="200 sms">200 sms €34,00 EUR</option>
+                                                  <option value="500 sms">500 sms €75,00 EUR</option>
+                                                </select>
+                                              </td>
+                                            </tr>
+                                          </table>
+                                          <input type="hidden" name="currency_code" value="EUR">
+                                          <input type="image" src="https://www.paypalobjects.com/it_IT/IT/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal è il metodo rapido e sicuro per pagare e farsi pagare online.">
+                                          <img alt="" border="0" src="https://www.paypalobjects.com/it_IT/i/scr/pixel.gif" width="1" height="1">
                                         </form>
+
+
                                       </td>
                                     </tr>
                                   </table>

@@ -888,7 +888,6 @@ include "dbactions/db_connection.php";
 
                               <?php } else if(@$_GET["act"] == "monthly_report") { // ---------- Report mensili -  ?>
 
-
                                 <?php
                                 $query = "SELECT idUtente,t0,t1,t2,t3 FROM utenti WHERE codUtente='$COD_UTENTE'";
                                 $result = $conn->query($query);
@@ -913,8 +912,8 @@ include "dbactions/db_connection.php";
                                 ?>
 
 
-                                <div class="modal-content"> <br> <center>
-                                  <br> <center>
+                                <div class="modal-content">
+                                  <br><br> <center>
                                     <h3> Genera report mensile </h3>
                                     <br>
                                     <form action="hooly_report.php" method="post">
@@ -976,325 +975,407 @@ include "dbactions/db_connection.php";
 
                                       <button type="submit" class="greenbtn">Report SA-04</button>
                                     </form>
-                                  </div>
+                                  </center>
+                                </div>
 
 
-                                <?php } else if(@$_GET["act"] == "alarm_pause") { // ---------- Sospendi notifiche -  ?>
+                              <?php } else if(@$_GET["act"] == "alarm_pause") { // ---------- Sospendi notifiche -  ?>
 
 
-                                  <?php
-                                  $query = "SELECT alarm_pause_flag_1,alarm_pause_from_1,alarm_pause_to_1,alarm_pause_flag_2,alarm_pause_from_2,alarm_pause_to_2 FROM alarm_pause WHERE codUtente='$COD_UTENTE'";
-                                  $result = $conn->query($query);
-                                  if(($result->num_rows) == 1)
-                                  {
-                                    while($row = $result->fetch_assoc()) {
-                                      $alarm_pause_flag_1_result = $row["alarm_pause_flag_1"];
-                                      $alarm_pause_from_1_result = $row["alarm_pause_from_1"];
-                                      $alarm_pause_to_1_result = $row["alarm_pause_to_1"];
-                                      $alarm_pause_flag_2_result = $row["alarm_pause_flag_2"];
-                                      $alarm_pause_from_2_result = $row["alarm_pause_from_2"];
-                                      $alarm_pause_to_2_result = $row["alarm_pause_to_2"];
-                                    }
-                                  } else {
-
-                                    $alarm_pause_flag_1 = 0;
-                                    $alarm_pause_from_1_result = "01";
-                                    $alarm_pause_to_1_result = "01";
-                                    $alarm_pause_flag_2 = 0;
-                                    $alarm_pause_from_2_result = "01";
-                                    $alarm_pause_to_2_result = "01";
-                                  }
-
-                                  ?>
-
-                                  <div class="modal-content">
-                                    <br><br>
-                                    <center>
-                                      <h3>Non inviare allarmi</h3>
-                                      <br>
-                                      <form action="dbactions/hooly_db_actions.php" onsubmit="return checkOrari()" method="post">
-                                        <input type="checkbox" name="alarm_pause_flag_1" value="1" <?php if($alarm_pause_flag_1_result) echo "checked"; ?>>
-
-                                        dalle ore:
-                                        <select name="alarm_pause_from_1" id="from1">
-                                          <?php for($i=1;$i<23;$i++){
-                                            echo "<option value= \""; printf('%02d', $i); echo "\"";
-                                            if (intval($alarm_pause_from_1_result) == $i) { echo " selected";}
-                                            echo ">"; printf('%02d', $i); echo ":00</option>\n";
-                                          }?>
-                                        </select>
-                                        alle ore:
-                                        <select name="alarm_pause_to_1" id="to1">
-                                          <?php for($i=1;$i<23;$i++){
-                                            echo "<option value= \""; printf('%02d', $i); echo "\"";
-                                            if (intval($alarm_pause_to_1_result) == $i) { echo " selected";}
-                                            echo ">"; printf('%02d', $i); echo ":00</option>\n";
-                                          }?>
-                                        </select>
-                                        <br>
-
-                                        <input type="checkbox" name="alarm_pause_flag_2" value="1" <?php if($alarm_pause_flag_2_result) echo "checked"; ?>>
-                                        dalle ore:
-                                        <select name="alarm_pause_from_2" id="from2">
-                                          <?php for($i=1;$i<23;$i++){
-                                            echo "<option value= \""; printf('%02d', $i); echo "\"";
-                                            if (intval($alarm_pause_from_2_result) == $i) { echo " selected";}
-                                            echo ">"; printf('%02d', $i); echo ":00</option>\n";
-                                          }?>
-                                        </select>
-                                        alle ore:
-                                        <select name="alarm_pause_to_2" id="to2">
-                                          <?php for($i=1;$i<23;$i++){
-                                            echo "<option value= \""; printf('%02d', $i); echo "\"";
-                                            if (intval($alarm_pause_to_2_result) == $i) { echo " selected";}
-                                            echo ">"; printf('%02d', $i); echo ":00</option>\n";
-                                          }?>
-                                        </select>
-                                        <br> <br> <br>
-                                        <input type="hidden" name="act" value="alarm_pause_record">
-                                        <button type="submit" class="greenbtn">Imposta</button>
-                                      </form>
-                                    </center>
-                                  </div>
-
-
-                                <?php } else if(@$_GET["act"] == "logout") { // ---------- Logout ?>
-
-
-                                  <?php
-                                  setcookie('LOGIN', null);
-                                  header('Location: http://www.hooly.eu');
-                                  ?>
-
-
-                                <?php } else if(@$_GET["act"] == "changePwd") { // ---------- cambio password ?>
-
-
-                                  <div class=modal-content>
-                                    <center>
-                                      <form action="generals.php?act=changePwd_result" onsubmit="return checkPassword()" method="post">
-                                        <br>
-                                        Inserisci la nuova password:
-                                        <br>
-                                        <input type="password" style="width:100%" placeholder="Enter Password" name="password" id="password" maxlength="14" pattern="[A-Za-z0-9]{5,12}" title="La passowrd può contenere lettere e numeri, un minimo di 5 ed un massimo di 12 caratteri alfanumerici" required>
-                                        <br> <br>
-                                        Ripeti la password:
-                                        <br>
-                                        <input type="password" style="width:100%" placeholder="Repeat Password" name="psw-repeat" id="confirm_password"  maxlenght="14" required>
-                                        <input name="act" type="hidden" value="registrazione">
-                                        <br><br>
-                                        <button type="submit" class=greenbtn>Cambia la tua password</button>
-                                      </form>
-                                    </center>
-                                  </div>
-
-
-                                <?php } else if(@$_GET["act"] == "changePwd_result") { // ---------- effettua il cambio password  ?>
-
-
-                                  <?php
-                                  $password	= $_POST["password"];
-                                  $codPassword = md5($password);
-                                  $query = "UPDATE `utenti` SET `password` =  '$codPassword' WHERE `codUtente` = '$COD_UTENTE' ";
-                                  $result	= $conn->query($query);
-                                  $Messaggio	= "
-                                  Ciao, questa e-mail ti giunge dall'area riservata di ".NOMESITO.".\n\n
-                                  Ti informiamo che la tua password è stata cambiata.\n
-                                  Se non hai effettuato tu il cambio password ti invitiamo a contattarci direttamente.
-                                  ";
-                                  $query = "SELECT username FROM utenti WHERE codUtente='$COD_UTENTE'";
-                                  $result = $conn->query($query);
+                                <?php
+                                $query = "SELECT alarm_pause_flag_1,alarm_pause_from_1,alarm_pause_to_1,alarm_pause_flag_2,alarm_pause_from_2,alarm_pause_to_2 FROM alarm_pause WHERE codUtente='$COD_UTENTE'";
+                                $result = $conn->query($query);
+                                if(($result->num_rows) == 1)
+                                {
                                   while($row = $result->fetch_assoc()) {
-                                    $To = $row["username"];
+                                    $alarm_pause_flag_1_result = $row["alarm_pause_flag_1"];
+                                    $alarm_pause_from_1_result = $row["alarm_pause_from_1"];
+                                    $alarm_pause_to_1_result = $row["alarm_pause_to_1"];
+                                    $alarm_pause_flag_2_result = $row["alarm_pause_flag_2"];
+                                    $alarm_pause_from_2_result = $row["alarm_pause_from_2"];
+                                    $alarm_pause_to_2_result = $row["alarm_pause_to_2"];
                                   }
-                                  mail($To, "Hooly Sensors - Conferma registrazione", $Messaggio, "From: admin@hooly.eu");
+                                } else {
 
-                                  setcookie('LOGIN', null);
-                                  ?>
-                                  <div class=modal-content>
+                                  $alarm_pause_flag_1 = 0;
+                                  $alarm_pause_from_1_result = "01";
+                                  $alarm_pause_to_1_result = "01";
+                                  $alarm_pause_flag_2 = 0;
+                                  $alarm_pause_from_2_result = "01";
+                                  $alarm_pause_to_2_result = "01";
+                                }
+
+                                ?>
+
+                                <div class="modal-content">
+                                  <br><br>
+                                  <center>
+                                    <h3>Non inviare allarmi</h3>
                                     <br>
-                                    Il cambio password è avvenuto correttamente.<br>
-                                    Adesso dovrai nuovamente autenticarti passando dalla pagina di Login<br><br><br>
-                                    <button type="button" onclick="location.href='index.php';" class="greenbtn">Login</button>
+                                    <form action="dbactions/hooly_db_actions.php" onsubmit="return checkOrari()" method="post">
+                                      <input type="checkbox" name="alarm_pause_flag_1" value="1" <?php if($alarm_pause_flag_1_result) echo "checked"; ?>>
+
+                                      dalle ore:
+                                      <select name="alarm_pause_from_1" id="from1">
+                                        <?php for($i=1;$i<23;$i++){
+                                          echo "<option value= \""; printf('%02d', $i); echo "\"";
+                                          if (intval($alarm_pause_from_1_result) == $i) { echo " selected";}
+                                          echo ">"; printf('%02d', $i); echo ":00</option>\n";
+                                        }?>
+                                      </select>
+                                      alle ore:
+                                      <select name="alarm_pause_to_1" id="to1">
+                                        <?php for($i=1;$i<23;$i++){
+                                          echo "<option value= \""; printf('%02d', $i); echo "\"";
+                                          if (intval($alarm_pause_to_1_result) == $i) { echo " selected";}
+                                          echo ">"; printf('%02d', $i); echo ":00</option>\n";
+                                        }?>
+                                      </select>
+                                      <br>
+
+                                      <input type="checkbox" name="alarm_pause_flag_2" value="1" <?php if($alarm_pause_flag_2_result) echo "checked"; ?>>
+                                      dalle ore:
+                                      <select name="alarm_pause_from_2" id="from2">
+                                        <?php for($i=1;$i<23;$i++){
+                                          echo "<option value= \""; printf('%02d', $i); echo "\"";
+                                          if (intval($alarm_pause_from_2_result) == $i) { echo " selected";}
+                                          echo ">"; printf('%02d', $i); echo ":00</option>\n";
+                                        }?>
+                                      </select>
+                                      alle ore:
+                                      <select name="alarm_pause_to_2" id="to2">
+                                        <?php for($i=1;$i<23;$i++){
+                                          echo "<option value= \""; printf('%02d', $i); echo "\"";
+                                          if (intval($alarm_pause_to_2_result) == $i) { echo " selected";}
+                                          echo ">"; printf('%02d', $i); echo ":00</option>\n";
+                                        }?>
+                                      </select>
+                                      <br> <br> <br>
+                                      <input type="hidden" name="act" value="alarm_pause_record">
+                                      <button type="submit" class="greenbtn">Imposta</button>
+                                    </form>
+                                  </center>
+                                </div>
 
 
-                                  <?php } else if(@$_GET["act"] == "set_notifyMethod") { // ---------- Imposta metodo di notifica  ?>
+                              <?php } else if(@$_GET["act"] == "logout") { // ---------- Logout ?>
 
 
-                                    <?php
-                                    $query = "SELECT * FROM notify_method WHERE codUtente='$COD_UTENTE' limit 1";
-                                    $result = $conn->query($query);
-                                    if(($result->num_rows) == 1)
-                                    {
-                                      while($row = $result->fetch_assoc()) {
-                                        $telegram_flag = $row["telegram_flag"];
-                                        $telegram_chatid = $row["telegram_chatid"];
-                                        $pushbullett_flag = $row["pushbullett_flag"];
-                                        $pushbullett_addr = $row["pushbullett_addr"];
-                                        $email_flag = $row["email_flag"];
-                                        $email_addr = $row["email_addr"];
-                                        $whatsapp_flag = $row["whatsapp_flag"];
-                                        $whatsapp_tel = $row["whatsapp_tel"];
-                                        $sms_flag = $row["sms_flag"];
-                                        $sms_tel = $row["sms_tel"];
-
-                                      }
-                                    } else {
-                                      $telegram_flag = "";
-                                      $telegram_chatid = "";
-                                      $pushbullett_flag = "";
-                                      $pushbullett_addr = "";
-                                      $email_flag = "";
-                                      $email_addr = "";
-                                      $whatsapp_flag = "";
-                                      $whatsapp_tel = "";
-                                      $sms_flag = "";
-                                      $sms_tel = "";
-
-                                    }
-                                    ?>
-
-                                    <div class=modal-content>
-                                      <center>
-                                        <br><br>
-                                        <h3>Desidero ricevere le notifiche tramite:</h3>
-                                        <br><br>
-
-                                        <form action="dbactions/hooly_db_actions.php" method="post">
-                                          <table>
-                                            <tr><td><input type="checkbox" name="telegram_flag" value="1" <?php if($telegram_flag) echo "checked"; ?> >Telegram </td><td></td><td>
-                                              ChatId:</td><td> <input type="text" class=slim name="telegram_chatid" maxlength="20" value=<?php echo $telegram_chatid ?> ></td>
-                                            </tr>
-                                            <tr><td><input type="checkbox" name="pushbullett_flag" value="1" <?php if($pushbullett_flag) echo "checked"; ?> >Pushbullett</td><td>&nbsp&nbsp&nbsp</td><td>
-                                              Addr:</td><td> <input type="email" class=slim name="pushbullett_addr" maxlength="50" value=<?php echo $pushbullett_addr ?> ></td>
-                                            </tr>
-                                            <tr><td><input type="checkbox" name="email_flag" value="1" <?php if($email_flag) echo "checked"; ?> >Email</td><td></td><td>
-                                              Addr:</td><td> <input type="email" class=slim name="email_addr" maxlength="50" value=<?php echo $email_addr ?> ></td>
-                                            </tr>
-                                            <tr><td><input type="checkbox" disabled name="whatsapp_flag" value="1" <?php if($whatsapp_flag) echo "checked"; ?> >WhatsApp</td><td>&nbsp</td><td>
-                                              #Tel:</td><td> <input type="text" class=slim name="whatsapp_tel" maxlength="20" value=<?php echo $whatsapp_tel ?> ></td>
-                                            </tr>
-                                            <tr><td><input type="checkbox" name="sms_flag" value="1" <?php if($sms_flag) echo "checked"; ?> >SMS</td><td>&nbsp</td><td>
-                                              #Tel:</td><td> <input type="text" class=slim name="sms_tel" maxlength="20" value=<?php echo $sms_tel ?> ></td>
-                                            </tr>
-                                          </table>
-                                          <br>
-                                          <input type="hidden" name="act" value="set_notifyMethod">
-                                          <button type="submit" class=greenbtn>Conferma</button>
-                                        </form>
-                                      </center>
-                                    </div>
+                                <?php
+                                setcookie('LOGIN', null);
+                                header('Location: http://www.hooly.eu');
+                                ?>
 
 
-                                  <?php } else if(@$_GET["act"] == "set_billingInfo") { // ---------- Imposta info di fatturazione  ?>
+                              <?php } else if(@$_GET["act"] == "changePwd") { // ---------- cambio password ?>
 
 
-                                    <?php
-                                    $query = "SELECT * FROM billing_info WHERE codUtente='$COD_UTENTE' LIMIT 1";
-                                    $result = $conn->query($query);
-                                    if(($result->num_rows) == 1)
-                                    {
-                                      while($row = $result->fetch_assoc()) {
-                                        $PIVA = $row["PIVA"];
-                                        $ragione_sociale = $row["ragione_sociale"];
-                                        $indirizzo_1 = $row["indirizzo_1"];
-                                        $indirizzo_2 = $row["indirizzo_2"];
-                                        $cap = $row["cap"];
-                                        $citta = $row["citta"];
-                                        $codice_destinatario = $row["codice_destinatario"];
-                                        $richiesta_invio_pec = $row["richiesta_invio_pec"];
-                                        $indirizzo_pec = $row["indirizzo_pec"];
-
-                                      }
-                                    } else {
-                                      $PIVA = "";
-                                      $ragione_sociale = "";
-                                      $indirizzo_1 = "";
-                                      $indirizzo_2 = "";
-                                      $cap = "";
-                                      $citta = "";
-                                      $codice_destinatario = "";
-                                      $richiesta_invio_pec = "";
-                                      $indirizzo_pec = "";
-                                    }
-                                    ?>
-
-                                    <div class="modal-content">
+                                <div class=modal-content>
+                                  <center>
+                                    <form action="generals.php?act=changePwd_result" onsubmit="return checkPassword()" method="post">
+                                      <br>
+                                      Inserisci la nuova password:
+                                      <br>
+                                      <input type="password" style="width:100%" placeholder="Enter Password" name="password" id="password" maxlength="14" pattern="[A-Za-z0-9]{5,12}" title="La passowrd può contenere lettere e numeri, un minimo di 5 ed un massimo di 12 caratteri alfanumerici" required>
+                                      <br> <br>
+                                      Ripeti la password:
+                                      <br>
+                                      <input type="password" style="width:100%" placeholder="Repeat Password" name="psw-repeat" id="confirm_password"  maxlenght="14" required>
+                                      <input name="act" type="hidden" value="registrazione">
                                       <br><br>
-                                      <center>
-                                        <?php if ($result->num_rows) echo "<h3> Gestisci le informazioni di fatturazione </h3>"; else echo "<h3> Inserisci le informazioni di fatturazione </h3>";?>
-
-                                        <form action="dbactions/hooly_db_actions.php" method="post">
-                                          <br>
-                                          <table>
-                                            <tr><td>Partita IVA: </td><td><input type="text" class="slim" name="PIVA" maxlength="50" value="<?php echo $PIVA; ?>"></td></tr>
-                                            <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale" maxlength="50" value="<?php echo htmlentities($ragione_sociale, ENT_QUOTES); ?>"></td></tr>
-                                            <tr><td>Indirizzo 1: </td><td><input type="text" class="slim" name="indirizzo_1" maxlength="50" value="<?php echo htmlentities($indirizzo_1, ENT_QUOTES); ?>"></td></tr>
-                                            <tr><td>Indirizzo 2: </td><td><input type="text" class="slim" name="indirizzo_2" maxlength="50" value="<?php echo htmlentities($indirizzo_2, ENT_QUOTES); ?>"></td></tr>
-                                            <tr><td>CAP: </td><td><input type="text" class="slim" name="cap" maxlength="5" value="<?php echo $cap; ?>"></td></tr>
-                                            <tr><td>Città: </td><td><input type="text" class="slim" name="citta" maxlength="32" value="<?php echo htmlentities($citta, ENT_QUOTES); ?>"></td></tr>
-                                            <tr><td>Codice Destinatario: </td><td><input type="text" class="slim" name="codice_destinatario" maxlength="32" value="<?php echo htmlentities($codice_destinatario, ENT_QUOTES); ?>"></td></tr>
-                                            <tr><td>Richiesta invio PEC: </td><td><input type="checkbox" name="richiesta_invio_pec" maxlength="32" value="1" <?php if ($richiesta_invio_pec) echo "checked"; ?>></td></tr>
-                                            <tr><td>Indirizzo PEC Destinatario: </td><td><input type="text" class="slim" name="indirizzo_pec" maxlength="32" value="<?php echo $indirizzo_pec; ?>"></td></tr>
-                                          </table>
-                                          <br>
-                                          <input type="hidden" name="act" value="set_billingInfo">
-                                          <button type="submit" class=greenbtn>Conferma</button>
-                                        </form>
-                                      </center>
-                                    </div>
+                                      <button type="submit" class=greenbtn>Cambia la tua password</button>
+                                    </form>
+                                  </center>
+                                </div>
 
 
-                                  <?php } else if(@$_GET["act"] == "set_personalInfo") { // ---------- Imposta info utente  ?>
+                              <?php } else if(@$_GET["act"] == "changePwd_result") { // ---------- effettua il cambio password  ?>
 
 
-                                    <?php
-                                    $query = "SELECT * FROM personal_info WHERE codUtente='$COD_UTENTE' limit 1";
-                                    $result = $conn->query($query);
-                                    if(($result->num_rows) == 1)
-                                    {
-                                      while($row = $result->fetch_assoc()) {
-                                        $ragione_sociale = $row["ragione_sociale"];
-                                        $indirizzo_1 = $row["indirizzo_1"];
-                                        $indirizzo_2 = $row["indirizzo_2"];
-                                        $cap = $row["cap"];
-                                        $citta = $row["citta"];
-                                        $telefono = $row["telefono"];
-                                      }
-                                    } else {
-                                      $ragione_sociale = "";
-                                      $indirizzo_1 = "";
-                                      $indirizzo_2 = "";
-                                      $cap = "";
-                                      $citta = "";
-                                      $telefono = "";
-                                    }
-                                    ?>
+                                <?php
+                                $password	= $_POST["password"];
+                                $codPassword = md5($password);
+                                $query = "UPDATE `utenti` SET `password` =  '$codPassword' WHERE `codUtente` = '$COD_UTENTE' ";
+                                $result	= $conn->query($query);
+                                $Messaggio	= "
+                                Ciao, questa e-mail ti giunge dall'area riservata di ".NOMESITO.".\n\n
+                                Ti informiamo che la tua password è stata cambiata.\n
+                                Se non hai effettuato tu il cambio password ti invitiamo a contattarci direttamente.
+                                ";
+                                $query = "SELECT username FROM utenti WHERE codUtente='$COD_UTENTE'";
+                                $result = $conn->query($query);
+                                while($row = $result->fetch_assoc()) {
+                                  $To = $row["username"];
+                                }
+                                mail($To, "Hooly Sensors - Conferma registrazione", $Messaggio, "From: admin@hooly.eu");
 
-                                    <div class="modal-content">
+                                setcookie('LOGIN', null);
+                                ?>
+                                <div class=modal-content>
+                                  <br>
+                                  Il cambio password è avvenuto correttamente.<br>
+                                  Adesso dovrai nuovamente autenticarti passando dalla pagina di Login<br><br><br>
+                                  <button type="button" onclick="location.href='index.php';" class="greenbtn">Login</button>
+                                </div>
+
+                              <?php } else if(@$_GET["act"] == "set_notifyMethod") { // ---------- Imposta metodo di notifica  ?>
+
+
+                                <?php
+                                $query = "SELECT * FROM notify_method WHERE codUtente='$COD_UTENTE' limit 1";
+                                $result = $conn->query($query);
+                                if(($result->num_rows) == 1)
+                                {
+                                  while($row = $result->fetch_assoc()) {
+                                    $telegram_flag = $row["telegram_flag"];
+                                    $telegram_chatid = $row["telegram_chatid"];
+                                    $pushbullett_flag = $row["pushbullett_flag"];
+                                    $pushbullett_addr = $row["pushbullett_addr"];
+                                    $email_flag = $row["email_flag"];
+                                    $email_addr = $row["email_addr"];
+                                    $whatsapp_flag = $row["whatsapp_flag"];
+                                    $whatsapp_tel = $row["whatsapp_tel"];
+                                    $sms_flag = $row["sms_flag"];
+                                    $sms_tel = $row["sms_tel"];
+
+                                  }
+                                } else {
+                                  $telegram_flag = "";
+                                  $telegram_chatid = "";
+                                  $pushbullett_flag = "";
+                                  $pushbullett_addr = "";
+                                  $email_flag = "";
+                                  $email_addr = "";
+                                  $whatsapp_flag = "";
+                                  $whatsapp_tel = "";
+                                  $sms_flag = "";
+                                  $sms_tel = "";
+
+                                }
+                                ?>
+
+                                <div class=modal-content>
+                                  <center>
+                                    <br><br>
+                                    <h3>Desidero ricevere le notifiche tramite:</h3>
+                                    <br><br>
+
+                                    <form action="dbactions/hooly_db_actions.php" method="post">
+                                      <table>
+                                        <tr><td><input type="checkbox" name="telegram_flag" value="1" <?php if($telegram_flag) echo "checked"; ?> >Telegram </td><td></td><td>
+                                          ChatId:</td><td> <input type="text" class=slim name="telegram_chatid" maxlength="20" value=<?php echo $telegram_chatid ?> ></td>
+                                        </tr>
+                                        <tr><td><input type="checkbox" name="pushbullett_flag" value="1" <?php if($pushbullett_flag) echo "checked"; ?> >Pushbullett</td><td>&nbsp&nbsp&nbsp</td><td>
+                                          Addr:</td><td> <input type="email" class=slim name="pushbullett_addr" maxlength="50" value=<?php echo $pushbullett_addr ?> ></td>
+                                        </tr>
+                                        <tr><td><input type="checkbox" name="email_flag" value="1" <?php if($email_flag) echo "checked"; ?> >Email</td><td></td><td>
+                                          Addr:</td><td> <input type="email" class=slim name="email_addr" maxlength="50" value=<?php echo $email_addr ?> ></td>
+                                        </tr>
+                                        <tr><td><input type="checkbox" disabled name="whatsapp_flag" value="1" <?php if($whatsapp_flag) echo "checked"; ?> >WhatsApp</td><td>&nbsp</td><td>
+                                          #Tel:</td><td> <input type="text" class=slim name="whatsapp_tel" maxlength="20" value=<?php echo $whatsapp_tel ?> ></td>
+                                        </tr>
+                                        <tr><td><input type="checkbox" name="sms_flag" value="1" <?php if($sms_flag) echo "checked"; ?> >SMS</td><td>&nbsp</td><td>
+                                          #Tel:</td><td> <input type="text" class=slim name="sms_tel" maxlength="20" value=<?php echo $sms_tel ?> ></td>
+                                        </tr>
+                                        <tr><td colspan="4"> Ricorda di verificare il tuo <a href="generals.php?act=SMS_manage">credito SMS</a></td></tr>
+                                      </table>
                                       <br><br>
-                                      <center>
-                                        <?php if ($result->num_rows) echo "<h3> Gestisci le informazioni personali </h3>"; else echo "<h3> Inserisci le informazioni personali </h3>";?>
+                                      <input type="hidden" name="act" value="set_notifyMethod">
+                                      <button type="submit" class=greenbtn>Conferma</button>
+                                    </form>
+                                  </center>
+                                </div>
+
+
+                              <?php } else if(@$_GET["act"] == "set_billingInfo") { // ---------- Imposta info di fatturazione  ?>
+
+
+                                <?php
+                                $query = "SELECT * FROM billing_info WHERE codUtente='$COD_UTENTE' LIMIT 1";
+                                $result = $conn->query($query);
+                                if(($result->num_rows) == 1)
+                                {
+                                  while($row = $result->fetch_assoc()) {
+                                    $PIVA = $row["PIVA"];
+                                    $ragione_sociale = $row["ragione_sociale"];
+                                    $indirizzo_1 = $row["indirizzo_1"];
+                                    $indirizzo_2 = $row["indirizzo_2"];
+                                    $cap = $row["cap"];
+                                    $citta = $row["citta"];
+                                    $codice_destinatario = $row["codice_destinatario"];
+                                    $richiesta_invio_pec = $row["richiesta_invio_pec"];
+                                    $indirizzo_pec = $row["indirizzo_pec"];
+
+                                  }
+                                } else {
+                                  $PIVA = "";
+                                  $ragione_sociale = "";
+                                  $indirizzo_1 = "";
+                                  $indirizzo_2 = "";
+                                  $cap = "";
+                                  $citta = "";
+                                  $codice_destinatario = "";
+                                  $richiesta_invio_pec = "";
+                                  $indirizzo_pec = "";
+                                }
+                                ?>
+
+                                <div class="modal-content">
+                                  <br><br>
+                                  <center>
+                                    <?php if ($result->num_rows) echo "<h3> Gestisci le informazioni di fatturazione </h3>"; else echo "<h3> Inserisci le informazioni di fatturazione </h3>";?>
+
+                                    <form action="dbactions/hooly_db_actions.php" method="post">
+                                      <br>
+                                      <table>
+                                        <tr><td>Partita IVA: </td><td><input type="text" class="slim" name="PIVA" maxlength="50" value="<?php echo $PIVA; ?>"></td></tr>
+                                        <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale" maxlength="50" value="<?php echo htmlentities($ragione_sociale, ENT_QUOTES); ?>"></td></tr>
+                                        <tr><td>Indirizzo 1: </td><td><input type="text" class="slim" name="indirizzo_1" maxlength="50" value="<?php echo htmlentities($indirizzo_1, ENT_QUOTES); ?>"></td></tr>
+                                        <tr><td>Indirizzo 2: </td><td><input type="text" class="slim" name="indirizzo_2" maxlength="50" value="<?php echo htmlentities($indirizzo_2, ENT_QUOTES); ?>"></td></tr>
+                                        <tr><td>CAP: </td><td><input type="text" class="slim" name="cap" maxlength="5" value="<?php echo $cap; ?>"></td></tr>
+                                        <tr><td>Città: </td><td><input type="text" class="slim" name="citta" maxlength="32" value="<?php echo htmlentities($citta, ENT_QUOTES); ?>"></td></tr>
+                                        <tr><td>Codice Destinatario: </td><td><input type="text" class="slim" name="codice_destinatario" maxlength="32" value="<?php echo htmlentities($codice_destinatario, ENT_QUOTES); ?>"></td></tr>
+                                        <tr><td>Richiesta invio PEC: </td><td><input type="checkbox" name="richiesta_invio_pec" maxlength="32" value="1" <?php if ($richiesta_invio_pec) echo "checked"; ?>></td></tr>
+                                        <tr><td>Indirizzo PEC Destinatario: </td><td><input type="text" class="slim" name="indirizzo_pec" maxlength="32" value="<?php echo $indirizzo_pec; ?>"></td></tr>
+                                      </table>
+                                      <br>
+                                      <input type="hidden" name="act" value="set_billingInfo">
+                                      <button type="submit" class=greenbtn>Conferma</button>
+                                    </form>
+                                  </center>
+                                </div>
+
+
+                              <?php } else if(@$_GET["act"] == "set_personalInfo") { // ---------- Imposta info utente  ?>
+
+
+                                <?php
+                                $query = "SELECT * FROM personal_info WHERE codUtente='$COD_UTENTE' limit 1";
+                                $result = $conn->query($query);
+                                if(($result->num_rows) == 1)
+                                {
+                                  while($row = $result->fetch_assoc()) {
+                                    $ragione_sociale = $row["ragione_sociale"];
+                                    $indirizzo_1 = $row["indirizzo_1"];
+                                    $indirizzo_2 = $row["indirizzo_2"];
+                                    $cap = $row["cap"];
+                                    $citta = $row["citta"];
+                                    $telefono = $row["telefono"];
+                                  }
+                                } else {
+                                  $ragione_sociale = "";
+                                  $indirizzo_1 = "";
+                                  $indirizzo_2 = "";
+                                  $cap = "";
+                                  $citta = "";
+                                  $telefono = "";
+                                }
+                                ?>
+
+                                <div class="modal-content">
+                                  <br><br>
+                                  <center>
+                                    <?php if ($result->num_rows) echo "<h3> Gestisci le informazioni personali </h3>"; else echo "<h3> Inserisci le informazioni personali </h3>";?>
+                                    <form action="dbactions/hooly_db_actions.php" method="post">
+                                      <br>
+                                      <table>
+                                        <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale" maxlength="50" value="<?php echo htmlentities($ragione_sociale, ENT_QUOTES); ?>"></td></tr>
+                                        <tr><td>Indirizzo 1: </td><td><input type="text" class="slim" name="indirizzo_1" maxlength="50" value="<?php echo htmlentities($indirizzo_1, ENT_QUOTES); ?>"></td></tr>
+                                        <tr><td>Indirizzo 2: </td><td><input type="text" class="slim" name="indirizzo_2" maxlength="50" value="<?php echo htmlentities($indirizzo_2, ENT_QUOTES); ?>"></td></tr>
+                                        <tr><td>CAP: </td><td><input type="text" class="slim" name="cap" maxlength="5" value="<?php echo $cap; ?>"></td></tr>
+                                        <tr><td>Città: </td><td><input type="text" class="slim" name="citta" maxlength="32" value="<?php echo htmlentities($citta, ENT_QUOTES); ?>"></td></tr>
+                                        <tr><td>Telefono: </td><td><input type="text" class="slim" name="telefono" maxlength="32" value="<?php echo $telefono; ?>"></td></tr>
+                                      </table>
+                                      <br>
+                                      <input type="hidden" name="act" value="set_personalInfo">
+                                      <button type="submit" class=greenbtn>Conferma</button>
+                                    </form>
+                                  </center>
+                                </div>
+
+
+                              <?php } else if(@$_GET["act"] == "SMS_manage") { // ---------- Gestione SMS, credito e history  ?>
+
+
+                                <?php
+                                $query = "SELECT credit FROM sms_credit WHERE codUtente='$COD_UTENTE' limit 1";
+                                $result = $conn->query($query);
+                                if(($result->num_rows) == 1)
+                                {
+                                  $row = $result->fetch_assoc();
+                                  $credit = $row["credit"];
+                                } else {
+                                  $credit = 0;
+                                }
+                                ?>
+
+                                <div class="modal-content NC_manage">
+                                  <br><br>
+                                  <center>
+                                    <h3> Resoconto credito SMS e messaggi inviati</h3>
+                                  </center>
+                                  <br><br>
+                                  <table width=100%>
+                                    <tr>
+                                      <td align="left">
                                         <form action="dbactions/hooly_db_actions.php" method="post">
-                                          <br>
-                                          <table>
-                                            <tr><td>Ragione Sociale: </td><td><input type="text" class="slim" name="ragione_sociale" maxlength="50" value="<?php echo htmlentities($ragione_sociale, ENT_QUOTES); ?>"></td></tr>
-                                            <tr><td>Indirizzo 1: </td><td><input type="text" class="slim" name="indirizzo_1" maxlength="50" value="<?php echo htmlentities($indirizzo_1, ENT_QUOTES); ?>"></td></tr>
-                                            <tr><td>Indirizzo 2: </td><td><input type="text" class="slim" name="indirizzo_2" maxlength="50" value="<?php echo htmlentities($indirizzo_2, ENT_QUOTES); ?>"></td></tr>
-                                            <tr><td>CAP: </td><td><input type="text" class="slim" name="cap" maxlength="5" value="<?php echo $cap; ?>"></td></tr>
-                                            <tr><td>Città: </td><td><input type="text" class="slim" name="citta" maxlength="32" value="<?php echo htmlentities($citta, ENT_QUOTES); ?>"></td></tr>
-                                            <tr><td>Telefono: </td><td><input type="text" class="slim" name="telefono" maxlength="32" value="<?php echo $telefono; ?>"></td></tr>
-                                          </table>
-                                          <br>
-                                          <input type="hidden" name="act" value="set_personalInfo">
-                                          <button type="submit" class=greenbtn>Conferma</button>
+                                          <?php if ($credit > 0) echo "Il tuo credito residuo è di <b>" . $credit . "</b> SMS"; else echo "Attenzione! Il tuo credito SMS è esaurito."; ?>
+                                        </td>
+                                        <td align="right" >
+                                          Ricarica ora
+                                          <select>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                            <option value="500">500</option>
+                                          </select>
+                                          SMS
+                                          <button type="submit"><img src="icone/green_signal.png" width="30"></button>
                                         </form>
-                                      </center>
-                                    </div>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                  <br><br><br>
+
+                                  <?php
+                                  $query = "SELECT * FROM sms_usage where codUtente = '$COD_UTENTE' ORDER BY timestamp DESC";
+                                  $result = $conn->query($query);
+                                  if(($result->num_rows) != 0) $found = 1;
+                                  else {
+                                    $x=0;
+                                    while($row = $result->fetch_assoc()) {
+                                      $destination[$x]=$row["destination"];
+                                      $timestamp[$x]=$row["timestamp"];
+                                      $text[$x]=$row["text"];
+                                      $credit[$x]=$row["credit"];
+
+                                      ++$x;
+                                    }
+                                  }
+                                  if ($found == 1) { ?>
+                                    Resoconto:<br><br>
+                                    <center>
+                                      <table class="centered NC_manage">
+                                        <tr>
+                                          <th>Destinazione</th><th>Timestamp</th><th>Testo</th><th>Saldo</th>
+                                        </tr>
+                                        <?php  for($i=0;$i<$x;$i++) { ?>
+                                          <tr>
+                                            <TD width="15%"><?php echo $destination[$i] ?></TD>
+                                            <TD width="30%"><?php echo $timestamp[$i] ?></TD>
+                                            <TD width="45%"><?php echo $text[$i] ?></TD>
+                                            <TD width="10%"><?php echo $credit[$i] ?></TD>
+                                          </tr>
+                                        <?php }  ?>
+                                      </TABLE>
+                                    <?php } else echo "Non ci sono SMS inviati" ?>
+                                    <br><br><br><br>
+                                    <button type="button" onclick="location.href='status.php';" class="greenbtn">Torna alla pagina principale</button>
+                                    <br><br><br>
+                                  </center>
+                                </div>
 
 
-
-                                  <?php } ?>
-                                </body>
-                                </html>
-                              </body>
+                              <?php } ?>
+                            </body>
+                            </html>
+                          </body>

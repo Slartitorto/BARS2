@@ -206,7 +206,7 @@ if (($temp < $min_ok) or ($temp > $max_ok)) {
         }
 
         if ($sms_flag) {
-          $website="http://myhooly.hooly.eu/sendmessage.php?channel=sms&key=".$sendmessage_key."&destination=".$sms_tel."&subject=".$subject."&message=".$message;
+          $website="http://myhooly.hooly.eu/sendmessage.php?channel=sms&key=".$sendmessage_key."&codUtente=".$codUtente."&destination=".$sms_tel."&subject=".$subject."&message=".$message;
           $website = str_replace(" ","%20",$website);
           $content = file_get_contents($website);
         }

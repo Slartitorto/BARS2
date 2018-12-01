@@ -77,9 +77,10 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
 
     $query		= "INSERT INTO `utenti` SET `activation_key`='$activation_key', `sms_tel`='$sms_tel', `username`='$email', `codUtente`='$codUtente', `password`='$codPassword', `t0`= $next_tenant, `t1`= 0, `t2`= 0, `t3`= 0, `email`='$email';";
     $result	= $conn->query($query);
+
     $subject = "PIN per l'attivazione dell'account MyHooly";
     $message = "inserisci nella form il numero: ".$activation_key;
-    $website = "http://myhooly.hooly.eu/sendmessage.php?channel=sms&key=".$sendmessage_key."&destination=".$sms_tel."&subject=".$subject."&message=".$message;
+    $website = "http://myhooly.hooly.eu/sendmessage.php?channel=sms&key=".$sendmessage_key."&destination=".$sms_tel."&subject=".$subject."&message=".$message."&codUtente=NoCreditControl";
     $website = str_replace(" ","%20",$website);
     $content = file_get_contents($website);
 
@@ -166,6 +167,9 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
       if ($pin == $registered_pin) {
         $Sql		=	"UPDATE utenti SET stato = '1' WHERE codUtente = '" . $codUtente . "' LIMIT 1";
         $result		=	$conn->query($Sql);
+        $query		= "INSERT INTO `sms_usage` (codUtente, destination, type, text, credit) VALUES ('$codUtente', '', 2, 'Ricarica 50 SMS omaggio',50)";
+        $result	= $conn->query($query);
+
         header('Location: ../index.php?act=AttivazioneOn');
       } else {
         $Sql		=	"DELETE FROM utenti WHERE stato = '0' AND codUtente = '" . $codUtente . "'";
@@ -183,6 +187,9 @@ if(@$_POST["act"] == "recuperaPassword") { // ----------------------------------
   // da verificare e sistemare
   $Sql		=	"UPDATE `utenti` SET `stato` = '1' WHERE `codUtente`='".@$_GET["cod"]."' LIMIT 1 ;";
   $result		=	$conn->query($Sql);
+  $query		= "INSERT INTO `sms_usage` (codUtente, destination, type, text, credit) VALUES ('$codUtente', '', 2, 'Ricarica 50 SMS omaggio',50)";
+  $result	= $conn->query($query);
+
   header('Location: ../index.php');
 
 

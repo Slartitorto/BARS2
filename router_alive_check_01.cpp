@@ -279,12 +279,11 @@ int main(void)
               MYSQL_RES *result = mysql_store_result(mysql_conn);
               MYSQL_NUM_RES = mysql_num_rows(result);
               if(MYSQL_NUM_RES == 1) {
-                while ((row = mysql_fetch_row(result))) {
-                  sendmessage_key = row[0];
-                }
+              row = mysql_fetch_row(result);
+              sendmessage_key = row[0];
               }
               mysql_free_result(result);
-              sprintf(command,"wget --no-cache --spider \"%s?destination=%s&channel=sms&key=%s&subject=%s&message=%s\"",SENDMESSAGE_URL,sms_tel,sendmessage_key,SUBJECT,MESSAGE);
+              sprintf(command,"wget --no-cache --spider \"%s?destination=%s&channel=sms&key=%s&subject=%s&message=%s&codUtente=%s\"",SENDMESSAGE_URL,sms_tel,sendmessage_key,SUBJECT,MESSAGE,codUtente);
               fprintf(logfile,"%s\n",command);
               fflush(logfile);
               system(command);

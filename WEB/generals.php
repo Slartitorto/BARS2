@@ -1314,7 +1314,7 @@ include "dbactions/db_connection.php";
                                   <center>
                                     <h3> Resoconto credito SMS e messaggi inviati</h3>
                                   </center>
-                                  <br><br>
+                                  <br><br><br>
                                   <table width=100%>
                                     <tr>
                                       <td align="left">
@@ -1370,6 +1370,7 @@ include "dbactions/db_connection.php";
                                   }
                                   if ($found == 1) { ?>
                                     Resoconto:<br><br>
+
                                     <center>
                                       <table class="centered NC_manage">
                                         <tr>
@@ -1377,10 +1378,10 @@ include "dbactions/db_connection.php";
                                         </tr>
                                         <?php  for($i=0;$i<$x;$i++) { ?>
                                           <tr>
-                                            <TD width="15%"><?php echo $destination[$i] ?></TD>
-                                            <TD width="30%"><?php echo $timestamp[$i] ?></TD>
-                                            <TD width="45%"><?php echo $text[$i] ?></TD>
-                                            <TD width="10%"><?php echo $credito[$i] ?></TD>
+                                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="15%"><?php echo $destination[$i] ?></TD>
+                                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="30%"><?php echo $timestamp[$i] ?></TD>
+                                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="45%"><?php echo $text[$i] ?></TD>
+                                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="10%"><?php echo $credito[$i] ?></TD>
                                           </tr>
                                         <?php }  ?>
                                       </TABLE>

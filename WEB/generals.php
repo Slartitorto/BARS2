@@ -1298,7 +1298,7 @@ include "dbactions/db_connection.php";
 
 
                                 <?php
-                                $query = "SELECT credit FROM sms_credit WHERE codUtente='$COD_UTENTE' limit 1";
+                                $query = "SELECT credit FROM sms_usage where codUtente = '$COD_UTENTE' ORDER BY timestamp DESC LIMIT 1";
                                 $result = $conn->query($query);
                                 if(($result->num_rows) == 1)
                                 {
@@ -1339,15 +1339,15 @@ include "dbactions/db_connection.php";
                                   <?php
                                   $query = "SELECT * FROM sms_usage where codUtente = '$COD_UTENTE' ORDER BY timestamp DESC";
                                   $result = $conn->query($query);
-                                  if(($result->num_rows) != 0) $found = 1;
-                                  else {
+                                  if(($result->num_rows) != 0)
+                                  {
+                                    $found = 1;
                                     $x=0;
                                     while($row = $result->fetch_assoc()) {
                                       $destination[$x]=$row["destination"];
                                       $timestamp[$x]=$row["timestamp"];
                                       $text[$x]=$row["text"];
-                                      $credit[$x]=$row["credit"];
-
+                                      $credito[$x]=intval($row["credit"]);
                                       ++$x;
                                     }
                                   }
@@ -1363,7 +1363,7 @@ include "dbactions/db_connection.php";
                                             <TD width="15%"><?php echo $destination[$i] ?></TD>
                                             <TD width="30%"><?php echo $timestamp[$i] ?></TD>
                                             <TD width="45%"><?php echo $text[$i] ?></TD>
-                                            <TD width="10%"><?php echo $credit[$i] ?></TD>
+                                            <TD width="10%"><?php echo $credito[$i] ?></TD>
                                           </tr>
                                         <?php }  ?>
                                       </TABLE>

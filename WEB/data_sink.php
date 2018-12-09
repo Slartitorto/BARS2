@@ -1,5 +1,6 @@
 <?php
 // aggiornamento per Hooly 2 (atmega328 con rfm69hw e SHT3x)
+// include la verifica del checksum
 
 
 include "dbactions/db_connection.php";
@@ -7,13 +8,43 @@ include "dbactions/db_connection.php";
 if((isset($_GET['data'])) and (isset($_GET['rssi'])) and (isset($_GET['router']))){
   $data=$_GET['data'];
   $rssi=$_GET['rssi'];
+  if(isset($_GET['checksum'])) { $checksum_received=$_GET['checksum']; $check = 1;} else $check = 0;
   if ($rssi < 1)
   {$rssi = 1;}
   $router=$_GET['router'];
   if(isset($_GET['repeater'])) $repeater=$_GET['repeater']; else $repeater=0;
 } else exit();
 
+$data = str_replace(" ","+",$data);
+
 date_default_timezone_set('Europe/Rome');
+
+if($check) {
+  $query = "SELECT current_key from router where router = '$router'";
+  $result = mysqli_query($conn,$query);
+  $row = mysqli_fetch_array($result);
+  $key = $row[0];
+
+  $x = 0;
+  $y = 0;
+  for($i=1;$i<10;$i++)
+  {
+    $a = ord($data[$i]);
+    $b = ord($key[$i]);
+    $x = $x + $a * $a + ($x % $b);
+    $x = $x + $b * $b + ($x % $a);
+  }
+  for($i=10;$i<strlen($data);$i++)
+  {
+    $a = ord($data[$i]);
+    $b = ord($key[$i]);
+    $y = $y + $a * $a * $a + ($y % $b);
+    $y = $y + $b * $b + ($y % $a);
+  }
+  $checksum = $y % $x;
+
+  if($checksum_received != $checksum) exit();
+}
 
 list($serial, $counter, $temp, $hum, $battery, $period) = explode(":",$data);
 

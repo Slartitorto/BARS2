@@ -1,5 +1,5 @@
 // Vers. 0.4
-// add checksum data - to use with data_sink_check.php
+// add checksum data - to use with data_sink.php
 
 // Vers.0.3
 // add repeater info in url
@@ -357,7 +357,7 @@ void loop() {
       if (!client.connect(http_site, http_port) ) {
         blink_error();
       } else {
-        client.print("GET /data_sink_check.php?data=");
+        client.print("GET /data_sink.php?data=");
         client.print(receivePayload);
         client.print("&rssi=");
         client.print(signal_strenght);

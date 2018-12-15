@@ -12,7 +12,6 @@ include "dbactions/db_connection.php";
 
   <link href="css/reset.css" rel="stylesheet" type="text/css" />
   <link href="css/stile.css" rel="stylesheet" type="text/css" />
-  <link href="css/dropDownMenu.css" rel="stylesheet" type="text/css" />
 
   <link rel="apple-touch-icon" href="/icone/app_icon128.png">
   <link rel="icon" href="/icone/temp_icon.png">

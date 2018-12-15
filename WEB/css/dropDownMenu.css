@@ -1,46 +1,80 @@
-
-/* https://www.w3schools.com/howto/howto_css_dropdown.asp */
-
-.dropbtn {
-  background-color: white;
-  border: none;
-}
-.dropdown {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  display: inline-block;
-  z-index: 1;
-
-}
-.dropdown-content {
-  display: none;
-  padding: 15px 16px;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 300px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-}
-.dropdown-content a {
-  padding: 5px 0px;
-  color: 666666;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content a:hover {
-  background-color: #ddd;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-.dropdown:hover .dropbtn {
-  background-color: #ddd;
-}
-
-@media screen and (max-height: 500px) {
-  .dropdown {
+.third-level-menu
+{
     position: absolute;
-  }
+    top: 0;
+    right: -150px;
+    width: 150px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+    z-index: 1;
+
 }
+
+.third-level-menu > li
+{
+    height: 30px;
+    width: 250px;
+    background: #999999;
+}
+
+.third-level-menu > li:hover { background: #CCCCCC; }
+
+.second-level-menu
+{
+    position: absolute;
+    top: 30px;
+    left: 0;
+    width: 150px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+}
+
+.second-level-menu > li
+{
+    position: relative;
+    height: 30px;
+    background: #999999;
+}
+
+.second-level-menu > li:hover { background: #CCCCCC; }
+
+.top-level-menu
+{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.top-level-menu > li
+{
+    position: relative;
+    float: left;
+}
+
+.top-level-menu > li:hover { background: #CCCCCC; }
+
+.top-level-menu li:hover > ul
+{
+    /* On hover, display the next level's menu */
+    display: inline;
+}
+
+
+/* Menu Link Styles */
+
+.top-level-menu a /* Apply to all links inside the multi-level menu */
+{
+    font: bold 14px Arial, Helvetica, sans-serif;
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 0 0 0 10px;
+
+    /* Make the link cover the entire list item-container */
+    display: block;
+    line-height: 30px;
+}
+.top-level-menu a:hover { color: #000000; }

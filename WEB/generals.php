@@ -8,7 +8,6 @@ include "dbactions/db_connection.php";
 
   <title>Hooly sensors</title>
   <link href="css/reset.css" rel="stylesheet" type="text/css" />
-  <link href="css/dropDownMenu.css" rel="stylesheet" type="text/css" />
   <link href="css/stile.css" rel="stylesheet" type="text/css" />
   <link href="css/jquery-ui.css" rel="stylesheet">
   <link rel="apple-touch-icon" href="/icone/temp_icon.png">

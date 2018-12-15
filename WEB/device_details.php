@@ -14,9 +14,7 @@ else { $COD_UTENTE = 0; header("Location: index.php"); }
   <link rel="apple-touch-icon" href="/icone/app_icon128.png">
 
   <link href="css/reset.css" rel="stylesheet" type="text/css" />
-  <link href="css/dropDownMenu.css" rel="stylesheet" type="text/css" />
   <link href="css/stile.css" rel="stylesheet" type="text/css" />
-
 
   <?php
   $PDR_tooltip_txt = "Intervallo di tempo tra un rilevamento e l'altro";

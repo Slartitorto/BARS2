@@ -87,7 +87,6 @@ if(($result->num_rows) > 0)
 <head>
   <title>Hooly sensors</title>
   <link href="css/reset.css" rel="stylesheet" type="text/css" />
-  <link href="css/dropDownMenu.css" rel="stylesheet" type="text/css" />
   <link href="css/stile.css" rel="stylesheet" type="text/css" />
   <link href="css/report.css" rel="stylesheet" type="text/css" />
 

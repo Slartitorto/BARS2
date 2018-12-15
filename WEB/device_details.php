@@ -193,7 +193,7 @@ else { $COD_UTENTE = 0; header("Location: index.php"); }
         <div class="modal-content" style="width:900px;">
           <table class="padded centered device_details">
             <tr>
-              <th  style="vertical-align:middle" width="50%"><button id="myBtn" style="padding:5px 5px";><img src="icone/info_icon.png" height="20" width="20"></button><?php echo $device_name?></th>
+              <th  style="vertical-align:middle" width="50%"><button id="myBtn" style="padding:5px 5px"; class="hide-print"><img src="icone/info_icon.png" height="20" width="20"></button><?php echo $device_name?></th>
               <th  style="vertical-align:middle" width="50%"><?php echo $position ?></th></tr>
 
               <tr>
@@ -254,7 +254,7 @@ else { $COD_UTENTE = 0; header("Location: index.php"); }
               </script>
 
 
-              <table width=100%>
+              <table width=100% class="hide-print">
                 <tr>
                   <td width="33%" align="left">
                     <form action = "<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">

@@ -357,6 +357,10 @@ include "dbactions/db_connection.php";
 
             $query = "UPDATE new_devices SET assigned = 0 WHERE serial = '$serial'";
             $result = $conn->query($query);
+            $query = "UPDATE new_devices SET former_owner = '$COD_UTENTE' WHERE serial = '$serial'";
+            $result = $conn->query($query);
+            $query = "UPDATE new_devices SET owner = '' WHERE serial = '$serial'";
+            $result = $conn->query($query);
             $query = "DELETE FROM devices WHERE serial = '$serial'";
             $result = $conn->query($query);
             $query = "DELETE FROM last_rec_data WHERE serial = '$serial'";
@@ -396,6 +400,8 @@ include "dbactions/db_connection.php";
               if ($pin == $pin_trovato) {
 
                 $query = "update new_devices set assigned = 1 WHERE serial='$serial'";
+                $result = $conn->query($query);
+                $query = "update new_devices set owner = '$COD_UTENTE' WHERE serial='$serial'";
                 $result = $conn->query($query);
                 $query = "insert into devices (serial,device_name,position,armed,batt_alarmed,alarmed,min_ok,max_ok,batt_type,tenant,code_period) values ('$serial','Hooly_$serial','posizione',0,0,0,10,30,3,'$tenant',5) ";
                 $result = $conn->query($query); ?>
@@ -690,16 +696,21 @@ include "dbactions/db_connection.php";
 
             <?php } else if(@$_GET["act"] == "add_router") { // ---------- add Hooly: inserisci serial e pin  ?>
 
+              <?php
+              $query = "SELECT router FROM router WHERE codUtente = '$COD_UTENTE' ";
+              $result = $conn->query($query);
+              if ($result->num_rows > 0) $router_trovato = 1; else $router_trovato = 0;
+              ?>
 
               <div class="modal-content"> <br> <center>
                 <br><br>
                 <center>
-                  <h3> Benvenuto nel servizio Hooly !</h3>
+                  <h3> <?php if($router_trovato) echo "Registrazione nuovo Hooly Router"; else echo "Benvenuto nel servizio Hooly !"; ?> </h3>
                   <br>
                   <form action="generals.php?act=add_router_response" method="post">
                     <br>
                   </center>
-                  Registra subito un router ed inizia con Hooly
+                  <?php if($router_trovato) echo "Inserisci il numero seriale ed il pin del nuovo router"; else echo "Registra subito un router ed inizia con Hooly"; ?>
                   <br><br>
                   <center>
                     Seriale: <input type="text" class="slim" name="serial" size="8" maxlength="6" pattern="[0-9]{6,6}" title= "Il codice seriale consiste di 6 numeri ed è indicato sulla confezione del tuo Hooly-router" required>
@@ -726,6 +737,108 @@ include "dbactions/db_connection.php";
                       <button type="submit" class="greenbtn">Seleziona</button>
                     </form>
                   </center>
+                </div>
+
+              <?php } else if(@$_GET["act"] == "billing") { // ---------- Gestione conto mensile e credito -  ?>
+
+
+                <div class="modal-content NC_manage">
+                  <br><br>
+                  <center>
+                    <h3> Fatturazione </h3>
+                    <br>
+                  </center>
+
+                  <?php
+                  $query = "SELECT router FROM router where codUtente = '$COD_UTENTE'";
+                  $result = $conn->query($query);
+                  $x=0;
+                  while($row = $result->fetch_assoc()) {
+                    $router[$x]=$row["router"];
+                    ++$x;
+                  }
+                  $router_count=count($router);
+
+                  $query = "SELECT serial FROM new_devices where owner = '$COD_UTENTE' and assigned = '1'";
+                  $result = $conn->query($query);
+                  $x=0;
+                  while($row = $result->fetch_assoc()) {
+                    $serial[$x]=$row["serial"];
+                    ++$x;
+                  }
+                  $hooly_count=count($serial);
+
+                  $query = "SELECT serial FROM new_devices where former_owner = '$COD_UTENTE' and assigned = '0'";
+                  $result = $conn->query($query);
+                  $x=0;
+                  while($row = $result->fetch_assoc()) {
+                    $deleted_hooly[$x]=$row["serial"];
+                    ++$x;
+                  }
+                  $deleted_hooly_count=count($deleted_hooly);
+
+                  $query = "SELECT saldo FROM credit where codUtente = '$COD_UTENTE' order by timestamp desc limit 1";
+                  $result = $conn->query($query);
+                  $row = $result->fetch_assoc();
+                  $credito=$row["saldo"];
+
+                  echo "La tua utenza risulta avere in carico: <br><br>N. <b>$hooly_count</b> Hooly e N. <b>$router_count</b> Hooly-Router";
+                  if($deleted_hooly_count > 0)
+                  {
+                    echo "<br><br>Ci risulta anche N. <b>$deleted_hooly_count</b> Hooly";
+                    if($deleted_hooly_count == 1) echo " eliminato"; else echo " eliminati";
+                    echo " con numero di serie: ";
+                    for ($x=0;$x<$deleted_hooly_count;$x++)
+                    {
+                      echo " <b>$deleted_hooly[$x]</b>";
+                    }
+                    echo "<br>Utilizza gli Hooly eliminati oppure rivolgiti a <a href=\"mailto:admin@hooly.eu?subject=Restituzione Hooly eliminati\">admin@hooly.eu</a> per restituirli.";
+                  }
+                  $importo_mese=(($hooly_count+$router_count+$deleted_hooly_count)*7.5);
+                  $importo_mese_ic=$importo_mese * 1.22;
+                  echo "<br><br><br>Il tuo conto per il mese in corso è di euro: <b>" . number_format($importo_mese_ic,2,",",".") . "</b> (IVA inclusa)
+                  e sarà addebitato sul tuo credito il primo giorno del prossimo mese. Eventuali variazioni di consistenza saranno calcolate al momento dell'addebito.";
+                  echo "<br><br>Il tuo credito residuo attuale è di euro <b>" . number_format($credito,2,",",".") . "</b>. Ricarica ora con PayPal o carta di credito.";
+
+                  $query = "SELECT * FROM credit where codUtente = '$COD_UTENTE' ORDER BY timestamp DESC";
+                  $result = $conn->query($query);
+                  if(($result->num_rows) != 0)
+                  {
+                    $found = 1;
+                    $x=0;
+                    while($row = $result->fetch_assoc()) {
+                      $timestamp[$x]=$row["timestamp"];
+                      $text[$x]=$row["text"];
+                      $importo[$x]=$row["importo"];
+                      $saldo[$x]=$row["saldo"];
+                      ++$x;
+                    }
+                  }
+                  if ($found == 1) { ?>
+                    <br><br><br>Resoconto dei movimenti:<br><br>
+
+                    <center>
+                      <table class="centered NC_manage">
+                        <tr>
+                          <th>Timestamp</th><th>Causale</th><th>Importo</th><th>Saldo</th>
+                        </tr>
+                        <?php  for($i=0;$i<$x;$i++) { ?>
+                          <tr>
+                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="30%"><?php echo $timestamp[$i] ?></TD>
+                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="45%"><?php echo $text[$i] ?></TD>
+                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="10%"><div class="tooltip"><?php echo number_format($importo[$i],2,",",".") ?><span class="tooltiptext"><NOTA></span></div></TD>
+                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="15%"><?php echo number_format($saldo[$i],2,",",".") ?></TD>
+                          </tr>
+                        <?php }  ?>
+                      </TABLE>
+                    <?php } else echo "Non ci sono dati da visualizzare" ?>
+                    <br><br><br><br>
+                    <button type="button" onclick="location.href='status.php';" class="greenbtn">Torna alla pagina principale</button>
+                    <br><br><br>
+                  </center>
+
+
+
                 </div>
 
 

@@ -151,6 +151,8 @@ DROP TABLE IF EXISTS `new_devices`;
 CREATE TABLE `new_devices` (
   `serial` varchar(4) DEFAULT NULL,
   `pin` varchar(4) DEFAULT NULL,
+  `owner` varchar(64) DEFAULT NULL,
+  `former_owner` varchar(64) DEFAULT NULL,
   `assigned` tinyint(1) DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -358,6 +360,22 @@ CREATE TABLE `sms_usage` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+--
+-- Table structure for table `credit`
+--
+
+DROP TABLE IF EXISTS `credit`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `credit` (
+  `codUtente` varchar(32) DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `text` varchar(64) DEFAULT NULL,
+  `importo` float DEFAULT NULL,
+  `saldo` float DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 
 

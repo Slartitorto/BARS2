@@ -12,14 +12,17 @@
       <a href="generals.php?act=monthly_report">Genera report mensili</a>
       <br>
       <b>Gestione</b>
-      <a href="device_settings.php">Sensori</a>
+      <a href="device_settings.php">Configura i tuoi Hooly</a>
       <a href="generals.php?act=alarm_pause">Sospendi allarmi</a>
-      <a href="generals.php?act=add_hooly">Aggiungi o elimina un sensore</a>
+      <a href="generals.php?act=add_hooly">Aggiungi o elimina un Hooly</a>
+      <a href="generals.php?act=add_router">Aggiungi un router</a>
       <a href="generals.php?act=delete_records">Elimina dati di rilevazione</a>
       <a href="generals.php?act=SMS_manage">Credito SMS</a>
       <a href="generals.php?act=set_notifyMethod">Imposta notifiche</a>
       <a href="generals.php?act=set_billingInfo">Informazioni di fatturazione</a>
       <a href="generals.php?act=changePwd">Cambio password</a>
+      <a href="generals.php?act=billing">Fatturazione</a>
+
       <br>
       <a href="generals.php?act=logout"><b>Logout</b></a>
       </div>

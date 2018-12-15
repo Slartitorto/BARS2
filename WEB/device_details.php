@@ -4,7 +4,6 @@ if(isset($_COOKIE['LOGIN'])) { $COD_UTENTE = $_COOKIE['LOGIN']; }
 else { $COD_UTENTE = 0; header("Location: index.php"); }
 ?>
 
-<!DOCTYPE html>
 <html lang="en-US">
 <head>
   <title>Sensor details</title>

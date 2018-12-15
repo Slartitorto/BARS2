@@ -15,6 +15,8 @@ else { $COD_UTENTE = 0; header("Location: index.php"); }
 
   <link href="css/reset.css" rel="stylesheet" type="text/css" />
   <link href="css/stile.css" rel="stylesheet" type="text/css" />
+  <link href="css/info_popup_modal.css" rel="stylesheet" type="text/css" />
+
 
   <?php
   $PDR_tooltip_txt = "Intervallo di tempo tra un rilevamento e l'altro";
@@ -182,6 +184,7 @@ else { $COD_UTENTE = 0; header("Location: index.php"); }
       });
     });
     </script>
+
   </head>
   <body>
     <?php include 'includes/headerTableMenu.php'; ?>
@@ -189,109 +192,156 @@ else { $COD_UTENTE = 0; header("Location: index.php"); }
       <center>
         <div class="modal-content" style="width:900px;">
           <table class="padded centered device_details">
-            <tr><th><?php echo $device_name?></th><th><?php echo $position ?></th></tr>
-            <tr> <th colspan = 2>Temp: <?php echo round($last_temp,2)?> &deg C</th></tr>
-            <TR><TD>Serial: <B><?php echo $serial ?></B></TD><TD>Batteria: <B><?php  if ($last_bat < 5) {echo "<font color=\"red\">";} echo $last_bat ?>%</B></TD></TR>
-            <TR>
-              <TD><div class="tooltip">Periodo di rilevamento (min.): <span class="tooltiptext"><?php echo $PDR_tooltip_txt ?></span></div><B><?php echo $min_period ?></B></td>
-                <TD><div class="tooltip">Ultimo aggiornamento (min.): <span class="tooltiptext"><?php echo $ULA_tooltip_txt ?></span></div><B><?php echo $min_delay ?></B></td>
+            <tr>
+              <th  style="vertical-align:middle" width="50%"><button id="myBtn" style="padding:5px 5px";><img src="icone/info_icon.png" height="20" width="20"></button><?php echo $device_name?></th>
+              <th  style="vertical-align:middle" width="50%"><?php echo $position ?></th></tr>
 
-                </TR><TR>
-                  <TD><div class="tooltip">Qualità del collegamento: <span class="tooltiptext"><?php echo $QDC_tooltip_txt ?></span></div><B><?php echo $link_qlt ?>%</B></td>
-                    <TD><div class="tooltip">Segnale radio: <span class="tooltiptext"><?php echo $SER_tooltip_txt ?></span></div><B>
-                      <?php if ($last_rssi < 5) {echo "<font color=\"red\">";} echo $last_rssi ?>%</B></td>
+              <tr>
+              <th colspan=2><font style="font-size:150%">Temp: <?php echo round($last_temp,2)?> &deg C</font></th>
+            </tr>
+          </table>
+          <br><br>
+
+
+          <div id="myModal" class="info_pupup_modal">
+            <div class="info_pupup_modal-content">
+              <span class="close">&times;</span>
+              <table width="100%">
+                <tr>
+                  <TD>
+                    Numero seriale del sensore: <B><?php echo $serial ?></B>
+                  </TD>
+                  <TD>
+                    Batteria: <B><?php  if ($last_bat < 5) {echo "<font color=\"red\">";} echo $last_bat ?>%</B>
+                    </TD>
+                  </tr>
+                  <tr>
+                    <TD>
+                      <div class="tooltip">Periodo di rilevamento (min.): <span class="tooltiptext"><?php echo $PDR_tooltip_txt ?></span></div><B><?php echo $min_period ?></B>
+                    </td>
+                    <TD>
+                      <div class="tooltip">Ultimo aggiornamento (min.): <span class="tooltiptext"><?php echo $ULA_tooltip_txt ?></span></div><B><?php echo $min_delay ?></B>
+                    </td>
+                  </TR>
+                  <TR>
+                    <TD>
+                      <div class="tooltip">Qualità del collegamento: <span class="tooltiptext"><?php echo $QDC_tooltip_txt ?></span></div><B><?php echo $link_qlt ?>%</B>
+                    </td>
+                    <TD>
+                      <div class="tooltip">Segnale radio (ultimo ricevuto): <span class="tooltiptext"><?php echo $SER_tooltip_txt ?></span>
+                      </div><B><?php if ($last_rssi < 5) {echo "<font color=\"red\">";} echo $last_rssi ?>%</B>
+                      </td>
                     </TR>
                   </table>
-                  <br><br>
-
-                  <table width=100%>
-                    <tr>
-                      <td width="33%" align="left">
-                        <form action = "<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-                          <select name="graph" onchange="this.form.submit()">
-                            <option value= "temp" <?php if ($graph == "temp") { echo " selected";} ?>> Temperatura</option>
-                            <option value= "hum" <?php if ($graph == "hum") { echo " selected";} ?>> Umidità</option>
-                            <option value= "rssi" <?php if ($graph == "rssi") { echo " selected";} ?>> Forza del segnale</option>
-                            <option value= "batt" <?php if ($graph == "batt") { echo " selected";} ?>> Livello batteria</option>
-                          </select>
-                          <input type="hidden" name="serial" value="<?php echo $serial; ?>">
-                          <input type=hidden name=last value="<?php echo $last; ?>">
-                        </form>
-                      </td>
-
-                      <td width="34%" align="center">
-                        <form action = "<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-                          <select name="last" onchange="this.form.submit()">
-                            <option value= "1" <?php if ($last == 1) { echo " selected";} ?>> Ultime 24 ore</option>
-                            <option value= "2" <?php if ($last == 2) { echo " selected";} ?>> Ultime 48 ore</option>
-                            <option value= "7" <?php if ($last == 7) { echo " selected";} ?>> Ultima settimana</option>
-                            <option value= "30" <?php if ($last == 30) { echo " selected";} ?>> Ultimo mese</option>
-                          </select>
-                          <input type="hidden" name="serial" value="<?php echo $serial?>">
-                          <input type="hidden" name="graph" value="<?php echo $graph?>">
-                        </form>
-                      </td>
-
-                      <td width="33%" align="right">
-                        <form action = "<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-                          <select name="serial" onchange="this.form.submit()">
-                            <?php
-                            for($i=0;$i<$serial_qty;$i++) {
-                              echo "<option value= \"$serial_array[$i]\"";
-                              if ($serial_array[$i] == $serial) { echo " selected";}
-                              echo ">$device_name_array[$i] - $position_array[$i]</option>\n";
-                            }
-                            ?>
-                          </select>
-                          <input type=hidden name=last value="<?php echo $last; ?>" >
-                          <input type=hidden name=graph value="<?php echo $graph ?>" >
-                        </form>
-                      </td>
-                    </tr>
-                  </table>
-                  <div id="container1" style="width:100%; height:380px;"></div>
-                  <div class="hide-print">
-                    <script>
-                    var data = [ <?php
-                    // https://code-maven.com/create-and-download-csv-with-javascript
-
-                    $result = $conn->query($sql_csv);
-                    while ($row = $result->fetch_array()) {
-                      echo "['" . $row[0] . "','" . $row[1] . "','" . $row[2] . "'],";
-                    }
-                    ?> ];
-
-                    function download_csv() {
-                      var csv = 'Timestamp,Count,<?php echo $header_csv; ?>\n';
-                      data.forEach(function(row) {
-                        csv += row.join(',');
-                        csv += "\n";
-                      });
-
-                      console.log(csv);
-                      var hiddenElement = document.createElement('a');
-                      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
-                      hiddenElement.download = 'data.csv';
-                      hiddenElement.click();
-                    }
-                    </script>
-
-                    <button class=graybtn onclick="download_csv()">Download CSV</button>
-                    <button class=graybtn onClick="window.print()">Stampa</button>
-                  </div>
-
-                <?php } else { ?>
-                  <div class="modal-content animate">
-                    <h2>Qualcosa non va</h2>
-                    <br><br>
-                    Nessun record trovato. Probabilmente il tuo Hooly non è stato ancora acceso.
-                    <br><br>
-                    Se hai difficoltà non esitare a <a href=mailto:admin@hooly.eu>contattarci</a>.
-                    <button type="button" onclick="location.href='status.php';" class="greenbtn centeredbtn">Torna indietro</button>
-                  </div>
-
-                <?php }  $conn->close();  ?>
+                </div>
               </div>
-              </center>
-            </body>
-            </html>
+
+              <script>
+              var modal = document.getElementById('myModal');
+              var btn = document.getElementById("myBtn");
+              var span = document.getElementsByClassName("close")[0];
+              btn.onclick = function() {
+                modal.style.display = "block";
+              }
+              span.onclick = function() {
+                modal.style.display = "none";
+              }
+              window.onclick = function(event) {
+                if (event.target == modal) {
+                  modal.style.display = "none";
+                }
+              }
+              </script>
+
+
+              <table width=100%>
+                <tr>
+                  <td width="33%" align="left">
+                    <form action = "<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+                      <select name="graph" onchange="this.form.submit()">
+                        <option value= "temp" <?php if ($graph == "temp") { echo " selected";} ?>> Temperatura</option>
+                        <option value= "hum" <?php if ($graph == "hum") { echo " selected";} ?>> Umidità</option>
+                        <option value= "rssi" <?php if ($graph == "rssi") { echo " selected";} ?>> Forza del segnale</option>
+                        <option value= "batt" <?php if ($graph == "batt") { echo " selected";} ?>> Livello batteria</option>
+                      </select>
+                      <input type="hidden" name="serial" value="<?php echo $serial; ?>">
+                      <input type=hidden name=last value="<?php echo $last; ?>">
+                    </form>
+                  </td>
+
+                  <td width="34%" align="center">
+                    <form action = "<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+                      <select name="last" onchange="this.form.submit()">
+                        <option value= "1" <?php if ($last == 1) { echo " selected";} ?>> Ultime 24 ore</option>
+                        <option value= "2" <?php if ($last == 2) { echo " selected";} ?>> Ultime 48 ore</option>
+                        <option value= "7" <?php if ($last == 7) { echo " selected";} ?>> Ultima settimana</option>
+                        <option value= "30" <?php if ($last == 30) { echo " selected";} ?>> Ultimo mese</option>
+                      </select>
+                      <input type="hidden" name="serial" value="<?php echo $serial?>">
+                      <input type="hidden" name="graph" value="<?php echo $graph?>">
+                    </form>
+                  </td>
+
+                  <td width="33%" align="right">
+                    <form action = "<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+                      <select name="serial" onchange="this.form.submit()">
+                        <?php
+                        for($i=0;$i<$serial_qty;$i++) {
+                          echo "<option value= \"$serial_array[$i]\"";
+                          if ($serial_array[$i] == $serial) { echo " selected";}
+                          echo ">$device_name_array[$i] - $position_array[$i]</option>\n";
+                        }
+                        ?>
+                      </select>
+                      <input type=hidden name=last value="<?php echo $last; ?>" >
+                      <input type=hidden name=graph value="<?php echo $graph ?>" >
+                    </form>
+                  </td>
+                </tr>
+              </table>
+              <div id="container1" style="width:100%; height:380px;"></div>
+              <div class="hide-print">
+                <script>
+                var data = [ <?php
+                // https://code-maven.com/create-and-download-csv-with-javascript
+
+                $result = $conn->query($sql_csv);
+                while ($row = $result->fetch_array()) {
+                  echo "['" . $row[0] . "','" . $row[1] . "','" . $row[2] . "'],";
+                }
+                ?> ];
+
+                function download_csv() {
+                  var csv = 'Timestamp,Count,<?php echo $header_csv; ?>\n';
+                  data.forEach(function(row) {
+                    csv += row.join(',');
+                    csv += "\n";
+                  });
+
+                  console.log(csv);
+                  var hiddenElement = document.createElement('a');
+                  hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+                  hiddenElement.download = 'data.csv';
+                  hiddenElement.click();
+                }
+                </script>
+
+                <button class=graybtn onclick="download_csv()">Download CSV</button>
+                <button class=graybtn onClick="window.print()">Stampa</button>
+              </div>
+
+            <?php } else { ?>
+              <div class="modal-content animate">
+                <h2>Qualcosa non va</h2>
+                <br><br>
+                Nessun record trovato. Probabilmente il tuo Hooly non è stato ancora acceso.
+                <br><br>
+                Se hai difficoltà non esitare a <a href=mailto:admin@hooly.eu>contattarci</a>.
+                <button type="button" onclick="location.href='status.php';" class="greenbtn centeredbtn">Torna indietro</button>
+              </div>
+
+            <?php }  $conn->close();  ?>
+          </div>
+        </center>
+      </body>
+      </html>

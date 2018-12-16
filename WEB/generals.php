@@ -740,7 +740,7 @@ include "dbactions/db_connection.php";
 
               <?php } else if(@$_GET["act"] == "billing") { // ---------- Gestione conto mensile e credito -  ?>
 
-
+                <link href="css/info_popup_modal.css" rel="stylesheet" type="text/css" />
                 <div class="modal-content NC_manage">
                   <br><br>
                   <center>
@@ -796,25 +796,12 @@ include "dbactions/db_connection.php";
                   $importo_mese=(($hooly_count+$router_count+$deleted_hooly_count)*7.5);
                   $importo_mese_ic=$importo_mese * 1.22;
                   ?>
-
                   <br><br><br>La spesa del mese in corso è di <b> <?php echo number_format($importo_mese_ic,2,",",".")?></b> euro (IVA inclusa)
                   e sarà addebitata sul tuo credito il primo giorno del prossimo mese. Eventuali variazioni di consistenza saranno calcolate al momento dell'addebito.
-                  <br><br>Il tuo credito residuo attuale è di <b> <?php echo number_format($credito,2,",",".")?></b> euro. Ricarica con PayPal o carta di credito.<br><br>
+                  <br><br>Il tuo credito residuo attuale è di <b> <?php echo number_format($credito,2,",",".")?></b> euro. Ricarica con PayPal o carta di credito.
+                  <button id="myBtn" style="padding:5px 5px"; class="hide-print"><img src="icone/freccia_destra.jpg" height="20" width="20"></button><br><br>
 
-                  <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                  <input type="hidden" name="cmd" value="_s-xclick">
-                  <input type="hidden" name="hosted_button_id" value="7XCWYA7U6HFUE">
-                  <input type="hidden" name="on0" value="codice">
-                  <input type="hidden" name="os0" value="<?php echo $COD_UTENTE ?>">
-                  <table width="100%">
-                    <tr>
-                      <td align="right">
-                  <input type="image" src="https://www.paypalobjects.com/it_IT/IT/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal è il metodo rapido e sicuro per pagare e farsi pagare online.">
-                  <img alt="" border="0" src="https://www.paypalobjects.com/it_IT/i/scr/pixel.gif" width="1" height="1">
-                </td>
-              </tr>
-            </table>
-                  </form>
+
 
                   <?php
                   $query = "SELECT * FROM credit where codUtente = '$COD_UTENTE' ORDER BY timestamp DESC";
@@ -853,10 +840,47 @@ include "dbactions/db_connection.php";
                     <button type="button" onclick="location.href='status.php';" class="greenbtn">Torna alla pagina principale</button>
                     <br><br><br>
                   </center>
-
-
-
                 </div>
+                <div id="myModal" class="info_pupup_modal">
+                  <div class="info_pupup_modal-content">
+                    <span class="close">&times;</span>
+                    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                      <center>
+                        <input type="hidden" name="cmd" value="_s-xclick">
+                        <input type="hidden" name="hosted_button_id" value="EZTLY99DTS9BA">
+                        <input type="hidden" name="on0" value="Scegli il taglio della ricarica">Scegli il taglio della ricarica<select name="os0">
+                          <option value="Light">€100,00 EUR</option>
+                          <option value="Small">€200,00 EUR</option>
+                          <option value="Medium">€500,00 EUR</option>
+                          <option value="Big">€1.000,00 EUR</option>
+                        </select>
+                        <br><br><br>
+                        <input type="hidden" name="on1" value="codice">
+                        <input type="hidden" name="os1" value="<?php echo $COD_UTENTE ?>">
+                        <input type="hidden" name="currency_code" value="EUR">
+                        <input type="image" src="https://www.paypalobjects.com/it_IT/IT/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal è il metodo rapido e sicuro per pagare e farsi pagare online.">
+                        <img alt="" border="0" src="https://www.paypalobjects.com/it_IT/i/scr/pixel.gif" width="1" height="1">
+                      </center>
+                    </form>
+                  </div>
+                </div>
+
+                <script>
+                var modal = document.getElementById('myModal');
+                var btn = document.getElementById("myBtn");
+                var span = document.getElementsByClassName("close")[0];
+                btn.onclick = function() {
+                  modal.style.display = "block";
+                }
+                span.onclick = function() {
+                  modal.style.display = "none";
+                }
+                window.onclick = function(event) {
+                  if (event.target == modal) {
+                    modal.style.display = "none";
+                  }
+                }
+                </script>
 
 
               <?php } else if(@$_GET["act"] == "RM_manage_select") { // ---------- Gestione RM: seleziona periodo -  ?>

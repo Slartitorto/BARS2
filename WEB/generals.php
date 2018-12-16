@@ -784,21 +784,39 @@ include "dbactions/db_connection.php";
                   echo "La tua utenza risulta avere in carico: <br><br>N. <b>$hooly_count</b> Hooly e N. <b>$router_count</b> Hooly-Router";
                   if($deleted_hooly_count > 0)
                   {
-                    echo "<br><br>Ci risulta anche N. <b>$deleted_hooly_count</b> Hooly";
+                    echo "<br><br>Ci risulta anche <b>$deleted_hooly_count</b> Hooly";
                     if($deleted_hooly_count == 1) echo " eliminato"; else echo " eliminati";
                     echo " con numero di serie: ";
                     for ($x=0;$x<$deleted_hooly_count;$x++)
                     {
                       echo " <b>$deleted_hooly[$x]</b>";
                     }
-                    echo "<br>Utilizza gli Hooly eliminati oppure rivolgiti a <a href=\"mailto:admin@hooly.eu?subject=Restituzione Hooly eliminati\">admin@hooly.eu</a> per restituirli.";
+                    echo ".<br>Utilizza gli Hooly eliminati oppure rivolgiti a <a href=\"mailto:admin@hooly.eu?subject=Restituzione Hooly eliminati\">admin@hooly.eu</a> per restituirli.";
                   }
                   $importo_mese=(($hooly_count+$router_count+$deleted_hooly_count)*7.5);
                   $importo_mese_ic=$importo_mese * 1.22;
-                  echo "<br><br><br>Il tuo conto per il mese in corso è di euro: <b>" . number_format($importo_mese_ic,2,",",".") . "</b> (IVA inclusa)
-                  e sarà addebitato sul tuo credito il primo giorno del prossimo mese. Eventuali variazioni di consistenza saranno calcolate al momento dell'addebito.";
-                  echo "<br><br>Il tuo credito residuo attuale è di euro <b>" . number_format($credito,2,",",".") . "</b>. Ricarica ora con PayPal o carta di credito.";
+                  ?>
 
+                  <br><br><br>La spesa del mese in corso è di <b> <?php echo number_format($importo_mese_ic,2,",",".")?></b> euro (IVA inclusa)
+                  e sarà addebitata sul tuo credito il primo giorno del prossimo mese. Eventuali variazioni di consistenza saranno calcolate al momento dell'addebito.
+                  <br><br>Il tuo credito residuo attuale è di <b> <?php echo number_format($credito,2,",",".")?></b> euro. Ricarica con PayPal o carta di credito.<br><br>
+
+                  <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                  <input type="hidden" name="cmd" value="_s-xclick">
+                  <input type="hidden" name="hosted_button_id" value="7XCWYA7U6HFUE">
+                  <input type="hidden" name="on0" value="codice">
+                  <input type="hidden" name="os0" value="<?php echo $COD_UTENTE ?>">
+                  <table width="100%">
+                    <tr>
+                      <td align="right">
+                  <input type="image" src="https://www.paypalobjects.com/it_IT/IT/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal è il metodo rapido e sicuro per pagare e farsi pagare online.">
+                  <img alt="" border="0" src="https://www.paypalobjects.com/it_IT/i/scr/pixel.gif" width="1" height="1">
+                </td>
+              </tr>
+            </table>
+                  </form>
+
+                  <?php
                   $query = "SELECT * FROM credit where codUtente = '$COD_UTENTE' ORDER BY timestamp DESC";
                   $result = $conn->query($query);
                   if(($result->num_rows) != 0)
@@ -814,7 +832,7 @@ include "dbactions/db_connection.php";
                     }
                   }
                   if ($found == 1) { ?>
-                    <br><br><br>Resoconto dei movimenti:<br><br>
+                    <br><br>Resoconto dei movimenti:<br><br>
 
                     <center>
                       <table class="centered NC_manage">
@@ -825,7 +843,7 @@ include "dbactions/db_connection.php";
                           <tr>
                             <TD style="border: 1px solid #dddddd; padding: 10px;" width="30%"><?php echo $timestamp[$i] ?></TD>
                             <TD style="border: 1px solid #dddddd; padding: 10px;" width="45%"><?php echo $text[$i] ?></TD>
-                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="10%"><div class="tooltip"><?php echo number_format($importo[$i],2,",",".") ?><span class="tooltiptext"><NOTA></span></div></TD>
+                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="10%"><?php echo number_format($importo[$i],2,",",".") ?></TD>
                             <TD style="border: 1px solid #dddddd; padding: 10px;" width="15%"><?php echo number_format($saldo[$i],2,",",".") ?></TD>
                           </tr>
                         <?php }  ?>
@@ -1434,7 +1452,6 @@ include "dbactions/db_connection.php";
                                       </td>
                                       <td align="right" >
 
-
                                         <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
                                           <input type="hidden" name="cmd" value="_s-xclick">
                                           <input type="hidden" name="hosted_button_id" value="M8WD3G8HY34T6">
@@ -1451,6 +1468,16 @@ include "dbactions/db_connection.php";
                                                   <option value="200 sms">200 sms €34,00 EUR</option>
                                                   <option value="500 sms">500 sms €75,00 EUR</option>
                                                 </select>
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td>
+                                                <input type="hidden" name="on1" value="codice">
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td>
+                                                <input type="hidden" name="os1" value ="<?php echo $COD_UTENTE ?>">
                                               </td>
                                             </tr>
                                           </table>

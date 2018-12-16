@@ -791,17 +791,15 @@ include "dbactions/db_connection.php";
                     {
                       echo " <b>$deleted_hooly[$x]</b>";
                     }
-                    echo ".<br>Utilizza gli Hooly eliminati oppure rivolgiti a <a href=\"mailto:admin@hooly.eu?subject=Restituzione Hooly eliminati\">admin@hooly.eu</a> per restituirli.";
+                    echo ".<br>Utilizza gli Hooly eliminati oppure rivolgiti a <a href=\"mailto:admin@hooly.eu?subject=Restituzione Hooly eliminati\" style=\"color:000000\">admin@hooly.eu</a> per restituirli.";
                   }
                   $importo_mese=(($hooly_count+$router_count+$deleted_hooly_count)*7.5);
                   $importo_mese_ic=$importo_mese * 1.22;
                   ?>
                   <br><br><br>La spesa del mese in corso è di <b> <?php echo number_format($importo_mese_ic,2,",",".")?></b> euro (IVA inclusa)
                   e sarà addebitata sul tuo credito il primo giorno del prossimo mese. Eventuali variazioni di consistenza saranno calcolate al momento dell'addebito.
-                  <br><br>Il tuo credito residuo attuale è di <b> <?php echo number_format($credito,2,",",".")?></b> euro. Ricarica con PayPal o carta di credito.
-                  <button id="myBtn" style="padding:5px 5px"; class="hide-print"><img src="icone/freccia_destra.jpg" height="20" width="20"></button><br><br>
-
-
+                  <br><br>Il tuo credito residuo attuale è di <b> <?php echo number_format($credito,2,",",".")?></b> euro.
+                  <button id="myBtn" style="padding:5px 5px" class="hide-print"><u>Ricarica con PayPal o carta di credito.</u></button><br><br>
 
                   <?php
                   $query = "SELECT * FROM credit where codUtente = '$COD_UTENTE' ORDER BY timestamp DESC";
@@ -854,12 +852,12 @@ include "dbactions/db_connection.php";
                           <option value="Medium">€500,00 EUR</option>
                           <option value="Big">€1.000,00 EUR</option>
                         </select>
-                        <br><br><br>
+                        <br><br>
                         <input type="hidden" name="on1" value="codice">
                         <input type="hidden" name="os1" value="<?php echo $COD_UTENTE ?>">
                         <input type="hidden" name="currency_code" value="EUR">
-                        <input type="image" src="https://www.paypalobjects.com/it_IT/IT/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal è il metodo rapido e sicuro per pagare e farsi pagare online.">
-                        <img alt="" border="0" src="https://www.paypalobjects.com/it_IT/i/scr/pixel.gif" width="1" height="1">
+                        <img src="icone/paypal.png">
+                        <button type="submit" class="greenbtn">Procedi con il pagamento</button>
                       </center>
                     </form>
                   </div>

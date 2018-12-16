@@ -202,39 +202,23 @@ else { $COD_UTENTE = 0; header("Location: index.php"); }
           </table>
           <br><br>
 
-
           <div id="myModal" class="info_pupup_modal">
             <div class="info_pupup_modal-content">
               <span class="close">&times;</span>
               <table width="100%">
-                <tr>
-                  <TD>
-                    Numero seriale del sensore: <B><?php echo $serial ?></B>
-                  </TD>
-                  <TD>
-                    Batteria: <B><?php  if ($last_bat < 5) {echo "<font color=\"red\">";} echo $last_bat ?>%</B>
-                    </TD>
-                  </tr>
-                  <tr>
-                    <TD>
-                      <div class="tooltip">Periodo di rilevamento (min.): <span class="tooltiptext"><?php echo $PDR_tooltip_txt ?></span></div><B><?php echo $min_period ?></B>
-                    </td>
-                    <TD>
-                      <div class="tooltip">Ultimo aggiornamento (min.): <span class="tooltiptext"><?php echo $ULA_tooltip_txt ?></span></div><B><?php echo $min_delay ?></B>
-                    </td>
-                  </TR>
-                  <TR>
-                    <TD>
-                      <div class="tooltip">Qualità del collegamento: <span class="tooltiptext"><?php echo $QDC_tooltip_txt ?></span></div><B><?php echo $link_qlt ?>%</B>
-                    </td>
-                    <TD>
-                      <div class="tooltip">Segnale radio (ultimo ricevuto): <span class="tooltiptext"><?php echo $SER_tooltip_txt ?></span>
-                      </div><B><?php if ($last_rssi < 5) {echo "<font color=\"red\">";} echo $last_rssi ?>%</B>
-                      </td>
-                    </TR>
-                  </table>
-                </div>
-              </div>
+                <tr><TD style="padding:10px">Numero seriale del sensore: <B><?php echo $serial ?></B></TD></tr>
+                <tr><TD style="padding:10px">Nome del sensore: <B><?php echo $device_name?></B></TD></tr>
+                <tr><TD style="padding:10px">Posizione del sensore: <B><?php echo $position?></B></TD></tr>
+                <tr><TD style="padding:10px">Soglia allarme temperatura minima: <B><?php echo $min_ok?></B></TD></tr>
+                <tr><TD style="padding:10px">Soglia allarme temperatura massima: <B><?php echo $max_ok?></B></TD></tr>
+                <tr><TD style="padding:10px">Batteria: <B><?php  if ($last_bat < 5) {echo "<font color=\"red\">";} echo $last_bat ?>%</B></TD></tr>
+                <tr><TD style="padding:10px"><div class="tooltip">Periodo di rilevamento (min.): <span class="tooltiptext"><?php echo $PDR_tooltip_txt ?></span></div><B><?php echo $min_period ?></B></td></tr>
+                <tr><TD style="padding:10px"><div class="tooltip">Ultimo aggiornamento (min.): <span class="tooltiptext"><?php echo $ULA_tooltip_txt ?></span></div><B><?php echo $min_delay ?></B></td></tr>
+                <tr><TD style="padding:10px"><div class="tooltip">Qualità del collegamento: <span class="tooltiptext"><?php echo $QDC_tooltip_txt ?></span></div><B><?php echo $link_qlt ?>%</B></td></tr>
+                <tr><TD style="padding:10px"><div class="tooltip">Segnale radio (ultimo ricevuto): <span class="tooltiptext"><?php echo $SER_tooltip_txt ?></span></div><B><?php if ($last_rssi < 5) {echo "<font color=\"red\">";} echo $last_rssi ?>%</B></td></tr>
+              </table>
+            </div>
+            </div>
 
               <script>
               var modal = document.getElementById('myModal');

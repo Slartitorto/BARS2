@@ -1461,59 +1461,58 @@ include "dbactions/db_connection.php";
                                 }
                                 ?>
 
+                                <link href="css/info_popup_modal.css" rel="stylesheet" type="text/css" />
                                 <div class="modal-content NC_manage">
                                   <br><br>
                                   <center>
                                     <h3> Resoconto credito SMS e messaggi inviati</h3>
                                   </center>
                                   <br><br><br>
-                                  <table width=100%>
-                                    <tr>
-                                      <td align="left">
-                                        <?php if ($credit > 0) echo "Il tuo credito residuo è di <b>" . $credit . "</b> SMS"; else echo "Attenzione! Il tuo credito SMS è esaurito."; ?>
-                                      </td>
-                                      <td align="right" >
+                                  <?php if ($credit > 0) echo "Il tuo credito residuo è di <b>" . $credit . "</b> SMS."; else echo "Attenzione! Il tuo credito SMS è esaurito."; ?>
+                                  <button id="myBtn" style="padding:5px 5px" class="hide-print"><u>Ricarica con PayPal o carta di credito.</u></button><br><br>
 
-                                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                                  <div id="myModal" class="info_pupup_modal">
+                                    <div class="info_pupup_modal-content">
+                                      <span class="close">&times;</span>
+                                      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                                        <center>
                                           <input type="hidden" name="cmd" value="_s-xclick">
                                           <input type="hidden" name="hosted_button_id" value="M8WD3G8HY34T6">
-                                          <table>
-                                            <tr>
-                                              <td>
-                                                <input type="hidden" name="on0" value="Quanità">Ricarica ora
-                                              </td>
-                                            </tr>
-                                            <tr>
-                                              <td>
-                                                <select name="os0">
-                                                  <option value="50 sms">50 sms €10,00 EUR</option>
-                                                  <option value="200 sms">200 sms €34,00 EUR</option>
-                                                  <option value="500 sms">500 sms €75,00 EUR</option>
-                                                </select>
-                                              </td>
-                                            </tr>
-                                            <tr>
-                                              <td>
-                                                <input type="hidden" name="on1" value="codice">
-                                              </td>
-                                            </tr>
-                                            <tr>
-                                              <td>
-                                                <input type="hidden" name="os1" value ="<?php echo $COD_UTENTE ?>">
-                                              </td>
-                                            </tr>
-                                          </table>
+                                          <input type="hidden" name="on0" value="Scegli il taglio della ricarica">Scegli il taglio della ricarica
+                                          <select name="os0">
+                                            <option value="50 sms">50 sms €10,00 EUR</option>
+                                            <option value="200 sms">200 sms €34,00 EUR</option>
+                                            <option value="500 sms">500 sms €75,00 EUR</option>
+                                          </select>
+                                          <br><br>
+                                          <input type="hidden" name="on1" value="codice">
+                                          <input type="hidden" name="os1" value="<?php echo $COD_UTENTE ?>">
                                           <input type="hidden" name="currency_code" value="EUR">
-                                          <input type="image" src="https://www.paypalobjects.com/it_IT/IT/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal è il metodo rapido e sicuro per pagare e farsi pagare online.">
-                                          <img alt="" border="0" src="https://www.paypalobjects.com/it_IT/i/scr/pixel.gif" width="1" height="1">
-                                        </form>
+                                          <img src="icone/paypal.png">
+                                          <button type="submit" class="greenbtn">Procedi con il pagamento</button>
+                                        </center>
+                                      </form>
+                                    </div>
+                                  </div>
 
+                                  <script>
+                                  var modal = document.getElementById('myModal');
+                                  var btn = document.getElementById("myBtn");
+                                  var span = document.getElementsByClassName("close")[0];
+                                  btn.onclick = function() {
+                                    modal.style.display = "block";
+                                  }
+                                  span.onclick = function() {
+                                    modal.style.display = "none";
+                                  }
+                                  window.onclick = function(event) {
+                                    if (event.target == modal) {
+                                      modal.style.display = "none";
+                                    }
+                                  }
+                                  </script>
 
-                                      </td>
-                                    </tr>
-                                  </table>
                                   <br><br><br>
-
                                   <?php
                                   $query = "SELECT * FROM sms_usage where codUtente = '$COD_UTENTE' ORDER BY timestamp DESC";
                                   $result = $conn->query($query);

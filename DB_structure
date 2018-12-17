@@ -373,6 +373,7 @@ CREATE TABLE `credit` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `text` varchar(64) DEFAULT NULL,
   `importo` float DEFAULT NULL,
+  `cred_deb` tinyint(1) DEFAULT NULL,
   `saldo` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

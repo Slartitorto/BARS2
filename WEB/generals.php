@@ -812,6 +812,7 @@ include "dbactions/db_connection.php";
                       $timestamp[$x]=$row["timestamp"];
                       $text[$x]=$row["text"];
                       $importo[$x]=$row["importo"];
+                      $cred_deb[$x]=$row["cred_deb"];
                       $saldo[$x]=$row["saldo"];
                       ++$x;
                     }
@@ -826,9 +827,11 @@ include "dbactions/db_connection.php";
                         </tr>
                         <?php  for($i=0;$i<$x;$i++) { ?>
                           <tr>
-                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="30%"><?php echo $timestamp[$i] ?></TD>
-                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="45%"><?php echo $text[$i] ?></TD>
-                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="10%"><?php echo number_format($importo[$i],2,",",".") ?></TD>
+                            <TD width="30%" style="border: 1px solid #dddddd; padding: 10px;"><?php echo $timestamp[$i] ?></TD>
+                            <TD width="45%" style="border: 1px solid #dddddd; padding: 10px;"><?php echo $text[$i] ?></TD>
+                            <TD width="10%" style="border: 1px solid #dddddd; padding: 10px;
+                            <?php if($cred_deb[$i]) {echo " color:green";} else {echo " color:red";} echo "\">" . number_format($importo[$i],2,",",".") ?>
+                            </TD>
                             <TD style="border: 1px solid #dddddd; padding: 10px;" width="15%"><?php echo number_format($saldo[$i],2,",",".") ?></TD>
                           </tr>
                         <?php }  ?>

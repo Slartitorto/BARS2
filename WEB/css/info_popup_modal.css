@@ -15,11 +15,12 @@
 
 /* Modal Content */
 .info_pupup_modal-content {
-  background-color: #fefefe;
+  background-color: #ffffff;
   margin: auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 30%;
+  border-radius: 12px;
+  width: 400px;
 }
 
 /* The Close Button */

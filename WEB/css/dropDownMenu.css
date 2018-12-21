@@ -9,7 +9,6 @@
     margin: 0;
     display: none;
     z-index: 1;
-
 }
 
 .third-level-menu > li
@@ -38,6 +37,7 @@
     position: relative;
     height: 30px;
     background: #999999;
+
 }
 
 .second-level-menu > li:hover { background: #CCCCCC; }
@@ -68,10 +68,10 @@
 
 .top-level-menu a /* Apply to all links inside the multi-level menu */
 {
-    font: bold 14px Arial, Helvetica, sans-serif;
     color: #FFFFFF;
     text-decoration: none;
     padding: 0 0 0 10px;
+    font-size: 80%;
 
     /* Make the link cover the entire list item-container */
     display: block;

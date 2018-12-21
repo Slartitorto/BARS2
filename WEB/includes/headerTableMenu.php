@@ -37,14 +37,9 @@
             <li><a href="generals.php?act=changePwd">Cambio password</a></li>
             <li><a href="generals.php?act=set_billingInfo">Informazioni di fatturazione</a></li>
             <li><a href="generals.php?act=billing">Credito e consumi</a></li>
-
+            <li><a href="generals.php?act=logout"><b>Logout</b></a></li>
           </ul>
         </li>
-
-
-
-        <li><a href="generals.php?act=logout"><b>Logout</b></a></li>
-
       </ul>
     </li>
   </ul>

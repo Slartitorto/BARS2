@@ -821,19 +821,24 @@ include "dbactions/db_connection.php";
                     <br><br>Resoconto dei movimenti:<br><br>
 
                     <center>
-                      <table class="centered NC_manage">
-                        <tr>
-                          <th>Timestamp</th><th>Causale</th><th>Importo</th><th>Saldo</th>
-                        </tr>
-                        <?php  for($i=0;$i<$x;$i++) { ?>
+                      <table class="rowed">
+                        <thead>
                           <tr>
-                            <TD width="30%" style="border: 1px solid #dddddd; padding: 10px;"><?php echo $timestamp[$i] ?></TD>
-                            <TD width="45%" style="border: 1px solid #dddddd; padding: 10px;"><?php echo $text[$i] ?></TD>
-                            <TD width="10%" style="border: 1px solid #dddddd; padding: 10px;
-                            <?php if($cred_deb[$i]) {echo " color:green";} else {echo " color:red";} echo "\">" . number_format($importo[$i],2,",",".") ?>
-                            </TD>
-                            <TD style="border: 1px solid #dddddd; padding: 10px;" width="15%"><?php echo number_format($saldo[$i],2,",",".") ?></TD>
+                            <th>Timestamp</th><th>Causale</th><th>Importo</th><th>Saldo</th>
                           </tr>
+                        </thead>
+                        <tbody>
+                          <?php  for($i=0;$i<$x;$i++) { ?>
+                            <tr>
+                              <TD width="30%" style="border: 1px solid #dddddd; padding: 10px;"><?php echo $timestamp[$i] ?></TD>
+                              <TD width="45%" style="border: 1px solid #dddddd; padding: 10px;"><?php echo $text[$i] ?></TD>
+                              <TD width="10%" style="border: 1px solid #dddddd; padding: 10px;
+                              <?php if($cred_deb[$i]) {echo " color:green";} else {echo " color:red";} echo "\">" . number_format($importo[$i],2,",",".") ?>
+                              </TD>
+                              <TD style="border: 1px solid #dddddd; padding: 10px;" width="15%"><?php echo number_format($saldo[$i],2,",",".") ?></TD>
+                            </tr>
+                          </tbody>
+
                         <?php }  ?>
                       </TABLE>
                     <?php } else echo "Non ci sono dati da visualizzare" ?>
@@ -1533,20 +1538,26 @@ include "dbactions/db_connection.php";
                                   }
                                   if ($found == 1) { ?>
                                     Resoconto:<br><br>
-
                                     <center>
-                                      <table class="centered NC_manage">
-                                        <tr>
-                                          <th>Destinazione</th><th>Timestamp</th><th>Testo</th><th>Saldo</th>
-                                        </tr>
-                                        <?php  for($i=0;$i<$x;$i++) { ?>
+                                      <table class="rowed">
+                                        <thead>
                                           <tr>
-                                            <TD width="15%"><?php echo $destination[$i] ?></TD>
-                                            <TD width="30%"><?php echo $timestamp[$i] ?></TD>
-                                            <TD width="45%"><?php echo $text[$i] ?></TD>
-                                            <TD width="10%"><?php echo $credito[$i] ?></TD>
+                                            <th width="15%">Destinazione</th>
+                                            <th width="30%">Timestamp</th>
+                                            <th width="45%">Testo</th>
+                                            <th width="10%">Saldo</th>
                                           </tr>
-                                        <?php }  ?>
+                                        </thead>
+                                        <tbody>
+                                          <?php  for($i=0;$i<$x;$i++) { ?>
+                                            <tr>
+                                              <TD><?php echo $destination[$i] ?></TD>
+                                              <TD><?php echo $timestamp[$i] ?></TD>
+                                              <TD><?php echo $text[$i] ?></TD>
+                                              <TD><?php echo $credito[$i] ?></TD>
+                                            </tr>
+                                          <?php }  ?>
+                                        </tbody>
                                       </TABLE>
                                     <?php } else echo "Non ci sono SMS inviati" ?>
                                     <br><br><br><br>

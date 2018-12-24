@@ -29,7 +29,7 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
     <div class="modal-content animate status">
       <br><br>
       <table class="centered status">
-        <tr><th>Dettagli</th><th>Termometro</th><th>Posizione</th><th>Temp</th><th>Stato</th></tr>
+        <tr><th>Termometro</th><th>Posizione</th><th>Temp</th><th>Stato</th></tr>
 
         <?php
         include "dbactions/db_connection.php";
@@ -87,13 +87,12 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
           echo "<form action=device_details.php method=post>";
           echo "<TD>";
 
-          echo "<button type=submit class=imgbtn> <img src=icone/grafico.png height=\"30\" width=\"30\"></button>";
+          echo "<button type=submit style=\"color:blue\"><u>" . $device_name[$i] . "</u></button>";
           echo "<input type=hidden name=serial value=$serial[$i] > ";
           echo "<input type=hidden name=last value=1 > ";
           echo "<input type=hidden name=graph value=temp > ";
 
           echo "</form>";
-          echo "</TD><TD>" . $device_name[$i] . "</TD>";
           echo "</TD><TD>" . $position[$i] . "</TD>";
           echo "<TD>" . round($last_temp[$i],1) . "</TD>";
           echo "<TD><div class=\"tooltip\"><img src=\"icone/" . $warn[$i] . "_signal.png\" width=\"25\"> <span class=\"tooltiptext\">" . $tooltipText[$i] . "</span></TD>";

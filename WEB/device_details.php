@@ -300,7 +300,7 @@ else { $COD_UTENTE = 0; header("Location: index.php"); }
               </td>
             </tr>
           </table>
-          <div id="container1" style="width:100%; height:380px;"></div>
+          <div id="container1" style="width:100%" class="graph_height"></div>
           <script>
           var data = [ <?php
           // https://code-maven.com/create-and-download-csv-with-javascript

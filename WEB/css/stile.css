@@ -226,6 +226,10 @@ span.psw {
 .visible_on_normal_screen {
   display: block;
 }
+.graph_height {
+  height:380px;
+}
+
 
 .please_rotate {
   display: none;
@@ -241,6 +245,9 @@ button {
 }
 .device_details {
   width: 500px;
+}
+.graph_height {
+  height:220px;
 }
 th {
   padding: 5px;

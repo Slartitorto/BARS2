@@ -242,6 +242,9 @@ button {
 .device_details {
   width: 500px;
 }
+th {
+  padding: 5px;
+}
 }
 
 

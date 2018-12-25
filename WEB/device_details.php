@@ -202,9 +202,8 @@ else { $COD_UTENTE = 0; header("Location: index.php"); }
   <body>
     <?php include 'includes/headerTableMenu.php'; ?> <BR>
       <center>
-        <div class="modal-content please_rotate"><h2>Please rotate</h2></div>
-
-        <div class="modal-content visible_on_normal_screen" style="width:900px;">
+        <div class="please_rotate"><h2><br><br>Hooly ti suggerisce<br><br>di ruotare il telefono</h2></div>
+        <div class="modal-content device_details visible_on_normal_screen">
           <table class="padded centered device_details">
             <tr>
               <th  style="vertical-align:middle" width="50%"><button id="info_btn" style="padding:5px 5px"; class="hide-print"><img src="icone/info_icon.png" height="20" width="20"></button><?php echo $device_name?></th>
@@ -277,6 +276,8 @@ else { $COD_UTENTE = 0; header("Location: index.php"); }
                     <option value= "2" <?php if ($last == 2) { echo " selected";} ?>> Ultime 48 ore</option>
                     <option value= "7" <?php if ($last == 7) { echo " selected";} ?>> Ultima settimana</option>
                     <option value= "30" <?php if ($last == 30) { echo " selected";} ?>> Ultimo mese</option>
+                    <option value= "90" <?php if ($last == 90) { echo " selected";} ?>> Ultimi 3 mesi</option>
+
                   </select>
                   <input type="hidden" name="serial" value="<?php echo $serial?>">
                   <input type="hidden" name="graph" value="<?php echo $graph?>">

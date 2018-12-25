@@ -209,7 +209,7 @@ span.psw {
 
 /* Tables with size to be well defined */
 .device_details {
-  width: 650px;
+  width: 900px;
 }
 .device_settings {
   width: 800px;
@@ -224,12 +224,26 @@ span.psw {
   width: 80%;
 }
 .visible_on_normal_screen {
-  opacity: 1;
+  display: block;
 }
 
 .please_rotate {
-  opacity: 0;
+  display: none;
 }
+
+/* Change styles for span and cancel button on small screens or landscape phones */
+@media only screen and (max-width: 950px) {
+* {
+  font-size: 95%;
+}
+button {
+  padding: 5px 10px;
+}
+.device_details {
+  width: 500px;
+}
+}
+
 
 /* Change styles for span and cancel button on extra small screens */
 @media only screen and (max-width: 550px) {
@@ -239,14 +253,12 @@ span.psw {
 button {
   padding: 5px 10px;
 }
-
 .visible_on_normal_screen {
-  opacity: 0;
+  display: none;
 }
 .please_rotate {
-  opacity: 1;
+  display: block;
 }
-
 .modal-content {
   width: 280px;
 }

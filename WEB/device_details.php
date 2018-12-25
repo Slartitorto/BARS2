@@ -202,7 +202,9 @@ else { $COD_UTENTE = 0; header("Location: index.php"); }
   <body>
     <?php include 'includes/headerTableMenu.php'; ?> <BR>
       <center>
-        <div class="modal-content" style="width:900px;">
+        <div class="modal-content please_rotate"><h2>Please rotate</h2></div>
+
+        <div class="modal-content visible_on_normal_screen" style="width:900px;">
           <table class="padded centered device_details">
             <tr>
               <th  style="vertical-align:middle" width="50%"><button id="info_btn" style="padding:5px 5px"; class="hide-print"><img src="icone/info_icon.png" height="20" width="20"></button><?php echo $device_name?></th>

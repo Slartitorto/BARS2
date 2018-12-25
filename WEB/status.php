@@ -28,7 +28,7 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
   <BR>
     <div class="modal-content animate status">
       <br><br>
-      <table class="centered status">
+      <table class="centered" width="100%">
         <tr><th>Termometro</th><th>Posizione</th><th>Temp</th><th>Stato</th></tr>
 
         <?php
@@ -87,7 +87,7 @@ else { $COD_UTENTE =	0; header("Location: index.php");}
           echo "<form action=device_details.php method=post>";
           echo "<TD>";
 
-          echo "<button type=submit style=\"color:blue\"><u>" . $device_name[$i] . "</u></button>";
+          echo "<button type=submit style=\"color:#666666;opacity:1\"><u>" . $device_name[$i] . "</u></button>";
           echo "<input type=hidden name=serial value=$serial[$i] > ";
           echo "<input type=hidden name=last value=1 > ";
           echo "<input type=hidden name=graph value=temp > ";

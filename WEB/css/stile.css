@@ -206,6 +206,7 @@ span.psw {
 }
 
 
+
 /* Tables with size to be well defined */
 .device_details {
   width: 650px;
@@ -219,33 +220,51 @@ span.psw {
 .NC_manage {
   width: 800px;
 }
-.top-menu{
+.top-menu {
   width: 80%;
 }
+.visible_on_normal_screen {
+  opacity: 1;
+}
 
+.please_rotate {
+  opacity: 0;
+}
 
 /* Change styles for span and cancel button on extra small screens */
-@media screen and (max-device-width: 640px) {
-
-  .modal-content {
-    width: 100%;
-  }
-  * {
-    font-size: 10px;
-  }
-  .device_settings {
-    width: 550px;
-  }
-  .device_details {
-    width: 400px;
-  }
-  .status {
-    width: 500px;
-  }
-  .NC_manage {
-    width: 500px;
-  }
+@media only screen and (max-width: 550px) {
+* {
+  font-size: 95%;
 }
+button {
+  padding: 5px 10px;
+}
+
+.visible_on_normal_screen {
+  opacity: 0;
+}
+.please_rotate {
+  opacity: 1;
+}
+
+.modal-content {
+  width: 280px;
+}
+.status {
+  width: 280px;
+}
+th {
+  padding: 5px;
+}
+.device_settings {
+  width: 550px;
+}
+.device_details {
+  width: 400px;
+}
+.NC_manage {
+  width: 500px;
+} }
 
 
 /* Hides objects during printing */
